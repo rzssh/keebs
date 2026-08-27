@@ -1,8 +1,8 @@
 version = 1
-layers = ["Bunya", "Graphite", "VestnikDm", "Mantra", "Nav", "Sym", "Num", "Fn", "Vestnik2", "Mouse", "Game", "GameExtra", "Magic"]
-disabled_layers = ["Graphite", "VestnikDm"]
+layers = ["Graphite", "Bunya", "VestnikDm", "Mantra", "Nav", "Sym", "Num", "Fn", "Vestnik2", "Mouse", "Game", "GameExtra", "Magic"]
+disabled_layers = ["Bunya", "Mantra", "Vestnik2"]
 alpha_layers = ["Graphite", "Bunya", "VestnikDm", "Mantra", "Game"]
-default_layer = "Bunya"
+default_layer = "Graphite"
 default_os = "linux"
 layer_source = "layers.toml"
 behavior_source = "behaviors.toml"
@@ -17,6 +17,10 @@ then_layer = "Num"
 [operating_systems.linux]
 home = { key = "HOME" }
 end = { key = "END" }
+word_right = { key = "RIGHT", mods = ["LCTRL"] }
+word_left = { key = "LEFT", mods = ["LCTRL"] }
+select_word_right = { key = "RIGHT", mods = ["LCTRL", "LSHIFT"] }
+select_line_end = { key = "END", mods = ["LSHIFT"] }
 delete_word_left = { key = "BSPC", mods = ["LCTRL"] }
 delete_word_right = { key = "DEL", mods = ["LCTRL"] }
 undo = { key = "Z", mods = ["LCTRL"] }
@@ -31,6 +35,10 @@ screenshot_area = { key = "S", mods = ["LGUI", "LSHIFT"] }
 [operating_systems.macos]
 home = { key = "LEFT", mods = ["LGUI"] }
 end = { key = "RIGHT", mods = ["LGUI"] }
+word_right = { key = "RIGHT", mods = ["LALT"] }
+word_left = { key = "LEFT", mods = ["LALT"] }
+select_word_right = { key = "RIGHT", mods = ["LALT", "LSHIFT"] }
+select_line_end = { key = "RIGHT", mods = ["LGUI", "LSHIFT"] }
 delete_word_left = { key = "BSPC", mods = ["LALT"] }
 delete_word_right = { key = "DEL", mods = ["LALT"] }
 undo = { key = "Z", mods = ["LGUI"] }
@@ -45,6 +53,10 @@ screenshot_area = { key = "N4", mods = ["LGUI", "LSHIFT"] }
 [operating_systems.windows]
 home = { key = "HOME" }
 end = { key = "END" }
+word_right = { key = "RIGHT", mods = ["LCTRL"] }
+word_left = { key = "LEFT", mods = ["LCTRL"] }
+select_word_right = { key = "RIGHT", mods = ["LCTRL", "LSHIFT"] }
+select_line_end = { key = "END", mods = ["LSHIFT"] }
 delete_word_left = { key = "BSPC", mods = ["LCTRL"] }
 delete_word_right = { key = "DEL", mods = ["LCTRL"] }
 undo = { key = "Z", mods = ["LCTRL"] }

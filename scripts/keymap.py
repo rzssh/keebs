@@ -376,7 +376,7 @@ def validate(model: dict[str, Any]) -> None:
     behavior_identifiers = [ident(name) for name in behaviors]
     if len(behavior_identifiers) != len(set(behavior_identifiers)):
         fail("behavior names produce duplicate identifiers")
-    allowed_recipes = {"shift_morph", "sequence", "repeat_magic", "tap_hold", "leader", "macro", "layer_action", "layer_chord", "layer_sticky_mod", "smart_layer", "sticky_key", "platform"}
+    allowed_recipes = {"shift_morph", "sequence", "repeat_magic", "adaptive_repeat", "tap_hold", "leader", "macro", "layer_action", "layer_chord", "layer_sticky_mod", "smart_layer", "sticky_key", "platform"}
     for name, behavior in behaviors.items():
         if behavior.get("recipe") not in allowed_recipes:
             fail(f"behavior {name}: unknown recipe {behavior.get('recipe')!r}")
@@ -390,11 +390,22 @@ def validate(model: dict[str, Any]) -> None:
             validate_action(model, behavior["shifted"], f"behavior {name}.shifted")
         if behavior["recipe"] == "sequence":
             keys = behavior.get("keys")
-            if not isinstance(keys, list) or not 1 <= len(keys) <= 4:
-                fail(f"behavior {name}: keys must contain one through four keys")
-            for token in keys:
-                if not isinstance(token, str) or not valid_key(model, token):
-                    fail(f"behavior {name}: invalid key {token!r}")
+            steps = behavior.get("steps")
+            if (keys is None) == (steps is None):
+                fail(f"behavior {name}: sequence needs exactly one of keys or steps")
+            if keys is not None:
+                if not isinstance(keys, list) or not 1 <= len(keys) <= 4:
+                    fail(f"behavior {name}: keys must contain one through four keys")
+                for token in keys:
+                    if not isinstance(token, str) or not valid_key(model, token):
+                        fail(f"behavior {name}: invalid key {token!r}")
+            else:
+                if not isinstance(steps, list) or not 1 <= len(steps) <= 4:
+                    fail(f"behavior {name}: steps must contain one through four actions")
+                for index, step in enumerate(steps):
+                    validate_action(model, step, f"behavior {name}.steps[{index}]")
+                    if not isinstance(step, dict) or not ({"key", "os"} & set(step)):
+                        fail(f"behavior {name}: sequence steps must be key or OS actions")
             if not isinstance(behavior.get("label"), str) or not behavior["label"]:
                 fail(f"behavior {name}: label must be a non-empty string")
         if behavior["recipe"] == "tap_hold":
@@ -459,8 +470,18 @@ def validate(model: dict[str, Any]) -> None:
                 fail(f"behavior {name}: unsupported fallback or shifted action")
             if behavior.get("repeat_timeout_ms", 0) <= 0:
                 fail(f"behavior {name}: repeat timeout must be positive")
+        if behavior["recipe"] == "adaptive_repeat":
+            if not valid_key(model, behavior.get("marker", "")):
+                fail(f"behavior {name}: invalid marker")
+            if behavior.get("timeout_ms", 0) <= 0 or not isinstance(behavior.get("strict_modifiers"), bool):
+                fail(f"behavior {name}: invalid adaptive settings")
+            rules = behavior.get("rules", [])
+            if not rules or any(not valid_key(model, rule.get("after", "")) or not valid_key(model, rule.get("emit", "")) for rule in rules):
+                fail(f"behavior {name}: invalid adaptive repeat rules")
     if not isinstance(behavior_source.get("timings", {}).get("home_row", {}).get("opposite_hand_hold"), bool):
         fail("home_row.opposite_hand_hold must be a boolean")
+    if not isinstance(behavior_source.get("timings", {}).get("home_row", {}).get("hold_while_undecided", False), bool):
+        fail("home_row.hold_while_undecided must be a boolean")
     conditional_layers = root.get("conditional_layers", [])
     if not isinstance(conditional_layers, list):
         fail("conditional_layers must be a list")
@@ -869,6 +890,20 @@ def is_key_layer_tap_hold(value: dict[str, Any]) -> bool:
     return value.get("recipe") == "tap_hold" and isinstance(value.get("tap"), str) and isinstance(value.get("hold"), dict) and "layer" in value["hold"]
 
 
+def is_sticky_key_layer_tap_hold(model: dict[str, Any], value: Any) -> bool:
+    if not isinstance(value, dict):
+        return False
+    tap = value.get("tap")
+    return value.get("recipe") == "tap_hold" and isinstance(tap, dict) and "use" in tap and behavior(model, tap["use"]).get("recipe") == "sticky_key" and isinstance(value.get("hold"), dict) and "layer" in value["hold"]
+
+
+def is_shift_morph_layer_tap_hold(model: dict[str, Any], value: Any) -> bool:
+    if not isinstance(value, dict):
+        return False
+    tap = value.get("tap")
+    return value.get("recipe") == "tap_hold" and isinstance(tap, dict) and "use" in tap and behavior(model, tap["use"]).get("recipe") == "shift_morph" and isinstance(value.get("hold"), dict) and "layer" in value["hold"]
+
+
 def is_key_key_tap_hold(value: dict[str, Any]) -> bool:
     return value.get("recipe") == "tap_hold" and isinstance(value.get("tap"), str) and isinstance(value.get("hold"), dict) and "key" in value["hold"]
 
@@ -964,9 +999,16 @@ def zmk_action(model: dict[str, Any], ir: dict[str, Any], value: Any, adaptive_n
             return f"&{name} {key} {key}"
         if recipe == "repeat_magic":
             return f"&{name} {zmk_key(model, item['hold'])} 0"
+        if recipe == "adaptive_repeat":
+            return f"&{name}"
         if recipe == "tap_hold":
             if is_layer_tap_hold(item):
                 return f"&{name} LAYER_{item['hold']['layer']} LAYER_{item['tap']['layer']}"
+            if is_sticky_key_layer_tap_hold(model, item):
+                modifier = resolved_key(model, behavior(model, item["tap"]["use"])["key"])
+                return f"&{name} LAYER_{item['hold']['layer']} {'0' if modifier in {'LSHFT', 'RSHFT'} else zmk_key(model, modifier)}"
+            if is_shift_morph_layer_tap_hold(model, item):
+                return f"&{name} LAYER_{item['hold']['layer']} 0"
             if is_key_layer_tap_hold(item):
                 return f"&{name} LAYER_{item['hold']['layer']} {zmk_key(model, item['tap'])}"
             if is_key_key_tap_hold(item):
@@ -1025,10 +1067,13 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
     slot_indices = {slot: index for index, slot in enumerate(ir["slots"])}
     left_trigger = f'; hold-trigger-key-positions = <{" ".join(map(str, right_positions + thumbs))}>; hold-trigger-on-release' if h["opposite_hand_hold"] else ""
     right_trigger = f'; hold-trigger-key-positions = <{" ".join(map(str, left_positions + thumbs))}>; hold-trigger-on-release' if h["opposite_hand_hold"] else ""
+    immediate_hold = "; hold-while-undecided" if h.get("hold_while_undecided", False) else ""
     lines = [
-        f'ZMK_HOLD_TAP(hml, bindings = <&kp>, <&kp>; flavor = "{h["flavor"]}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>; require-prior-idle-ms = <{h["prior_idle_ms"]}>{left_trigger};)',
-        f'ZMK_HOLD_TAP(hmr, bindings = <&kp>, <&kp>; flavor = "{h["flavor"]}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>; require-prior-idle-ms = <{h["prior_idle_ms"]}>{right_trigger};)',
+        f'ZMK_HOLD_TAP(hml, bindings = <&kp>, <&kp>; flavor = "{h["flavor"]}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>; require-prior-idle-ms = <{h["prior_idle_ms"]}>{left_trigger}{immediate_hold};)',
+        f'ZMK_HOLD_TAP(hmr, bindings = <&kp>, <&kp>; flavor = "{h["flavor"]}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>; require-prior-idle-ms = <{h["prior_idle_ms"]}>{right_trigger}{immediate_hold};)',
     ]
+    if any(is_sticky_key_layer_tap_hold(model, item) and resolved_key(model, behavior(model, item["tap"]["use"])["key"]) in {"LSHFT", "RSHFT"} for item in model["behaviors"]["behaviors"].values()):
+        lines.append("ZMK_MOD_MORPH(smart_shift, bindings = <&sk LSHFT>, <&caps_word>; mods = <(MOD_LSFT|MOD_RSFT)>;)")
     layer_chords = []
     layer_sticky_mods = []
     for name, timing_name in (("thumb_ht", "thumb"), ("layer_thumb", "layer_thumb"), ("thumb_tp", "thumb_tap_preferred")):
@@ -1048,7 +1093,9 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
             lines.append(f'ZMK_HOLD_TAP({name}, bindings = <&kp>, <&sk>; flavor = "{timing["flavor"]}"; tapping-term-ms = <{timing["tapping_term_ms"]}>; hold-while-undecided; hold-while-undecided-linger;)')
         elif recipe == "sequence":
             timing = timings["sequence"]
-            bindings = ", ".join(f"<&kp {zmk_key(model, token)}>" for token in item["keys"])
+            bindings = ", ".join(
+                f"<&kp {zmk_key(model, token)}>" for token in item["keys"]
+            ) if "keys" in item else ", ".join(f"<{zmk_action(model, ir, step)}>" for step in item["steps"])
             lines.append(f"ZMK_MACRO({name}, wait-ms = <{timing['wait_ms']}>; tap-ms = <{timing['tap_ms']}>; bindings = {bindings};)")
         elif recipe == "macro":
             bindings = ", ".join(f"<{zmk_action(model, ir, step)}>" for step in item["steps"])
@@ -1061,6 +1108,16 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
             if "tap" in item:
                 timing = timings[item["timing"]]
                 lines.append(f'ZMK_HOLD_TAP({name}, bindings = <&{chord_name}>, <&kp>; flavor = "{timing["flavor"]}"; tapping-term-ms = <{timing["tapping_term_ms"]}>; quick-tap-ms = <{timing["quick_tap_ms"]}>; hold-while-undecided;)')
+        elif recipe == "adaptive_repeat":
+            marker = zmk_key(model, item["marker"])
+            lines.append(f"ZMK_MACRO({name}_default, bindings = <&alpha_repeat>, <&kp {marker}>;)")
+            triggers = []
+            for index, rule in enumerate(item["rules"]):
+                macro = f"{name}_r{index}"
+                lines.append(f"ZMK_MACRO({macro}, bindings = <&kp {zmk_key(model, rule['emit'])}>, <&kp {marker}>;)")
+                strict = " strict-modifiers;" if item["strict_modifiers"] else ""
+                triggers.append(f"r{index} {{ trigger-keys = <{zmk_key(model, rule['after'])}>; bindings = <&{macro}>; max-prior-idle-ms = <{item['timeout_ms']}>;{strict} }};")
+            lines.append(f"ZMK_ADAPTIVE_KEY({name}, bindings = <&{name}_default>; dead-keys = <{marker}>; {' '.join(triggers)})")
         elif recipe == "platform" and item["action"] == "bt_select":
             lines.append(f"ZMK_MACRO({name}, bindings = <&out OUT_BLE>, <&bt BT_SEL {item['value']}>;)")
         elif is_layer_tap_hold(item):
@@ -1073,6 +1130,20 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
                 fail(f"unsupported layer tap-hold {name!r}")
             quick_tap = f'; quick-tap-ms = <{timing["quick_tap_ms"]}>' if "quick_tap_ms" in timing else ""
             lines.append(f'ZMK_HOLD_TAP({name}, bindings = <{hold_binding}>, <{tap_binding}>; flavor = "{timing["flavor"]}"; tapping-term-ms = <{timing["tapping_term_ms"]}>{quick_tap};)')
+        elif is_sticky_key_layer_tap_hold(model, item):
+            timing = timings[item["timing"]]
+            if item["hold"].get("mode", "momentary") != "momentary":
+                fail(f"unsupported sticky-key layer tap-hold {name!r}")
+            modifier = resolved_key(model, behavior(model, item["tap"]["use"])["key"])
+            tap_binding = "&smart_shift" if modifier in {"LSHFT", "RSHFT"} else "&sk"
+            quick_tap = f'; quick-tap-ms = <{timing["quick_tap_ms"]}>' if "quick_tap_ms" in timing else ""
+            lines.append(f'ZMK_HOLD_TAP({name}, bindings = <&mo>, <{tap_binding}>; flavor = "{timing["flavor"]}"; tapping-term-ms = <{timing["tapping_term_ms"]}>{quick_tap};)')
+        elif is_shift_morph_layer_tap_hold(model, item):
+            timing = timings[item["timing"]]
+            if item["hold"].get("mode", "momentary") != "momentary":
+                fail(f"unsupported shift-morph layer tap-hold {name!r}")
+            quick_tap = f'; quick-tap-ms = <{timing["quick_tap_ms"]}>' if "quick_tap_ms" in timing else ""
+            lines.append(f'ZMK_HOLD_TAP({name}, bindings = <&mo>, <&{item["tap"]["use"]}>; flavor = "{timing["flavor"]}"; tapping-term-ms = <{timing["tapping_term_ms"]}>{quick_tap};)')
         elif is_key_layer_tap_hold(item):
             timing = timings[item["timing"]]
             if item["hold"].get("mode", "momentary") != "momentary":
@@ -1357,6 +1428,26 @@ def tap_dance_spec(model: dict[str, Any], value: Any) -> dict[str, Any] | None:
                 "timing": item["timing"],
                 "hold_on_interrupt": True,
             }
+    if is_sticky_key_layer_tap_hold(model, value):
+        modifier = resolved_key(model, behavior(model, value["tap"]["use"])["key"])
+        return {
+            "name": f"{value['hold']['layer']}_{modifier}",
+            "tap_kind": "RAZEN_TAP_SMART_SHIFT" if modifier in {"LSHFT", "RSHFT"} else "RAZEN_TAP_ONESHOT_MOD",
+            "tap": QMK_ONESHOT_MODS[modifier],
+            "hold_kind": "RAZEN_HOLD_LAYER",
+            "hold": qmk_layer(value["hold"]["layer"]),
+            "timing": value["timing"],
+        }
+    if is_shift_morph_layer_tap_hold(model, value):
+        tap = value["tap"]["use"]
+        return {
+            "name": f"{value['hold']['layer']}_{tap}",
+            "tap_kind": "RAZEN_TAP_MORPH",
+            "tap": custom_name("MORPH", tap),
+            "hold_kind": "RAZEN_HOLD_LAYER",
+            "hold": qmk_layer(value["hold"]["layer"]),
+            "timing": value["timing"],
+        }
     if isinstance(value, dict) and "tap" in value and not value.get("hand"):
         hold = value["hold"]
         if isinstance(hold, str):
@@ -1441,6 +1532,8 @@ def qmk_action(model: dict[str, Any], ir: dict[str, Any], value: Any, td_keys: d
             return custom_name("SEQUENCE", name)
         if recipe == "macro":
             return custom_name("MACRO", name)
+        if recipe == "adaptive_repeat":
+            return custom_name("ADAPTIVE_REPEAT", name)
         if recipe == "layer_action":
             return qmk_layer_action(item["layer"], item["mode"])
         if recipe == "layer_chord":
@@ -1493,6 +1586,8 @@ def qmk_custom_ids(model: dict[str, Any], ir: dict[str, Any]) -> list[str]:
             result.append(custom_name("SEQUENCE", name))
         elif item["recipe"] == "macro":
             result.append(custom_name("MACRO", name))
+        elif item["recipe"] == "adaptive_repeat":
+            result.append(custom_name("ADAPTIVE_REPEAT", name))
         elif item["recipe"] == "smart_layer":
             result.append(custom_name("SMART_LAYER", name))
         elif item["recipe"] == "layer_chord":
@@ -1512,7 +1607,8 @@ def qmk_leader_statement(model: dict[str, Any], ir: dict[str, Any], value: Any) 
         if item["recipe"] == "layer_action":
             return f"layer_move({qmk_layer(item['layer'])});"
         if item["recipe"] == "sequence":
-            return " ".join(f"tap_code16_delay({qmk_key(model, token)}, RAZEN_SEQUENCE_DELAY);" for token in item["keys"])
+            values = [qmk_key(model, token) for token in item["keys"]] if "keys" in item else [qmk_basic(model, ir, step) for step in item["steps"]]
+            return " ".join(f"tap_code16_delay({value}, RAZEN_SEQUENCE_DELAY);" for value in values)
         if item["recipe"] == "macro":
             statements = []
             for step in item["steps"]:
@@ -1540,6 +1636,14 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
     magic = behavior(model, "thumb_magic")
     magic_spec = qmk_native_tap_hold_spec(model, {"use": "thumb_magic"})
     smart = smart_layer_behavior(model)
+    adaptive_repeats = [
+        (name, item)
+        for name, item in model["behaviors"]["behaviors"].items()
+        if item["recipe"] == "adaptive_repeat" and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"])
+    ]
+    if len(adaptive_repeats) != 1:
+        fail("QMK needs exactly one adaptive_repeat behavior")
+    adaptive_repeat_name, adaptive_repeat = adaptive_repeats[0]
     layer_chords = [
         (name, item)
         for name, item in model["behaviors"]["behaviors"].items()
@@ -1550,6 +1654,14 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
         "",
         f"const uint16_t razen_magic_keycode = {magic_spec['keycode']};",
         f"const uint16_t razen_magic_hold_keycode = {qmk_key(model, magic['hold'])};",
+        f"const uint16_t razen_adaptive_repeat_keycode = {custom_name('ADAPTIVE_REPEAT', adaptive_repeat_name)};",
+        f"const uint16_t razen_adaptive_repeat_marker = {qmk_key(model, adaptive_repeat['marker'])};",
+        f"const uint16_t razen_adaptive_repeat_timeout = {adaptive_repeat['timeout_ms']};",
+        f"const bool razen_adaptive_repeat_strict_modifiers = {'true' if adaptive_repeat['strict_modifiers'] else 'false'};",
+        "const razen_adaptive_repeat_rule_t razen_adaptive_repeat_rules[] = {",
+        *(f"    {{{qmk_key(model, rule['after'])}, {qmk_key(model, rule['emit'])}}}," for rule in adaptive_repeat["rules"]),
+        "};",
+        "const uint8_t razen_adaptive_repeat_rule_count = sizeof(razen_adaptive_repeat_rules) / sizeof(razen_adaptive_repeat_rules[0]);",
         "",
     ])
     if smart is not None and behavior_available(smart[1], "qmk"):
@@ -1595,8 +1707,8 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
     lines.extend(["};", "const uint8_t razen_macro_count = sizeof(razen_macros) / sizeof(razen_macros[0]);", "", "const razen_sequence_t razen_sequences[] = {"])
     for name, item in model["behaviors"]["behaviors"].items():
         if item["recipe"] == "sequence" and behavior_available(item, "qmk"):
-            keys = ", ".join(qmk_key(model, token) for token in item["keys"])
-            lines.append(f"    {{{custom_name('SEQUENCE', name)}, {{{keys}}}, {len(item['keys'])}}},")
+            values = [qmk_key(model, token) for token in item["keys"]] if "keys" in item else [qmk_basic(model, ir, step) for step in item["steps"]]
+            lines.append(f"    {{{custom_name('SEQUENCE', name)}, {{{', '.join(values)}}}, {len(values)}}},")
     lines.extend(["};", "const uint8_t razen_sequence_count = sizeof(razen_sequences) / sizeof(razen_sequences[0]);", "", "const razen_adaptive_rule_t razen_adaptive_rules[] = {"])
     adaptive_count = 0
     for adaptive_name in model["behaviors"].get("adaptives", {}):
@@ -1839,6 +1951,16 @@ def label_action(model: dict[str, Any], ir: dict[str, Any], value: Any) -> Any:
             return {"t": label_key(model, item["key"]), "type": "mod"}
         if item["recipe"] == "repeat_magic":
             return {"t": mdi("repeat"), "h": mdi("arrow-up-bold")}
+        if item["recipe"] == "adaptive_repeat":
+            return mdi("repeat")
+        if is_sticky_key_layer_tap_hold(model, item) or is_shift_morph_layer_tap_hold(model, item):
+            result = label_action(model, ir, item["tap"])
+            result = dict(result) if isinstance(result, dict) else {"t": result}
+            result.pop("type", None)
+            if is_shift_morph_layer_tap_hold(model, item):
+                result.pop("s", None)
+            result["h"] = item["hold"]["layer"]
+            return result
         if is_key_layer_tap_hold(item):
             return {"t": label_action(model, ir, item["tap"]), "h": item["hold"]["layer"]}
         if is_key_key_tap_hold(item):

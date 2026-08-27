@@ -1,57 +1,57 @@
 [layers.Graphite.core30]
 rows = [
-  ["B", "L", "D", "W", "G", "Y", "F", "O", "U", { use = "dot_qmark" }],
+  ["B", "L", "D", "W", "G", "Y", "F", "O", "U", "J"],
   [{ tap = "N", hold = "LGUI", hand = "left" }, { tap = "R", hold = "LALT", hand = "left" }, { tap = "T", hold = "LCTRL", hand = "left" }, { tap = "S", hold = "LSHFT", hand = "left", adaptive = "graphite" }, "V", "K", { tap = "H", hold = "RSHFT", hand = "right" }, { tap = "A", hold = "RCTRL", hand = "right" }, { tap = "E", hold = "RALT", hand = "right" }, { tap = "I", hold = "RGUI", hand = "right" }],
-  ["X", "M", "C", "P", { use = "sqt_dqt" }, { use = "comma_excl" }],
-  [{ tap = "RET", hold = { layer = "Nav", mode = "momentary" }, timing = "layer_thumb" }, "SPACE", { use = "thumb_magic" }, { tap = "BSPC", hold = { layer = "Sym", mode = "momentary" }, timing = "layer_thumb" }],
+  ["X", "M", "C", "P", { use = "dot_qmark" }, { use = "comma_excl" }],
+  [{ use = "bspc_nav" }, "SPACE", { use = "thumb_magic" }, { use = "sqt_sym" }],
 ]
 
 [layers.Graphite.core34]
 rows = [
-  ["B", "L", "D", "W", "Z", "J", "F", "O", "U", { use = "sqt_dqt" }],
+  ["B", "L", "D", "W", "Z", { use = "sqt_dqt" }, "F", "O", "U", "J"],
   [{ tap = "N", hold = "LGUI", hand = "left" }, { tap = "R", hold = "LALT", hand = "left" }, { tap = "T", hold = "LCTRL", hand = "left" }, { tap = "S", hold = "LSHFT", hand = "left", adaptive = "graphite" }, "G", "Y", { tap = "H", hold = "RSHFT", hand = "right" }, { tap = "A", hold = "RCTRL", hand = "right" }, { tap = "E", hold = "RALT", hand = "right" }, { tap = "I", hold = "RGUI", hand = "right" }],
   ["Q", "X", "M", "C", "V", "K", "P", { use = "dot_qmark" }, { use = "minus_slash" }, { use = "comma_excl" }],
-  [{ tap = "RET", hold = { layer = "Nav", mode = "momentary" }, timing = "layer_thumb" }, "SPACE", { use = "thumb_magic" }, { tap = "BSPC", hold = { layer = "Sym", mode = "momentary" }, timing = "layer_thumb" }],
+  [{ use = "bspc_nav" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "momentary" }],
 ]
 
 [layers.Bunya.core30]
 rows = [
   ["B", "L", "M", "P", "G", "Y", "F", "O", "U", "J"],
-  [{ tap = "N", hold = "LGUI", hand = "left" }, { tap = "R", hold = "LALT", hand = "left" }, { tap = "T", hold = "LCTRL", hand = "left" }, { tap = "D", hold = "LSHFT", hand = "left" }, "W", { use = "sqt_dqt" }, { tap = "H", hold = "RSHFT", hand = "right" }, { tap = "A", hold = "RCTRL", hand = "right" }, { tap = "E", hold = "RALT", hand = "right" }, { tap = "I", hold = "RGUI", hand = "right" }],
-  ["X", "V", "C", "K", { use = "dot_qmark" }, { use = "comma_excl" }],
-  [{ tap = "BSPC", hold = { layer = "Nav", mode = "momentary" }, timing = "layer_thumb" }, "S", "SPACE", { tap = "RET", hold = { layer = "Sym", mode = "momentary" }, timing = "layer_thumb" }],
+  [{ tap = "N", hold = "LGUI", hand = "left" }, { tap = "R", hold = "LALT", hand = "left", adaptive = "bunya" }, { tap = "T", hold = "LCTRL", hand = "left" }, { tap = "D", hold = "LSHFT", hand = "left" }, "W", "K", { tap = "H", hold = "RSHFT", hand = "right" }, { tap = "A", hold = "RCTRL", hand = "right" }, { tap = "E", hold = "RALT", hand = "right" }, { tap = "I", hold = "RGUI", hand = "right" }],
+  ["X", "V", "C", { use = "bunya_magic" }, { use = "dot_qmark" }, { use = "comma_excl" }],
+  [{ use = "shift_nav" }, "S", "SPACE", { use = "bspc_sym" }],
 ]
 
 [layers.Bunya.core34]
 rows = [
   ["B", "L", "M", "P", "W", { use = "sqt_dqt" }, "F", "O", "U", "J"],
-  [{ tap = "N", hold = "LGUI", hand = "left" }, { tap = "R", hold = "LALT", hand = "left" }, { tap = "T", hold = "LCTRL", hand = "left" }, { tap = "D", hold = "LSHFT", hand = "left" }, "G", "Y", { tap = "H", hold = "RSHFT", hand = "right" }, { tap = "A", hold = "RCTRL", hand = "right" }, { tap = "E", hold = "RALT", hand = "right" }, { tap = "I", hold = "RGUI", hand = "right" }],
-  ["Q", "X", "V", "C", "Z", { use = "colon_semi" }, "K", { use = "dot_qmark" }, { use = "minus_slash" }, { use = "comma_excl" }],
-  [{ tap = "BSPC", hold = { layer = "Nav", mode = "momentary" }, timing = "layer_thumb" }, "S", "SPACE", { tap = "RET", hold = { layer = "Sym", mode = "momentary" }, timing = "layer_thumb" }],
+  [{ tap = "N", hold = "LGUI", hand = "left" }, { tap = "R", hold = "LALT", hand = "left", adaptive = "bunya" }, { tap = "T", hold = "LCTRL", hand = "left" }, { tap = "D", hold = "LSHFT", hand = "left" }, "G", "Y", { tap = "H", hold = "RSHFT", hand = "right" }, { tap = "A", hold = "RCTRL", hand = "right" }, { tap = "E", hold = "RALT", hand = "right" }, { tap = "I", hold = "RGUI", hand = "right" }],
+  ["Q", "X", "V", "C", "Z", "K", { use = "bunya_magic" }, { use = "dot_qmark" }, { use = "minus_slash" }, { use = "comma_excl" }],
+  [{ use = "shift_nav" }, "S", "SPACE", { use = "bspc_sym" }],
 ]
 
 [layers.VestnikDm.core30]
 rows = [
-  ["Ш", "Г", "Р", "Б", "М", "Ь", "П", "А", "Я", "Ю"],
-  [{ tap = "С", hold = "LGUI", hand = "left" }, { tap = "Т", hold = "LALT", hand = "left" }, { tap = "Н", hold = "LCTRL", hand = "left" }, { tap = "К", hold = "LSHFT", hand = "left" }, "Ч", "Ж", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "О", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
-  ["З", "Л", "Д", "Й", "Ы", "У"],
-  [{ use = "vestnik2_nav" }, "SPACE", { use = "thumb_magic" }, { tap = "BSPC", hold = { layer = "Sym", mode = "momentary" }, timing = "layer_thumb" }],
+  ["Ш", "Г", "Р", "Б", "М", "Ь", "П", "О", "У", "Ю"],
+  [{ tap = "С", hold = "LGUI", hand = "left" }, { tap = "Т", hold = "LALT", hand = "left" }, { tap = "Н", hold = "LCTRL", hand = "left", adaptive = "vestnik" }, { tap = "К", hold = "LSHFT", hand = "left" }, "Ч", "Ж", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "А", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
+  ["З", "Л", "Д", "Й", "Ы", "Я"],
+  [{ use = "bspc_nav" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "momentary" }],
 ]
 
 [layers.VestnikDm.core34]
 rows = [
-  ["Ц", "Г", "Р", "Б", "Х", "Ф", "П", "А", "Я", "Э"],
-  [{ tap = "С", hold = "LGUI", hand = "left" }, { tap = "Т", hold = "LALT", hand = "left" }, { tap = "Н", hold = "LCTRL", hand = "left" }, { tap = "К", hold = "LSHFT", hand = "left" }, "М", "Ь", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "О", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
-  ["Ш", "З", "Л", "Д", "Ч", "Ж", "Й", "Ы", "У", "Ю"],
-  [{ tap = "RET", hold = { layer = "Nav", mode = "momentary" }, timing = "layer_thumb" }, "SPACE", { use = "thumb_magic" }, { tap = "BSPC", hold = { layer = "Sym", mode = "momentary" }, timing = "layer_thumb" }],
+  ["Ц", "Г", "Р", "Б", "Х", "Ф", "П", "О", "У", "Ю"],
+  [{ tap = "С", hold = "LGUI", hand = "left" }, { tap = "Т", hold = "LALT", hand = "left" }, { tap = "Н", hold = "LCTRL", hand = "left", adaptive = "vestnik" }, { tap = "К", hold = "LSHFT", hand = "left" }, "М", "Ь", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "А", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
+  ["Ш", "З", "Л", "Д", "Ч", "Ж", "Й", "Ы", "Я", "Э"],
+  [{ use = "bspc_nav" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "momentary" }],
 ]
 
 [layers.Mantra.core30]
 rows = [
-  ["Щ", "Г", "Л", "Б", "М", "Ь", "Й", "О", "У", "Ы"],
+  ["Х", "Г", "Л", "Б", "М", "Ь", "Й", "О", "У", "Ы"],
   [{ tap = "К", hold = "LGUI", hand = "left" }, { tap = "С", hold = "LALT", hand = "left" }, { tap = "Р", hold = "LCTRL", hand = "left" }, { tap = "Т", hold = "LSHFT", hand = "left" }, "Ш", "Ж", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "А", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
   ["З", "Ч", "Д", "П", "Ю", "Я"],
-  [{ use = "vestnik2_nav" }, "Н", "SPACE", { tap = "RET", hold = { layer = "Sym", mode = "momentary" }, timing = "layer_thumb" }],
+  [{ use = "shift_nav" }, "Н", "SPACE", { use = "bspc_sym" }],
 ]
 
 [layers.Mantra.core34]
@@ -59,28 +59,28 @@ rows = [
   ["Щ", "Г", "Л", "Б", "Ц", "Ф", "Й", "О", "У", "Ы"],
   [{ tap = "К", hold = "LGUI", hand = "left" }, { tap = "С", hold = "LALT", hand = "left" }, { tap = "Р", hold = "LCTRL", hand = "left" }, { tap = "Т", hold = "LSHFT", hand = "left" }, "М", "Ь", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "А", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
   ["Х", "З", "Ч", "Д", "Ш", "Ж", "П", "Ю", "Я", "Э"],
-  [{ tap = "BSPC", hold = { layer = "Nav", mode = "momentary" }, timing = "layer_thumb" }, "Н", "SPACE", { tap = "RET", hold = { layer = "Sym", mode = "momentary" }, timing = "layer_thumb" }],
+  [{ use = "shift_nav" }, "Н", "SPACE", { use = "bspc_sym" }],
 ]
 
 [layers.Nav.core30]
 rows = [
-  ["ESC", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, "none", "none", { mouse = "SCRL_UP" }, { os = "home" }, "UP", { os = "end" }, "PG_UP"],
-  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, { os = "select_all" }, { mouse = "SCRL_DOWN" }, "LEFT", "DOWN", "RIGHT", "PG_DN"],
-  [{ use = "undo_redo" }, { os = "copy" }, { os = "paste" }, "BSPC", "TAB", "DEL"],
-  ["none", { layer = "Mouse", mode = "momentary" }, "RET", "trans"],
+  ["none", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, { use = "tab_previous" }, { use = "tab_next" }, { mouse = "SCRL_UP" }, { os = "home" }, "UP", { os = "end" }, "PG_UP"],
+  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", { mouse = "SCRL_DOWN" }, "LEFT", "DOWN", "RIGHT", "PG_DN"],
+  ["none", { use = "select_line" }, { use = "select_word" }, "none", "none", "none"],
+  ["none", { layer = "Mouse", mode = "momentary" }, "none", "trans"],
 ]
 
 [layers.Nav.core34]
 rows = [
-  ["ESC", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, "none", "none", { mouse = "SCRL_UP" }, { os = "home" }, "UP", { os = "end" }, "PG_UP"],
+  ["none", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, { use = "tab_previous" }, { use = "tab_next" }, { mouse = "SCRL_UP" }, { os = "home" }, "UP", { os = "end" }, "PG_UP"],
   [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", { mouse = "SCRL_DOWN" }, "LEFT", "DOWN", "RIGHT", "PG_DN"],
-  ["none", { use = "undo_redo" }, { os = "copy" }, { os = "paste" }, { os = "select_all" }, "none", "BSPC", "TAB", "DEL", "none"],
-  ["none", { layer = "Mouse", mode = "momentary" }, "RET", "trans"],
+  ["none", "none", { use = "select_line" }, { use = "select_word" }, "none", "none", "none", "none", "none", "none"],
+  ["none", { layer = "Mouse", mode = "momentary" }, "none", "trans"],
 ]
 
 [layers.Sym.core30]
 rows = [
-  ["GRAVE", { use = "bslh_qmark" }, { use = "slash_excl" }, "DLLR", "DOT", "PRCNT", { use = "brace" }, { use = "paren" }, { use = "square" }, { use = "angle" }],
+  ["GRAVE", { use = "bslh_qmark" }, { use = "slash_excl" }, "DLLR", "DQT", "PRCNT", { use = "brace" }, { use = "paren" }, { use = "square" }, { use = "angle" }],
   ["CARET", "UNDER", "COLON", "EQUAL", "MINUS", "AT", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
   ["PIPE", "AMPS", "PLUS", "HASH", "STAR", "SEMI"],
   ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "none"],
@@ -88,7 +88,7 @@ rows = [
 
 [layers.Sym.core34]
 rows = [
-  ["GRAVE", { use = "bslh_qmark" }, { use = "slash_excl" }, "DLLR", "DOT", "PRCNT", { use = "brace" }, { use = "paren" }, { use = "square" }, { use = "angle" }],
+  ["GRAVE", { use = "bslh_qmark" }, { use = "slash_excl" }, "DLLR", "DQT", "PRCNT", { use = "brace" }, { use = "paren" }, { use = "square" }, { use = "angle" }],
   ["CARET", "UNDER", "COLON", "EQUAL", "MINUS", "AT", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
   ["none", "PIPE", "AMPS", "PLUS", "none", "none", "HASH", "STAR", "SEMI", "none"],
   ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "none"],

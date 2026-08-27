@@ -132,16 +132,23 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
             continue;
         }
         suppressed_keycode = keycode;
+        uint16_t repeated = KC_NO;
         for (uint8_t output = 0; output < rule->emit_len; output++) {
-            tap_code16(rule->emit[output]);
-            if (rule->emit[output] == KC_BSPC) {
+            uint16_t emitted = rule->emit[output];
+            if (emitted == razen_adaptive_repeat_marker) {
+                append_history(emitted, 0);
+                continue;
+            }
+            tap_code16(emitted);
+            if (emitted == KC_BSPC) {
                 pop_history();
             } else {
-                append_history(rule->emit[output], 0);
+                append_history(emitted, 0);
+                repeated = emitted;
             }
         }
-        if (rule->emit_len) {
-            set_last_keycode(rule->emit[rule->emit_len - 1]);
+        if (repeated != KC_NO) {
+            set_last_keycode(repeated);
             set_last_mods(0);
         }
         return false;
@@ -153,6 +160,38 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
         clear_history();
     }
     return true;
+}
+
+static void repeat_adaptive(void) {
+    uint16_t repeated = get_last_keycode();
+    uint8_t mods = get_last_mods();
+    uint8_t active_mods = get_mods() | get_oneshot_mods() | get_weak_mods();
+    bool substituted = false;
+    bool modifiers_match = !razen_adaptive_repeat_strict_modifiers || !active_mods;
+    if (modifiers_match && history_len && history_timer && timer_elapsed32(history_timer) <= razen_adaptive_repeat_timeout) {
+        for (uint8_t index = 0; index < razen_adaptive_repeat_rule_count; index++) {
+            if (razen_adaptive_repeat_rules[index].after != history[history_len - 1]) {
+                continue;
+            }
+            repeated = razen_adaptive_repeat_rules[index].emit;
+            mods = 0;
+            tap_code16(repeated);
+            set_last_keycode(repeated);
+            set_last_mods(0);
+            substituted = true;
+            break;
+        }
+    }
+    if (!substituted && repeated != KC_NO) {
+        keyevent_t event = MAKE_KEYEVENT(0, 0, true);
+        repeat_key_invoke(&event);
+        event.pressed = false;
+        repeat_key_invoke(&event);
+    }
+    if (substituted) {
+        append_history(repeated, mods);
+    }
+    append_history(razen_adaptive_repeat_marker, 0);
 }
 
 static void repeat_magic(void) {
@@ -176,6 +215,14 @@ static void execute_tap(razen_tap_dance_t *data) {
         case RAZEN_TAP_KEY:
             tap_code16(data->tap);
             break;
+        case RAZEN_TAP_MORPH:
+            for (uint8_t index = 0; index < razen_morph_count; index++) {
+                if (razen_morphs[index].trigger == data->tap) {
+                    tap_morph(razen_morphs[index].tap, razen_morphs[index].shifted);
+                    break;
+                }
+            }
+            break;
         case RAZEN_TAP_MAGIC:
             repeat_magic();
             break;
@@ -184,6 +231,14 @@ static void execute_tap(razen_tap_dance_t *data) {
             break;
         case RAZEN_TAP_ONESHOT_LAYER:
             set_oneshot_layer(data->tap, ONESHOT_START);
+            break;
+        case RAZEN_TAP_SMART_SHIFT:
+            if (shift_active()) {
+                set_oneshot_mods(get_oneshot_mods() & ~MOD_MASK_SHIFT);
+                caps_word_on();
+            } else {
+                add_oneshot_mods(MOD_BIT(KC_LSFT));
+            }
             break;
     }
 }
@@ -332,6 +387,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
+    if (keycode == razen_adaptive_repeat_keycode) {
+        if (record->event.pressed) {
+            repeat_adaptive();
+        }
+        return false;
+    }
+
     for (uint8_t index = 0; index < razen_oneshot_layer_count; index++) {
         if (razen_oneshot_layers[index].keycode != keycode || !record->tap.count) {
             continue;
@@ -390,8 +452,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool remember_last_key_user(uint16_t keycode, keyrecord_t *record, uint8_t *remembered_mods) {
     uint16_t basic = tap_keycode(keycode, record);
-    bool remember = keycode != razen_magic_keycode && !IS_QK_TAP_DANCE(keycode) &&
-                    !custom_keycode(keycode) && basic >= KC_A && basic <= KC_Z &&
+    bool remember = keycode != razen_magic_keycode && keycode != razen_adaptive_repeat_keycode &&
+                    !IS_QK_TAP_DANCE(keycode) && !custom_keycode(keycode) &&
+                    basic >= KC_A && basic <= KC_Z &&
                     !(*remembered_mods & ~MOD_MASK_SHIFT);
     if (remember) {
         repeat_timer = timer_read32();

@@ -4,9 +4,11 @@
 
 enum razen_tap_kind {
     RAZEN_TAP_KEY,
+    RAZEN_TAP_MORPH,
     RAZEN_TAP_MAGIC,
     RAZEN_TAP_ONESHOT_MOD,
     RAZEN_TAP_ONESHOT_LAYER,
+    RAZEN_TAP_SMART_SHIFT,
 };
 
 enum razen_hold_kind {
@@ -42,6 +44,11 @@ typedef struct {
     uint16_t timeout_ms;
     bool strict_modifiers;
 } razen_adaptive_rule_t;
+
+typedef struct {
+    uint16_t after;
+    uint16_t emit;
+} razen_adaptive_repeat_rule_t;
 
 typedef struct {
     uint32_t layers;
@@ -82,6 +89,12 @@ extern const razen_sequence_t razen_sequences[];
 extern const uint8_t razen_sequence_count;
 extern const razen_adaptive_rule_t razen_adaptive_rules[];
 extern const uint8_t razen_adaptive_rule_count;
+extern const uint16_t razen_adaptive_repeat_keycode;
+extern const uint16_t razen_adaptive_repeat_marker;
+extern const uint16_t razen_adaptive_repeat_timeout;
+extern const bool razen_adaptive_repeat_strict_modifiers;
+extern const razen_adaptive_repeat_rule_t razen_adaptive_repeat_rules[];
+extern const uint8_t razen_adaptive_repeat_rule_count;
 extern const razen_combo_t razen_combos[];
 extern const uint8_t razen_combo_count;
 extern const uint16_t razen_magic_keycode;
