@@ -13,6 +13,7 @@ draw_hidden_layers = ["Vestnik2", "GameExtra"]
 [[conditional_layers]]
 if_layers = ["Nav", "Sym"]
 then_layer = "Num"
+variants = ["core30"]
 
 [operating_systems.linux]
 home = { key = "HOME" }

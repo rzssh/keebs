@@ -178,9 +178,10 @@ text.label { stroke: none; }
 .layer-Game .key.shifted { fill: #c7f464; }
 text.held { fill: #1e1e2e; }
 text.trans { fill: #6c7086; }
-rect.num-activator { stroke: #fab387; stroke-width: 2; }
 rect:has(~ a[href="#Nav"]) { stroke: #89b4fa; stroke-width: 2; }
 rect:has(~ a[href="#Sym"]) { stroke: #a6e3a1; stroke-width: 2; }
+rect.num-activator { stroke: #fab387; stroke-width: 2; }
+rect:has(~ a[href="#Num"]) { stroke: #fab387; stroke-width: 2; }
 rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
 rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
 rect:has(~ a[href="#Game"]) { stroke: #ff4d6d; stroke-width: 2; }
@@ -888,8 +889,8 @@ text.gameextra-activator { font-size: 12px; }
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>
 <text x="0" y="0" class="key tap">;</text>
 </g>
-<g transform="translate(210, 196)" class="key num-activator keypos-26">
-<rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key num-activator"/>
+<g transform="translate(210, 196)" class="key held keypos-26">
+<rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key held"/>
 </g>
 <g transform="translate(270, 196)" class="key keypos-27">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>

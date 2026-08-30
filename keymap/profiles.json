@@ -65,7 +65,7 @@
       "L_TOP_OUTER", "L_PINKY_TOP", "L_RING_TOP", "L_MIDDLE_TOP", "L_INDEX_TOP", "L_INNER_TOP", "R_INNER_TOP", "R_INDEX_TOP", "R_MIDDLE_TOP", "R_RING_TOP", "R_PINKY_TOP", "R_TOP_OUTER",
       "L_MID_OUTER", "L_PINKY_HOME", "L_RING_HOME", "L_MIDDLE_HOME", "L_INDEX_HOME", "L_INNER_HOME", "R_INNER_HOME", "R_INDEX_HOME", "R_MIDDLE_HOME", "R_RING_HOME", "R_PINKY_HOME", "R_MID_OUTER",
       "L_BOTTOM_OUTER", "L_PINKY_BOTTOM", "L_RING_BOTTOM", "L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM", "L_INNER_BOTTOM", "R_INNER_BOTTOM", "R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM", "R_RING_BOTTOM", "R_PINKY_BOTTOM", "R_BOTTOM_OUTER",
-      "L_THUMB_SPARE_0", "L_THUMB_SPARE_1", "L_THUMB_SPARE_2", "L_THUMB_A", "L_THUMB_B", "R_THUMB_A", "R_THUMB_B", "R_THUMB_SPARE_0", "R_THUMB_SPARE_1", "R_THUMB_SPARE_2"
+      "L_RING_EXTRA", "L_MIDDLE_EXTRA", "L_INDEX_EXTRA", "L_THUMB_A", "L_THUMB_B", "R_THUMB_A", "R_THUMB_B", "R_INDEX_EXTRA", "R_MIDDLE_EXTRA", "R_RING_EXTRA"
     ],
     "hillside_d50_50": [
       "L_TOP_OUTER", "L_PINKY_TOP", "L_RING_TOP", "L_MIDDLE_TOP", "L_INDEX_TOP", "L_INNER_TOP", "R_INNER_TOP", "R_INDEX_TOP", "R_MIDDLE_TOP", "R_RING_TOP", "R_PINKY_TOP", "R_TOP_OUTER",
@@ -103,10 +103,10 @@
       "ANSIC_THUMB_0", "ANSIC_THUMB_1", "L_THUMB_A", "L_THUMB_B", "R_THUMB_A", "R_THUMB_B", "ANSIC_THUMB_2", "ANSIC_THUMB_3"
     ],
     "lintilla_42": [
-      "LINTILLA_TOP_0", "LINTILLA_TOP_1", "LINTILLA_TOP_2", "L_PINKY_TOP", "L_RING_TOP", "L_MIDDLE_TOP", "L_INDEX_TOP", "L_INNER_TOP", "R_INNER_TOP", "R_INDEX_TOP", "R_MIDDLE_TOP", "R_RING_TOP", "R_PINKY_TOP", "LINTILLA_TOP_3", "LINTILLA_TOP_4",
-      "L_PINKY_HOME", "L_RING_HOME", "L_MIDDLE_HOME", "L_INDEX_HOME", "L_INNER_HOME", "R_INNER_HOME", "R_INDEX_HOME", "R_MIDDLE_HOME", "R_RING_HOME", "R_PINKY_HOME", "LINTILLA_HOME_0",
+      "L_TOP_EXTRA", "R_TOP_EXTRA", "L_TOP_OUTER", "L_PINKY_TOP", "L_RING_TOP", "L_MIDDLE_TOP", "L_INDEX_TOP", "L_INNER_TOP", "R_INNER_TOP", "R_INDEX_TOP", "R_MIDDLE_TOP", "R_RING_TOP", "R_PINKY_TOP", "R_TOP_OUTER",
+      "L_MID_OUTER", "L_PINKY_HOME", "L_RING_HOME", "L_MIDDLE_HOME", "L_INDEX_HOME", "L_INNER_HOME", "R_INNER_HOME", "R_INDEX_HOME", "R_MIDDLE_HOME", "R_RING_HOME", "R_PINKY_HOME", "R_MID_OUTER",
       "L_PINKY_BOTTOM", "L_RING_BOTTOM", "L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM", "L_INNER_BOTTOM", "R_INNER_BOTTOM", "R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM", "R_RING_BOTTOM", "R_PINKY_BOTTOM",
-      "L_THUMB_A", "L_THUMB_B", "LINTILLA_THUMB_0", "LINTILLA_THUMB_1", "R_THUMB_A", "R_THUMB_B"
+      "L_THUMB_A", "L_THUMB_B", "L_THUMB_OPTIONAL", "R_THUMB_OPTIONAL", "R_THUMB_A", "R_THUMB_B"
     ],
     "glove80_80": [
       "GLOVE_00", "GLOVE_01", "GLOVE_02", "GLOVE_03", "GLOVE_04", "GLOVE_05", "GLOVE_06", "GLOVE_07", "GLOVE_08", "GLOVE_09", "GLOVE_10", "GLOVE_11", "GLOVE_12", "GLOVE_13", "GLOVE_14", "GLOVE_15", "GLOVE_16", "GLOVE_17", "GLOVE_18", "GLOVE_19", "GLOVE_20", "GLOVE_21", "GLOVE_22",
@@ -138,7 +138,8 @@
     "hillside_d50_50": {
       "physical_keys": 50,
       "binding_positions": 50,
-      "draw_notation": "334433+5 5+334433",
+      "qmk_info": "config/keyboards/hillside/hillside_d50.json",
+      "qmk_draw_layout": "LAYOUT",
       "position_set": "hillside_d50_50",
       "zmk_transform": "config/keyboards/hillside/shields/hillside/hillside.dtsi",
       "zmk": {"keyboard": "hillside", "board": "nice_nano/nrf52840/zmk", "shields": ["hillside_left", "hillside_right"]},
@@ -157,8 +158,17 @@
         "L_THUMB_UPPER_INNER": "LALT",
         "R_THUMB_UPPER_INNER": "RALT",
         "R_THUMB_UPPER_OUTER": "RCTRL",
-        "L_THUMB_OPTIONAL": "LGUI",
+        "L_THUMB_OPTIONAL": {"layer": "Num", "mode": "momentary"},
         "R_THUMB_OPTIONAL": "RGUI"
+      },
+      "overlays": {
+        "Graphite": {"L_THUMB_A": {"layer": "Nav", "mode": "momentary"}},
+        "VestnikDm": {
+          "L_THUMB_A": {"layer": "Nav", "mode": "momentary"},
+          "L_RING_EXTRA": "Щ",
+          "R_MIDDLE_EXTRA": "Ъ",
+          "R_RING_EXTRA": "Ё"
+        }
       },
       "alpha_capacity": 38
     },
@@ -203,7 +213,8 @@
     "totem_38": {
       "physical_keys": 38,
       "binding_positions": 38,
-      "draw_notation": "133333+3 3+333331",
+      "qmk_info": "config/keyboards/totem/totem.json",
+      "qmk_draw_layout": "LAYOUT",
       "position_set": "totem_38",
       "zmk_transform": "config/keyboards/totem/shields/totem/totem.dtsi",
       "zmk": {"keyboard": "totem", "board": "xiao_ble/nrf52840/zmk", "shields": ["totem_left", "totem_right"]},
@@ -303,17 +314,61 @@
     "flake_medium_46": {
       "physical_keys": 46,
       "binding_positions": 46,
-      "draw_notation": "333333+5 5+333333",
+      "qmk_info": "config/keyboards/flake/flake_medium.json",
+      "qmk_draw_layout": "LAYOUT",
       "position_set": "flake_medium_46",
       "zmk": {"keyboard": "flake", "board": "xiao_ble/nrf52840/zmk", "shields": ["anywhy_flake_left", "anywhy_flake_right"], "physical_layout": "medium_layout"},
+      "defaults": {
+        "L_TOP_OUTER": "ESC",
+        "R_TOP_OUTER": "BSPC",
+        "L_MID_OUTER": "TAB",
+        "R_MID_OUTER": "RET",
+        "L_BOTTOM_OUTER": "LCTRL",
+        "R_BOTTOM_OUTER": "DEL",
+        "L_RING_EXTRA": "LEFT",
+        "L_MIDDLE_EXTRA": "RIGHT",
+        "L_INDEX_EXTRA": {"layer": "Num", "mode": "momentary"},
+        "R_MIDDLE_EXTRA": "UP",
+        "R_RING_EXTRA": "DOWN"
+      },
+      "overlays": {
+        "Graphite": {"L_THUMB_A": {"layer": "Nav", "mode": "momentary"}},
+        "VestnikDm": {
+          "L_THUMB_A": {"layer": "Nav", "mode": "momentary"},
+          "L_RING_EXTRA": "Щ",
+          "R_INDEX_EXTRA": "Ъ",
+          "R_RING_EXTRA": "Ё"
+        }
+      },
       "alpha_capacity": 38
     },
     "lintilla_42": {
       "physical_keys": 42,
       "binding_positions": 42,
+      "qmk_info": "config/keyboards/lintilla/lintilla.json",
+      "qmk_draw_layout": "default_transform",
       "position_set": "lintilla_42",
       "zmk_transform": "config/keyboards/lintilla/shields/lintilla/lintilla.dtsi",
       "zmk": {"keyboard": "lintilla", "board": "xiao_ble/nrf52840/zmk", "shields": ["lintilla_left_central", "lintilla_right_peripheral"]},
+      "defaults": {
+        "L_TOP_EXTRA": "GRAVE",
+        "R_TOP_EXTRA": "DEL",
+        "L_TOP_OUTER": "ESC",
+        "R_TOP_OUTER": "BSPC",
+        "L_MID_OUTER": "TAB",
+        "R_MID_OUTER": "RET",
+        "L_THUMB_OPTIONAL": {"layer": "Num", "mode": "momentary"}
+      },
+      "overlays": {
+        "Graphite": {"L_THUMB_A": {"layer": "Nav", "mode": "momentary"}},
+        "VestnikDm": {
+          "L_THUMB_A": {"layer": "Nav", "mode": "momentary"},
+          "L_TOP_EXTRA": "Щ",
+          "R_TOP_EXTRA": "Ъ",
+          "R_TOP_OUTER": "Ё",
+          "R_THUMB_OPTIONAL": {"use": "bspc_word"}
+        }
+      },
       "alpha_capacity": 38
     },
     "dactyl_cc_68": {
@@ -395,7 +450,8 @@
     "klotz_34": {
       "physical_keys": 34,
       "binding_positions": 34,
-      "draw_notation": "33333+2 2+33333",
+      "qmk_info": "config/keyboards/klotz/klotz.json",
+      "qmk_draw_layout": "LAYOUT",
       "position_set": "core_34",
       "zmk": {"keyboard": "klotz", "board": "nice_nano/nrf52840/zmk", "shields": ["klotz_left", "klotz_right"]},
       "capabilities": {"lighting": "backlight", "sensor_bindings": [["C_VOL_UP", "C_VOL_DN"]]},

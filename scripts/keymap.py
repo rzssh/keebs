@@ -493,6 +493,9 @@ def validate(model: dict[str, Any]) -> None:
             fail(f"conditional layer {index}: if_layers must contain two unique layers")
         if not set(if_layers).issubset(declared_layers) or then_layer not in declared_layers:
             fail(f"conditional layer {index}: unknown layer")
+        variants = conditional.get("variants", [])
+        if len(variants) != len(set(variants)) or not set(variants).issubset(ROW_COUNTS):
+            fail(f"conditional layer {index}: invalid variants")
         if then_layer in if_layers or declared_layers.index(then_layer) <= max(declared_layers.index(layer) for layer in if_layers):
             fail(f"conditional layer {index}: then_layer must be above if_layers")
         if then_layer in seen_conditional_layers:
@@ -793,7 +796,8 @@ def compile_profile(model: dict[str, Any], profile_name: str, backend: str, os_n
     conditional_layers = [
         conditional
         for conditional in model["root"].get("conditional_layers", [])
-        if set(conditional["if_layers"] + [conditional["then_layer"]]).issubset(layers)
+        if (not conditional.get("variants") or variant in conditional["variants"])
+        and set(conditional["if_layers"] + [conditional["then_layer"]]).issubset(layers)
     ]
     return {
         "version": 1,
@@ -2073,6 +2077,16 @@ def render_draw(model: dict[str, Any], ir: dict[str, Any]) -> str:
         del layers[layer]
     for layer in model["root"].get("draw_hidden_layers", []):
         layers.pop(layer, None)
+    for source, cells in ir["layers"].items():
+        if source not in layers:
+            continue
+        for index, cell in enumerate(cells):
+            if held_layer(model, cell) != "Num":
+                continue
+            current = layers[source][index]
+            styled = dict(current) if isinstance(current, dict) else {"t": current}
+            styled.setdefault("type", "num-activator")
+            layers[source][index] = styled
     held = {name: set() for name in model["root"]["alpha_layers"] if name in layers}
     changed = True
     while changed:
@@ -2097,15 +2111,14 @@ def render_draw(model: dict[str, Any], ir: dict[str, Any]) -> str:
             held.setdefault(target, set()).update(indices)
             changed |= len(held[target]) != before
     for combo in ir["combos"]:
-        target = held_layer(model, combo["action"])
+        action = combo["action"]
+        item = behavior(model, action["use"]) if isinstance(action, dict) and "use" in action else None
+        target = item["child_layer"] if item and item["recipe"] == "layer_chord" else held_layer(model, action)
         if target in layers:
             indices = combo["indices"]
-            action = combo["action"]
-            if isinstance(action, dict) and "use" in action:
-                item = behavior(model, action["use"])
-                if item["recipe"] == "layer_sticky_mod":
-                    offset = combo["positions"].index(item["layer_position"])
-                    indices = [indices[offset]]
+            if item and item["recipe"] == "layer_sticky_mod":
+                offset = combo["positions"].index(item["layer_position"])
+                indices = [indices[offset]]
             held.setdefault(target, set()).update(indices)
     for layer, indices in held.items():
         for index in indices:

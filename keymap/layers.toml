@@ -11,7 +11,7 @@ rows = [
   ["B", "L", "D", "W", "Z", { use = "sqt_dqt" }, "F", "O", "U", "J"],
   [{ tap = "N", hold = "LGUI", hand = "left" }, { tap = "R", hold = "LALT", hand = "left" }, { tap = "T", hold = "LCTRL", hand = "left" }, { tap = "S", hold = "LSHFT", hand = "left", adaptive = "graphite" }, "G", "Y", { tap = "H", hold = "RSHFT", hand = "right" }, { tap = "A", hold = "RCTRL", hand = "right" }, { tap = "E", hold = "RALT", hand = "right" }, { tap = "I", hold = "RGUI", hand = "right" }],
   ["Q", "X", "M", "C", "V", "K", "P", { use = "dot_qmark" }, { use = "minus_slash" }, { use = "comma_excl" }],
-  [{ use = "bspc_nav" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "momentary" }],
+  [{ use = "ret_sym" }, { use = "space_nav" }, { use = "thumb_magic" }, { use = "bspc_num" }],
 ]
 
 [layers.Bunya.core30]
@@ -43,7 +43,7 @@ rows = [
   ["Ц", "Г", "Р", "Б", "Х", "Ф", "П", "О", "У", "Ю"],
   [{ tap = "С", hold = "LGUI", hand = "left" }, { tap = "Т", hold = "LALT", hand = "left" }, { tap = "Н", hold = "LCTRL", hand = "left", adaptive = "vestnik" }, { tap = "К", hold = "LSHFT", hand = "left" }, "М", "Ь", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "А", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
   ["Ш", "З", "Л", "Д", "Ч", "Ж", "Й", "Ы", "Я", "Э"],
-  [{ use = "bspc_nav" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "momentary" }],
+  [{ use = "ret_sym" }, { use = "space_nav" }, { use = "thumb_magic" }, { use = "bspc_num" }],
 ]
 
 [layers.Mantra.core30]
@@ -72,10 +72,10 @@ rows = [
 
 [layers.Nav.core34]
 rows = [
-  ["none", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, { use = "tab_previous" }, { use = "tab_next" }, { mouse = "SCRL_UP" }, { os = "home" }, "UP", { os = "end" }, "PG_UP"],
-  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", { mouse = "SCRL_DOWN" }, "LEFT", "DOWN", "RIGHT", "PG_DN"],
-  ["none", "none", { use = "select_line" }, { use = "select_word" }, "none", "none", "none", "none", "none", "none"],
-  ["none", { layer = "Mouse", mode = "momentary" }, "none", "trans"],
+  ["ESC", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, "none", "none", "none", { os = "home" }, "UP", { os = "end" }, "PG_UP"],
+  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", "none", "LEFT", "DOWN", "RIGHT", "PG_DN"],
+  ["none", "none", "none", "none", "none", "none", "TAB", "none", "none", "DEL"],
+  ["none", "none", "RET", "BSPC"],
 ]
 
 [layers.Sym.core30]
@@ -88,10 +88,10 @@ rows = [
 
 [layers.Sym.core34]
 rows = [
-  ["GRAVE", { use = "bslh_qmark" }, { use = "slash_excl" }, "DLLR", "DQT", "PRCNT", { use = "brace" }, { use = "paren" }, { use = "square" }, { use = "angle" }],
-  ["CARET", "UNDER", "COLON", "EQUAL", "MINUS", "AT", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  ["none", "PIPE", "AMPS", "PLUS", "none", "none", "HASH", "STAR", "SEMI", "none"],
-  ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "none"],
+  ["LBKT", "RBKT", "LPAR", "RPAR", "PLUS", "GRAVE", "DLLR", { use = "slash_excl" }, { use = "bslh_qmark" }, "DQT"],
+  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "AT", "SEMI", "EQUAL", "COLON", "UNDER", "MINUS"],
+  ["LT", "LBRC", "RBRC", "GT", "CARET", "STAR", "PRCNT", "AMPS", "PIPE", "HASH"],
+  ["trans", "none", "none", "none"],
 ]
 
 [layers.Num.core30]
@@ -104,10 +104,10 @@ rows = [
 
 [layers.Num.core34]
 rows = [
-  [{ key = "G", mods = ["LSHFT"] }, "N7", "N8", "N9", "UP", "PRCNT", "STAR", "FSLH", "EQUAL", "DOT"],
-  ["N0", "N4", "N5", "N6", "DOWN", "COLON", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  ["none", "N1", "N2", "N3", "none", "none", "PLUS", "MINUS", "COMMA", "none"],
-  ["none", "none", "none", "none"],
+  ["STAR", "N7", "N8", "N9", "PLUS", "PRCNT", "LPAR", "RPAR", "LBKT", "RBKT"],
+  ["FSLH", "N4", "N5", "N6", "MINUS", "COLON", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
+  ["DOT", "N1", "N2", "N3", "EQUAL", "COMMA", "LBRC", "RBRC", "LT", "GT"],
+  ["N0", "SPACE", "none", "none"],
 ]
 
 [layers.Fn.core30]
