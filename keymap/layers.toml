@@ -8,10 +8,10 @@ rows = [
 
 [layers.Graphite.core34]
 rows = [
-  ["B", "L", "D", "W", "Z", { use = "sqt_dqt" }, "F", "O", "U", "J"],
+  ["B", "L", "D", "W", "Z", "J", "F", "O", "U", { use = "dot_qmark" }],
   [{ tap = "N", hold = "LGUI", hand = "left" }, { tap = "R", hold = "LALT", hand = "left" }, { tap = "T", hold = "LCTRL", hand = "left" }, { tap = "S", hold = "LSHFT", hand = "left", adaptive = "graphite" }, "G", "Y", { tap = "H", hold = "RSHFT", hand = "right" }, { tap = "A", hold = "RCTRL", hand = "right" }, { tap = "E", hold = "RALT", hand = "right" }, { tap = "I", hold = "RGUI", hand = "right" }],
-  ["Q", "X", "M", "C", "V", "K", "P", { use = "dot_qmark" }, { use = "minus_slash" }, { use = "comma_excl" }],
-  [{ use = "ret_sym" }, { use = "space_nav" }, { use = "thumb_magic" }, { use = "bspc_num" }],
+  ["X", "Q", "M", "C", "V", "K", "P", { use = "sqt_dqt" }, { use = "minus_slash" }, { use = "comma_excl" }],
+  [{ layer = "Sym", mode = "momentary" }, { use = "space_nav" }, { use = "thumb_magic" }, { layer = "Num", mode = "momentary" }],
 ]
 
 [layers.Bunya.core30]
@@ -43,7 +43,7 @@ rows = [
   ["Ц", "Г", "Р", "Б", "Х", "Ф", "П", "О", "У", "Ю"],
   [{ tap = "С", hold = "LGUI", hand = "left" }, { tap = "Т", hold = "LALT", hand = "left" }, { tap = "Н", hold = "LCTRL", hand = "left", adaptive = "vestnik" }, { tap = "К", hold = "LSHFT", hand = "left" }, "М", "Ь", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "А", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
   ["Ш", "З", "Л", "Д", "Ч", "Ж", "Й", "Ы", "Я", "Э"],
-  [{ use = "ret_sym" }, { use = "space_nav" }, { use = "thumb_magic" }, { use = "bspc_num" }],
+  [{ layer = "Sym", mode = "momentary" }, { use = "space_nav" }, { use = "thumb_magic" }, { layer = "Num", mode = "momentary" }],
 ]
 
 [layers.Mantra.core30]
@@ -72,10 +72,10 @@ rows = [
 
 [layers.Nav.core34]
 rows = [
-  ["ESC", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, "none", "none", "none", { os = "home" }, "UP", { os = "end" }, "PG_UP"],
-  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", "none", "LEFT", "DOWN", "RIGHT", "PG_DN"],
-  ["none", "none", "none", "none", "none", "none", "TAB", "none", "none", "DEL"],
-  ["none", "none", "RET", "BSPC"],
+  ["ESC", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, { use = "tab_previous" }, { use = "tab_next" }, "INS", { os = "home" }, "UP", { os = "end" }, "PG_UP"],
+  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "C_MUTE", "CAPS", "LEFT", "DOWN", "RIGHT", "PG_DN"],
+  [{ use = "undo_redo" }, { os = "cut" }, { os = "copy" }, { os = "paste" }, { os = "select_all" }, "C_PP", "TAB", "BSPC", { os = "delete_word_right" }, "DEL"],
+  ["none", "none", "RET", { os = "delete_word_left" }],
 ]
 
 [layers.Sym.core30]
@@ -88,10 +88,10 @@ rows = [
 
 [layers.Sym.core34]
 rows = [
-  ["LBKT", "RBKT", "LPAR", "RPAR", "PLUS", "GRAVE", "DLLR", { use = "slash_excl" }, { use = "bslh_qmark" }, "DQT"],
-  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "AT", "SEMI", "EQUAL", "COLON", "UNDER", "MINUS"],
-  ["LT", "LBRC", "RBRC", "GT", "CARET", "STAR", "PRCNT", "AMPS", "PIPE", "HASH"],
-  ["trans", "none", "none", "none"],
+  ["PRCNT", "HASH", "STAR", "AMPS", { use = "bslh_plain" }, { use = "grave_tilde" }, { use = "lpar_lbkt" }, { use = "rpar_rbkt" }, { use = "lbrc_lt" }, { use = "rbrc_gt" }],
+  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "AT", "PLUS", { use = "minus_plain" }, "UNDER", "COLON", { use = "semi_plain" }],
+  ["EXCL", "CARET", "DLLR", { use = "comma_plain" }, { use = "sqt_plain" }, "PIPE", "DQT", { use = "slash_plain" }, { use = "dot_plain" }, "QMARK"],
+  ["trans", "none", "SPACE", { use = "equal_plain" }],
 ]
 
 [layers.Num.core30]
@@ -104,9 +104,9 @@ rows = [
 
 [layers.Num.core34]
 rows = [
-  ["STAR", "N7", "N8", "N9", "PLUS", "PRCNT", "LPAR", "RPAR", "LBKT", "RBKT"],
+  ["STAR", "N7", "N8", "N9", "PLUS", "TILDE", "LPAR", "RPAR", "LBKT", "RBKT"],
   ["FSLH", "N4", "N5", "N6", "MINUS", "COLON", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  ["DOT", "N1", "N2", "N3", "EQUAL", "COMMA", "LBRC", "RBRC", "LT", "GT"],
+  ["DOT", "N1", "N2", "N3", "EQUAL", "BSLH", "PRCNT", "LT", "GT", "COMMA"],
   ["N0", "SPACE", "none", "none"],
 ]
 
@@ -121,8 +121,8 @@ rows = [
 [layers.Fn.core34]
 rows = [
   [{ use = "bootloader" }, "F7", "F8", "F9", "F12", { use = "output_toggle" }, { use = "lang_en" }, { use = "lang_ru" }, { use = "lang_ua" }, { use = "bootloader" }],
-  ["F10", "F4", "F5", "F6", "F11", "none", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  ["none", "F1", "F2", "F3", "none", { use = "bt_clear" }, { use = "bt_0" }, { use = "bt_1" }, { use = "bt_2" }, "none"],
+  ["PSCRN", "F4", "F5", "F6", "F11", "none", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
+  ["PAUSE_BREAK", "F1", "F2", "F3", "F10", { use = "bt_clear" }, { use = "bt_0" }, { use = "bt_1" }, { use = "bt_2" }, { use = "bt_3" }],
   ["none", "none", "none", "none"],
 ]
 
@@ -154,7 +154,7 @@ rows = [
 rows = [
   ["none", "none", "none", "none", "none", { mouse = "SCRL_UP" }, { mouse = "SCRL_LEFT" }, { mouse = "MOVE_UP" }, { mouse = "SCRL_RIGHT" }, "PG_UP"],
   [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", { mouse = "SCRL_DOWN" }, { mouse = "MOVE_LEFT" }, { mouse = "MOVE_DOWN" }, { mouse = "MOVE_RIGHT" }, "PG_DN"],
-  ["none", "none", "none", "none", "none", "none", { mouse = "MCLK" }, "none", { mouse = "MB4" }, { mouse = "MB5" }],
+  [{ use = "undo_redo" }, { os = "cut" }, { os = "copy" }, { os = "paste" }, { os = "select_all" }, "none", { mouse = "MCLK" }, "none", { mouse = "MB4" }, { mouse = "MB5" }],
   ["none", "none", { mouse = "LCLK" }, { mouse = "RCLK" }],
 ]
 

@@ -354,15 +354,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     process_tap_dance_release(keycode, record);
 
 #ifdef RAZEN_LAYER_CHORD_ENABLE
+    if (record->event.pressed) {
+        for (uint8_t index = 0; index < razen_layer_chord_count; index++) {
+            razen_layer_chord_t *chord = &razen_layer_chords[index];
+            if ((chord->parent_pressed || chord->child_pressed) && chord->trigger != keycode) {
+                chord->interrupted = true;
+            }
+        }
+    }
     for (uint8_t index = 0; index < razen_layer_chord_count; index++) {
-        if (razen_layer_chords[index].trigger != keycode) {
+        razen_layer_chord_t *chord = &razen_layer_chords[index];
+        if (chord->trigger != keycode) {
             continue;
         }
         if (record->event.pressed) {
-            razen_layer_chords[index].parent_pressed = true;
-            razen_layer_chords[index].child_pressed = true;
-            layer_on(razen_layer_chords[index].parent_layer);
-            layer_on(razen_layer_chords[index].child_layer);
+            chord->timer = timer_read();
+            chord->interrupted = false;
+            chord->parent_pressed = true;
+            chord->child_pressed = true;
+            layer_on(chord->parent_layer);
+            layer_on(chord->child_layer);
             clear_history();
         }
         return false;
@@ -558,6 +569,10 @@ bool process_combo_key_release(uint16_t combo_index, combo_t *combo, uint8_t key
         } else if (keycode == chord->child_position) {
             chord->child_pressed = false;
             layer_off(chord->child_layer);
+        }
+        if (!chord->parent_pressed && !chord->child_pressed && chord->tap_keycode != KC_NO &&
+            !chord->interrupted && timer_elapsed(chord->timer) < chord->tapping_term) {
+            tap_code16(chord->tap_keycode);
         }
         break;
     }

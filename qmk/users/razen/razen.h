@@ -77,6 +77,10 @@ typedef struct {
     uint8_t child_layer;
     uint16_t parent_position;
     uint16_t child_position;
+    uint16_t tap_keycode;
+    uint16_t tapping_term;
+    uint16_t timer;
+    bool interrupted;
     bool parent_pressed;
     bool child_pressed;
 } razen_layer_chord_t;

@@ -2,6 +2,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/sys/util.h>
+#include <version.h>
 
 #include <drivers/behavior.h>
 
@@ -24,19 +25,35 @@ struct behavior_layer_chord_data {
     bool child_pressed;
 };
 
+static int activate_layer(zmk_keymap_layer_id_t layer) {
+#if KERNEL_VERSION_MAJOR >= 4
+    return zmk_keymap_layer_activate(layer, false);
+#else
+    return zmk_keymap_layer_activate(layer);
+#endif
+}
+
+static int deactivate_layer(zmk_keymap_layer_id_t layer) {
+#if KERNEL_VERSION_MAJOR >= 4
+    return zmk_keymap_layer_deactivate(layer, false);
+#else
+    return zmk_keymap_layer_deactivate(layer);
+#endif
+}
+
 static int layer_chord_pressed(struct zmk_behavior_binding *binding,
                                struct zmk_behavior_binding_event event) {
     (void)event;
     const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
     const struct behavior_layer_chord_config *config = dev->config;
     struct behavior_layer_chord_data *data = dev->data;
-    int ret = zmk_keymap_layer_activate(config->parent_layer, false);
+    int ret = activate_layer(config->parent_layer);
     if (ret < 0) {
         return ret;
     }
-    ret = zmk_keymap_layer_activate(config->child_layer, false);
+    ret = activate_layer(config->child_layer);
     if (ret < 0) {
-        zmk_keymap_layer_deactivate(config->parent_layer, false);
+        deactivate_layer(config->parent_layer);
         return ret;
     }
     data->active = true;
@@ -53,11 +70,11 @@ static int layer_chord_released(struct zmk_behavior_binding *binding,
     struct behavior_layer_chord_data *data = dev->data;
     if (data->parent_pressed) {
         data->parent_pressed = false;
-        zmk_keymap_layer_deactivate(config->parent_layer, false);
+        deactivate_layer(config->parent_layer);
     }
     if (data->child_pressed) {
         data->child_pressed = false;
-        zmk_keymap_layer_deactivate(config->child_layer, false);
+        deactivate_layer(config->child_layer);
     }
     data->active = false;
     return ZMK_BEHAVIOR_OPAQUE;
@@ -87,19 +104,19 @@ static int layer_chord_position_listener(const zmk_event_t *event) {
         }
         if (position_event->position == config->parent_position) {
             if (position_event->state && !data->parent_pressed) {
-                zmk_keymap_layer_activate(config->parent_layer, false);
+                activate_layer(config->parent_layer);
                 data->parent_pressed = true;
             } else if (!position_event->state && data->parent_pressed) {
                 data->parent_pressed = false;
-                zmk_keymap_layer_deactivate(config->parent_layer, false);
+                deactivate_layer(config->parent_layer);
             }
         } else if (position_event->position == config->child_position) {
             if (position_event->state && !data->child_pressed) {
-                zmk_keymap_layer_activate(config->child_layer, false);
+                activate_layer(config->child_layer);
                 data->child_pressed = true;
             } else if (!position_event->state && data->child_pressed) {
                 data->child_pressed = false;
-                zmk_keymap_layer_deactivate(config->child_layer, false);
+                deactivate_layer(config->child_layer);
             }
         }
         if (!data->parent_pressed && !data->child_pressed) {
@@ -122,10 +139,10 @@ static int layer_chord_layer_listener(const zmk_event_t *event) {
         const struct behavior_layer_chord_config *config = dev->config;
         struct behavior_layer_chord_data *data = dev->data;
         if (data->parent_pressed && layer_event->layer == config->parent_layer) {
-            zmk_keymap_layer_activate(config->parent_layer, false);
+            activate_layer(config->parent_layer);
         }
         if (data->child_pressed && layer_event->layer == config->child_layer) {
-            zmk_keymap_layer_activate(config->child_layer, false);
+            activate_layer(config->child_layer);
         }
     }
     return ZMK_EV_EVENT_BUBBLE;

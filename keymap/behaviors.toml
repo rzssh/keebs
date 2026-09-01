@@ -1,10 +1,10 @@
 [timings.home_row]
 tapping_term_ms = 240
 quick_tap_ms = 175
-prior_idle_ms = 130
+prior_idle_ms = 80
 flavor = "balanced"
-opposite_hand_hold = true
-hold_while_undecided = true
+opposite_hand_hold = false
+hold_while_undecided = false
 
 [timings.thumb]
 tapping_term_ms = 175
@@ -18,7 +18,7 @@ flavor = "hold-preferred"
 
 [timings.thumb_tap_preferred]
 tapping_term_ms = 175
-quick_tap_ms = 175
+quick_tap_ms = 0
 flavor = "tap-preferred"
 
 [timings.magic]
@@ -150,6 +150,51 @@ recipe = "shift_morph"
 tap = "FSLH"
 shifted = "EXCL"
 
+[behaviors.grave_tilde]
+recipe = "shift_morph"
+tap = "GRAVE"
+shifted = "TILDE"
+
+[behaviors.equal_plain]
+recipe = "shift_morph"
+tap = "EQUAL"
+shifted = "EQUAL"
+
+[behaviors.minus_plain]
+recipe = "shift_morph"
+tap = "MINUS"
+shifted = "MINUS"
+
+[behaviors.comma_plain]
+recipe = "shift_morph"
+tap = "COMMA"
+shifted = "COMMA"
+
+[behaviors.sqt_plain]
+recipe = "shift_morph"
+tap = "SQT"
+shifted = "SQT"
+
+[behaviors.semi_plain]
+recipe = "shift_morph"
+tap = "SEMI"
+shifted = "SEMI"
+
+[behaviors.bslh_plain]
+recipe = "shift_morph"
+tap = "BSLH"
+shifted = "BSLH"
+
+[behaviors.slash_plain]
+recipe = "shift_morph"
+tap = "FSLH"
+shifted = "FSLH"
+
+[behaviors.dot_plain]
+recipe = "shift_morph"
+tap = "DOT"
+shifted = "DOT"
+
 [behaviors.paren]
 recipe = "shift_morph"
 tap = "LPAR"
@@ -168,6 +213,26 @@ shifted = "RBKT"
 [behaviors.angle]
 recipe = "shift_morph"
 tap = "LT"
+shifted = "GT"
+
+[behaviors.lpar_lbkt]
+recipe = "shift_morph"
+tap = "LPAR"
+shifted = "LBKT"
+
+[behaviors.rpar_rbkt]
+recipe = "shift_morph"
+tap = "RPAR"
+shifted = "RBKT"
+
+[behaviors.lbrc_lt]
+recipe = "shift_morph"
+tap = "LBRC"
+shifted = "LT"
+
+[behaviors.rbrc_gt]
+recipe = "shift_morph"
+tap = "RBRC"
 shifted = "GT"
 
 [behaviors.bspc_word]
@@ -247,8 +312,6 @@ parent_layer = "Nav"
 child_layer = "Mouse"
 parent_position = "L_THUMB_B"
 child_position = "L_THUMB_A"
-tap = "ESC"
-timing = "layer_thumb"
 
 [behaviors.fn_chord]
 recipe = "layer_chord"
@@ -263,8 +326,6 @@ parent_layer = "Num"
 child_layer = "Fn"
 parent_position = "R_THUMB_B"
 child_position = "R_THUMB_A"
-tap = "TAB"
-timing = "layer_thumb"
 
 [behaviors.num_chord]
 recipe = "layer_chord"
@@ -605,15 +666,6 @@ term_ms = 25
 prior_idle_ms = 120
 
 [[combos]]
-name = "select_all_core34"
-positions = ["L_INDEX_BOTTOM", "L_INNER_BOTTOM"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
-variants = ["core34"]
-action = { os = "select_all" }
-term_ms = 25
-prior_idle_ms = 120
-
-[[combos]]
 name = "core30_z"
 positions = ["L_INDEX_TOP", "L_INDEX_HOME"]
 layers = ["Graphite", "Bunya"]
@@ -627,15 +679,6 @@ name = "undo_redo_core30"
 positions = ["L_PINKY_HOME", "L_RING_BOTTOM"]
 layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
-action = { use = "undo_redo" }
-term_ms = 35
-prior_idle_ms = 120
-
-[[combos]]
-name = "undo_redo_core34"
-positions = ["L_PINKY_BOTTOM", "L_RING_BOTTOM"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
-variants = ["core34"]
 action = { use = "undo_redo" }
 term_ms = 35
 prior_idle_ms = 120
@@ -837,6 +880,24 @@ term_ms = 25
 prior_idle_ms = 0
 
 [[combos]]
+name = "escape_core34"
+positions = ["L_RING_BOTTOM", "L_MIDDLE_BOTTOM"]
+layers = ["Graphite", "VestnikDm"]
+variants = ["core34"]
+action = "ESC"
+term_ms = 25
+prior_idle_ms = 0
+
+[[combos]]
+name = "delete_word_core34"
+positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
+layers = ["Graphite", "VestnikDm"]
+variants = ["core34"]
+action = { os = "delete_word_left" }
+term_ms = 25
+prior_idle_ms = 0
+
+[[combos]]
 name = "mouse"
 positions = ["L_THUMB_A", "L_THUMB_B"]
 layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
@@ -974,6 +1035,7 @@ draw = { layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"] }
 name = "cut"
 positions = ["L_RING_BOTTOM", "L_INDEX_BOTTOM"]
 layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+variants = ["core30"]
 action = { os = "cut" }
 term_ms = 25
 prior_idle_ms = 120
@@ -983,6 +1045,7 @@ draw = { align = "bottom", offset = -0.15 }
 name = "copy"
 positions = ["L_RING_BOTTOM", "L_MIDDLE_BOTTOM"]
 layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+variants = ["core30"]
 action = { os = "copy" }
 term_ms = 25
 prior_idle_ms = 120
@@ -991,6 +1054,7 @@ prior_idle_ms = 120
 name = "paste"
 positions = ["L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM"]
 layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+variants = ["core30"]
 action = { os = "paste" }
 term_ms = 25
 prior_idle_ms = 120

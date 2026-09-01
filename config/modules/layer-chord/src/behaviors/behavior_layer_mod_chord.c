@@ -2,6 +2,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/sys/util.h>
+#include <version.h>
 
 #include <drivers/behavior.h>
 
@@ -25,6 +26,22 @@ struct behavior_layer_mod_chord_data {
     bool active;
     bool layer_pressed;
 };
+
+static int activate_layer(zmk_keymap_layer_id_t layer) {
+#if KERNEL_VERSION_MAJOR >= 4
+    return zmk_keymap_layer_activate(layer, false);
+#else
+    return zmk_keymap_layer_activate(layer);
+#endif
+}
+
+static int deactivate_layer(zmk_keymap_layer_id_t layer) {
+#if KERNEL_VERSION_MAJOR >= 4
+    return zmk_keymap_layer_deactivate(layer, false);
+#else
+    return zmk_keymap_layer_deactivate(layer);
+#endif
+}
 
 static int release_modifier(const struct behavior_layer_mod_chord_config *config,
                             struct behavior_layer_mod_chord_data *data, uint8_t index,
@@ -55,7 +72,7 @@ static int layer_mod_chord_pressed(struct zmk_behavior_binding *binding,
     const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
     const struct behavior_layer_mod_chord_config *config = dev->config;
     struct behavior_layer_mod_chord_data *data = dev->data;
-    int ret = zmk_keymap_layer_activate(config->layer, false);
+    int ret = activate_layer(config->layer);
     if (ret < 0) {
         return ret;
     }
@@ -67,7 +84,7 @@ static int layer_mod_chord_pressed(struct zmk_behavior_binding *binding,
         ret = zmk_behavior_invoke_binding(&config->modifiers[index], event, true);
         if (ret < 0) {
             release_modifiers(config, data, event.timestamp);
-            zmk_keymap_layer_deactivate(config->layer, false);
+            deactivate_layer(config->layer);
             data->active = false;
             data->layer_pressed = false;
             return ret;
@@ -86,7 +103,7 @@ static int layer_mod_chord_released(struct zmk_behavior_binding *binding,
     int ret = release_modifiers(config, data, event.timestamp);
     if (data->layer_pressed) {
         data->layer_pressed = false;
-        zmk_keymap_layer_deactivate(config->layer, false);
+        deactivate_layer(config->layer);
     }
     data->active = false;
     return ret < 0 ? ret : ZMK_BEHAVIOR_OPAQUE;
@@ -117,7 +134,7 @@ static int layer_mod_chord_position_listener(const zmk_event_t *event) {
         }
         if (position_event->position == config->layer_position && data->layer_pressed) {
             data->layer_pressed = false;
-            zmk_keymap_layer_deactivate(config->layer, false);
+            deactivate_layer(config->layer);
         }
         for (uint8_t modifier_index = 0; modifier_index < config->modifier_count;
              modifier_index++) {
@@ -145,7 +162,7 @@ static int layer_mod_chord_layer_listener(const zmk_event_t *event) {
         const struct behavior_layer_mod_chord_config *config = dev->config;
         const struct behavior_layer_mod_chord_data *data = dev->data;
         if (data->layer_pressed && layer_event->layer == config->layer) {
-            zmk_keymap_layer_activate(config->layer, false);
+            activate_layer(config->layer);
         }
     }
     return ZMK_EV_EVENT_BUBBLE;

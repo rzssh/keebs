@@ -21,7 +21,7 @@ MOD_ALIASES = {"LSHIFT": "LSHFT", "RSHIFT": "RSHFT"}
 MODS = {"LGUI", "LALT", "LCTRL", "LSHFT", "RSHFT", "RCTRL", "RALT", "RGUI"} | set(MOD_ALIASES)
 KEYS = {
     "SPACE", "RET", "ESC", "TAB", "CAPS", "BSPC", "DEL", "INS",
-    "PG_UP", "PG_DN", "UP", "DOWN", "LEFT", "RIGHT", "HOME", "END",
+    "PSCRN", "PAUSE_BREAK", "PG_UP", "PG_DN", "UP", "DOWN", "LEFT", "RIGHT", "HOME", "END",
     "C_PREV", "C_PP", "C_NEXT", "C_MUTE", "POWER", "SLEEP",
     "COMMA", "DOT", "SEMI", "SQT", "MINUS", "EQUAL", "FSLH", "BSLH",
     "LBKT", "RBKT", "GRAVE",
@@ -39,6 +39,7 @@ SHIFTED = {
 QMK_KEYS = {
     "SPACE": "KC_SPC", "RET": "KC_ENT", "ESC": "KC_ESC", "TAB": "KC_TAB",
     "CAPS": "KC_CAPS", "BSPC": "KC_BSPC", "DEL": "KC_DEL", "INS": "KC_INS",
+    "PSCRN": "KC_PSCR", "PAUSE_BREAK": "KC_PAUS",
     "PG_UP": "KC_PGUP", "PG_DN": "KC_PGDN", "UP": "KC_UP", "DOWN": "KC_DOWN",
     "LEFT": "KC_LEFT", "RIGHT": "KC_RGHT", "HOME": "KC_HOME", "END": "KC_END",
     "C_PREV": "KC_MPRV", "C_PP": "KC_MPLY", "C_NEXT": "KC_MNXT", "C_MUTE": "KC_MUTE",
@@ -82,7 +83,7 @@ RGB_ZMK = {
     "toggle": "RGB_TOG", "speed_decrease": "RGB_SPD", "speed_increase": "RGB_SPI",
     "saturation_decrease": "RGB_SAD", "saturation_increase": "RGB_SAI",
 }
-ZMK_KEYS = {"SLEEP": "C_SLEEP", "POWER": "C_POWER"}
+ZMK_KEYS = {"SLEEP": "C_SLEEP", "POWER": "C_POWER", "PSCRN": "PSCRN", "PAUSE_BREAK": "PAUSE_BREAK"}
 
 
 def mdi(name: str) -> str:
@@ -102,7 +103,7 @@ DISPLAY = {
     "AMPS": "&", "AT": "@", "CARET": "^", "COLON": ":", "DLLR": "$", "DQT": '"',
     "EXCL": "!", "GT": ">", "HASH": "#", "LBRC": "{", "LPAR": "(", "LT": "<",
     "PIPE": "|", "PLUS": "+", "PRCNT": "%", "QMARK": "?", "RBRC": "}", "RPAR": ")",
-    "STAR": "*", "TILDE": "~", "UNDER": "_", "CAPS": "Caps", "LGUI": "❖", "RGUI": "❖",
+    "STAR": "*", "TILDE": "~", "UNDER": "_", "CAPS": "Caps", "PSCRN": "PrtSc", "PAUSE_BREAK": "Pause", "LGUI": "❖", "RGUI": "❖",
     "LALT": "⌥", "RALT": "⌥", "LCTRL": "⌃", "RCTRL": "⌃", "LSHFT": mdi("arrow-up-bold"),
     "RSHFT": mdi("arrow-up-bold"),
 }
@@ -1682,10 +1683,12 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
         slot_positions = dict(zip(ir["slots"], position_ids))
         lines.append("razen_layer_chord_t razen_layer_chords[] = {")
         for name, item in layer_chords:
+            tap = qmk_key(model, item["tap"]) if "tap" in item else "KC_NO"
+            term = model["behaviors"]["timings"][item["timing"]]["tapping_term_ms"] if "tap" in item else 0
             lines.append(
                 f"    {{{custom_name('LAYER_CHORD', name)}, {qmk_layer(item['parent_layer'])}, "
                 f"{qmk_layer(item['child_layer'])}, {slot_positions[item['parent_position']]}, "
-                f"{slot_positions[item['child_position']]}}},"
+                f"{slot_positions[item['child_position']]}, {tap}, {term}, 0, false, false, false}},"
             )
         lines.extend([
             "};",
@@ -1897,7 +1900,6 @@ def render_qmk_config(model: dict[str, Any], ir: dict[str, Any]) -> str:
         "#define MOUSEKEY_MOVE_DELTA 1",
         f"#define MOUSEKEY_MAX_SPEED {move_max_speed}",
         f"#define MOUSEKEY_TIME_TO_MAX {move_time_to_max}",
-        "#define MOUSEKEY_OVERLAP_RESET",
         f"#define MOUSEKEY_WHEEL_DELAY {scroll['delay_ms']}",
         f"#define MOUSEKEY_WHEEL_INTERVAL {scroll_interval}",
         "#define MOUSEKEY_WHEEL_MAX_SPEED 1",
@@ -1931,7 +1933,9 @@ def label_action(model: dict[str, Any], ir: dict[str, Any], value: Any) -> Any:
         name = value["use"]
         item = behavior(model, name)
         if item["recipe"] == "shift_morph":
-            return {"t": label_action(model, ir, item["tap"]), "s": label_action(model, ir, item["shifted"])}
+            tap = label_action(model, ir, item["tap"])
+            shifted = label_action(model, ir, item["shifted"])
+            return tap if tap == shifted else {"t": tap, "s": shifted}
         if item["recipe"] == "sequence":
             return item["label"]
         if item["recipe"] == "macro":
