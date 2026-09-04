@@ -254,6 +254,19 @@ sync_workspace_config() {
         fi
     fi
 
+    local config_prefix="$KEYBOARD"
+    if [[ -f "$KB_DIR/keyboard.yml" ]]; then
+        config_prefix="$(python3 -c "
+import yaml
+with open('$KB_DIR/keyboard.yml') as f:
+    d = yaml.safe_load(f) or {}
+print(d.get('config_prefix', '$KEYBOARD'))
+")"
+    fi
+    if [[ "$config_prefix" != "$KEYBOARD" ]]; then
+        ln -sf "$WORKSPACE/config/$KEYBOARD.conf" "$WORKSPACE/config/$config_prefix.conf"
+    fi
+
     # Custom shield definitions (must be at config/boards/shields/ for ZMK)
     if [[ -d "$KB_DIR/shields" ]]; then
         mkdir -p "$WORKSPACE/config/boards"
@@ -272,6 +285,7 @@ setup_workspace() {
     [[ -d .west ]] && rm -rf .west
     west init -l config/ --mf "$manifest"
     west update
+    "$REPO_ROOT/scripts/apply-zmk-patches" "$WORKSPACE"
 
     python3 -m venv "$WORKSPACE/.venv"
     "$WORKSPACE/.venv/bin/pip" install -q -r "$WORKSPACE/zephyr/scripts/requirements.txt"
@@ -324,6 +338,8 @@ if ((${#missing_projects[@]})); then
     echo "Run: $0 $KEYBOARD setup" >&2
     exit 1
 fi
+
+"$REPO_ROOT/scripts/apply-zmk-patches" "$WORKSPACE"
 
 revision_mismatches=()
 while IFS='|' read -r project revision project_path; do
@@ -420,6 +436,7 @@ case "$ACTION" in
         done
         ;;
     reset)
+        cmake -E remove_directory "build/settings_reset"
         west build -d "build/settings_reset" -s zmk/app -b "$board" -- -DSHIELD=settings_reset
         out="$REPO_ROOT/build/$KEYBOARD"
         mkdir -p "$out"

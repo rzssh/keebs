@@ -17,6 +17,7 @@ from typing import Any
 
 ROOT_FILES = ("keymap.toml", "layers.toml", "behaviors.toml", "profiles.json")
 ROW_COUNTS = {"core30": [10, 10, 6, 4], "core34": [10, 10, 10, 4]}
+THUMB_LAYOUT_LAYERS = ("Graphium", "VestnikDm")
 MOD_ALIASES = {"LSHIFT": "LSHFT", "RSHIFT": "RSHFT"}
 MODS = {"LGUI", "LALT", "LCTRL", "LSHFT", "RSHFT", "RCTRL", "RALT", "RGUI"} | set(MOD_ALIASES)
 KEYS = {
@@ -188,25 +189,31 @@ def expand_modifier_chords(model: dict[str, Any]) -> None:
             values = [item[field] for item in modifiers]
             if len(values) != len(set(values)):
                 fail(f"modifier chord family {family['name']}: duplicate modifier {field}")
+        required_number_layer = family.get("number_layer")
         for count in range(1, len(modifiers) + 1):
-            for selected in itertools.combinations(modifiers, count):
-                name = f"{family['name']}_{'_'.join(item['name'] for item in selected)}_chord"
+            for selected in itertools.combinations(enumerate(modifiers), count):
+                selected_indices = [index for index, _ in selected]
+                selected_modifiers = [item for _, item in selected]
+                name = f"{family['name']}_{'_'.join(item['name'] for item in selected_modifiers)}_chord"
                 if name in behavior_names or name in combo_names:
                     fail(f"modifier chord family {family['name']}: generated name {name!r} already exists")
                 behavior_names.add(name)
                 combo_names.add(name)
                 behaviors[name] = {
                     "recipe": "layer_sticky_mod",
-                    "targets": ["zmk"],
+                    "targets": ["zmk", "qmk"],
                     "layer": family["layer"],
-                    "modifier_behaviors": [item["behavior"] for item in selected],
+                    "modifier_behaviors": [item["behavior"] for item in modifiers],
                     "layer_position": family["layer_position"],
-                    "modifier_positions": [item["position"] for item in selected],
+                    "modifier_positions": [item["position"] for item in modifiers],
+                    "activation_layers": [*family["layers"], family["layer"]],
+                    "trigger_modifiers": sum(1 << index for index in selected_indices),
+                    "combo_term_ms": family["term_ms"],
                 }
                 combo = {
                     "name": name,
-                    "positions": [family["layer_position"], *(item["position"] for item in selected)],
-                    "layers": family["layers"],
+                    "positions": [family["layer_position"], *(item["position"] for item in selected_modifiers)],
+                    "layers": [*family["layers"], family["layer"]],
                     "action": {"use": name},
                     "term_ms": family["term_ms"],
                     "prior_idle_ms": family.get("prior_idle_ms", 0),
@@ -215,6 +222,8 @@ def expand_modifier_chords(model: dict[str, Any]) -> None:
                 }
                 if "variants" in family:
                     combo["variants"] = family["variants"]
+                if required_number_layer:
+                    combo["number_layer"] = required_number_layer
                 combos.append(combo)
 
 
@@ -330,6 +339,20 @@ def validate(model: dict[str, Any]) -> None:
         fail("keymap.toml source entry points changed")
     if root.get("default_os") not in root.get("operating_systems", {}):
         fail("default_os is not declared")
+    home_row_mods = root.get("features", {}).get("home_row_mods")
+    if not isinstance(home_row_mods, bool) and (
+        not isinstance(home_row_mods, dict)
+        or set(home_row_mods) != set(ROW_COUNTS)
+        or any(not isinstance(enabled, bool) for enabled in home_row_mods.values())
+    ):
+        fail("features.home_row_mods must be a boolean or core variant map")
+    thumb_layout = root.get("thumb_layout")
+    if not isinstance(thumb_layout, dict) or set(thumb_layout) != {"style", "number_layer"}:
+        fail("thumb_layout must define style and number_layer")
+    if thumb_layout["style"] not in {"right_space", "left_space_repeat"}:
+        fail("thumb_layout.style must be right_space or left_space_repeat")
+    if thumb_layout["number_layer"] not in {"dedicated", "trilayer"}:
+        fail("thumb_layout.number_layer must be dedicated or trilayer")
     declared_layers = root.get("layers", [])
     if not declared_layers or any(not isinstance(name, str) or not name for name in declared_layers):
         fail("layer order must contain non-empty names")
@@ -436,10 +459,13 @@ def validate(model: dict[str, Any]) -> None:
         if behavior["recipe"] == "layer_sticky_mod":
             modifier_behaviors = behavior.get("modifier_behaviors", [])
             modifier_positions = behavior.get("modifier_positions", [])
-            if behavior.get("targets") != ["zmk"]:
-                fail(f"behavior {name}: layer_sticky_mod must be ZMK-only")
+            if behavior.get("targets") != ["zmk", "qmk"]:
+                fail(f"behavior {name}: layer_sticky_mod must target ZMK and QMK")
             if behavior.get("layer") not in declared_layers:
                 fail(f"behavior {name}: unknown layer")
+            activation_layers = behavior.get("activation_layers", [])
+            if not activation_layers or not set(activation_layers).issubset(declared_layers):
+                fail(f"behavior {name}: invalid activation layers")
             if not 1 <= len(modifier_behaviors) <= 4 or len(modifier_behaviors) != len(modifier_positions):
                 fail(f"behavior {name}: modifier behaviors and positions must have matching lengths")
             if len(modifier_behaviors) != len(set(modifier_behaviors)):
@@ -486,7 +512,7 @@ def validate(model: dict[str, Any]) -> None:
     conditional_layers = root.get("conditional_layers", [])
     if not isinstance(conditional_layers, list):
         fail("conditional_layers must be a list")
-    seen_conditional_layers: set[str] = set()
+    seen_conditional_layers: set[tuple[str, tuple[str, ...], str | None]] = set()
     for index, conditional in enumerate(conditional_layers):
         if_layers = conditional.get("if_layers", [])
         then_layer = conditional.get("then_layer")
@@ -497,11 +523,14 @@ def validate(model: dict[str, Any]) -> None:
         variants = conditional.get("variants", [])
         if len(variants) != len(set(variants)) or not set(variants).issubset(ROW_COUNTS):
             fail(f"conditional layer {index}: invalid variants")
+        if conditional.get("number_layer") not in {None, "dedicated", "trilayer"}:
+            fail(f"conditional layer {index}: invalid number_layer")
         if then_layer in if_layers or declared_layers.index(then_layer) <= max(declared_layers.index(layer) for layer in if_layers):
             fail(f"conditional layer {index}: then_layer must be above if_layers")
-        if then_layer in seen_conditional_layers:
-            fail(f"conditional layer {index}: duplicate then_layer")
-        seen_conditional_layers.add(then_layer)
+        signature = (then_layer, tuple(sorted(variants)), conditional.get("number_layer"))
+        if signature in seen_conditional_layers:
+            fail(f"conditional layer {index}: duplicate condition")
+        seen_conditional_layers.add(signature)
     for name, adaptive in behavior_source.get("adaptives", {}).items():
         if not isinstance(adaptive.get("enabled"), bool) or not isinstance(adaptive.get("swaps_enabled", False), bool):
             fail(f"adaptive {name}: enabled flags must be booleans")
@@ -548,6 +577,21 @@ def validate(model: dict[str, Any]) -> None:
     core34 = set(topologies["core_34"])
     if core34 - core30 != {"L_INNER_TOP", "R_INNER_TOP", "L_PINKY_BOTTOM", "R_PINKY_BOTTOM"} or core30 - core34:
         fail("core_30 must omit only inner tops and pinky bottoms from core_34")
+    variant_slots = {"core30": topologies["core_30"], "core34": topologies["core_34"]}
+    for family in behavior_source.get("modifier_chords", []):
+        if family.get("number_layer") not in {None, "dedicated", "trilayer"}:
+            fail(f"modifier chord {family['name']}: invalid number_layer")
+        for variant in family.get("variants", ROW_COUNTS):
+            slots = variant_slots[variant]
+            target_cells = dict(zip(slots, flattened(layer_source[family["layer"]][variant])))
+            for modifier in family["modifiers"]:
+                cell = target_cells[modifier["position"]]
+                if not isinstance(cell, dict) or cell.get("use") != modifier["behavior"]:
+                    fail(f"modifier chord {family['name']}: {modifier['position']} does not use {modifier['behavior']} on {family['layer']}.{variant}")
+            for layer in family["layers"]:
+                cells = dict(zip(slots, flattened(layer_source[layer][variant])))
+                if held_layer(model, cells[family["layer_position"]]) != family["layer"]:
+                    fail(f"modifier chord {family['name']}: {family['layer_position']} does not hold {family['layer']} on {layer}.{variant}")
     for name, item in behaviors.items():
         if item["recipe"] == "smart_layer" and not set(item.get("keep_positions", [])).issubset(core34):
             fail(f"behavior {name}: keep position outside core34")
@@ -631,6 +675,8 @@ def validate(model: dict[str, Any]) -> None:
             unknown = set(profile["layers"]) - set(declared_layers)
             if unknown:
                 fail(f"profile {name}: unknown layers {sorted(unknown)}")
+        if not isinstance(profile.get("extended_thumbs", False), bool):
+            fail(f"profile {name}: extended_thumbs must be boolean")
         for backend in ("zmk", "qmk"):
             if backend not in profile:
                 continue
@@ -642,6 +688,8 @@ def validate(model: dict[str, Any]) -> None:
                 fail(f"profile {name}: {backend} slots do not cover its alpha core")
             if backend == "qmk" and not set(board_only).issubset(slots):
                 fail(f"profile {name}: qmk slots omit board-only positions")
+            if profile.get("extended_thumbs") and not {"L_THUMB_OPTIONAL", "R_THUMB_OPTIONAL"}.issubset(set(slots) - set(board_only)):
+                fail(f"profile {name}: extended_thumbs needs six physical thumb positions")
         for layer_name, overlay in profile.get("overlays", {}).items():
             if layer_name not in declared_layers:
                 fail(f"profile {name}: overlay names unknown layer {layer_name}")
@@ -682,6 +730,8 @@ def validate(model: dict[str, Any]) -> None:
         variants = combo.get("variants", [])
         if len(variants) != len(set(variants)) or not set(variants).issubset(ROW_COUNTS):
             fail(f"combo {combo['name']}: invalid variants")
+        if combo.get("number_layer") not in {None, "dedicated", "trilayer"}:
+            fail(f"combo {combo['name']}: invalid number_layer")
         if not set(combo.get("layers", [])).issubset(declared_layers):
             fail(f"combo {combo['name']}: unknown layer")
         if not set(combo["positions"]).issubset(core34):
@@ -710,6 +760,110 @@ def validate(model: dict[str, Any]) -> None:
             if not valid_key(model, token):
                 fail(f"leader {index}: unknown key {token!r}")
         validate_action(model, leader["action"], f"leader {index}")
+
+
+def feature_enabled(model: dict[str, Any], name: str, variant: str) -> bool:
+    value = model["root"]["features"][name]
+    return value if isinstance(value, bool) else value[variant]
+
+
+def apply_thumb_layout(model: dict[str, Any], profile: dict[str, Any], ir_layers: dict[str, list[Any]], slots: list[str], variant: str) -> None:
+    if variant != "core34":
+        return
+    positions = {slot: index for index, slot in enumerate(slots)}
+    thumb_positions = ("L_THUMB_A", "L_THUMB_B", "R_THUMB_A", "R_THUMB_B")
+    if not set(thumb_positions).issubset(positions):
+        return
+    thumb_layout = model["root"]["thumb_layout"]
+    dedicated_num = thumb_layout["number_layer"] == "dedicated"
+    if thumb_layout["style"] == "right_space":
+        base_actions = (
+            {"use": "shift_sym"},
+            {"use": "bspc_plain_nav"},
+            "SPACE",
+            {"use": "ret_num"} if dedicated_num else "RET",
+        )
+        left_context = {
+            "L_THUMB_OPTIONAL": {"use": "space_mouse"},
+            "L_THUMB_A": {"use": "shift_sym"},
+            "L_THUMB_B": {"use": "bspc_plain_nav"},
+        }
+        right_context = {
+            "R_THUMB_A": "SPACE",
+            "R_THUMB_B": {"use": "ret_num"} if dedicated_num else "RET",
+            "R_THUMB_OPTIONAL": {"use": "tab_fn"},
+        }
+    else:
+        base_actions = (
+            {"use": "ret_sym"},
+            {"use": "space_nav"},
+            {"use": "thumb_magic"},
+            {"use": "bspc_num"} if dedicated_num else "BSPC",
+        )
+        left_context = {
+            "L_THUMB_OPTIONAL": {"use": "space_mouse"},
+            "L_THUMB_A": {"use": "ret_sym"},
+            "L_THUMB_B": {"use": "shift_nav"},
+        }
+        right_context = {
+            "R_THUMB_A": {"use": "thumb_magic"},
+            "R_THUMB_B": {"use": "bspc_num"} if dedicated_num else "BSPC",
+            "R_THUMB_OPTIONAL": {"use": "ret_fn"},
+        }
+    for layer_name in THUMB_LAYOUT_LAYERS:
+        if layer_name not in ir_layers:
+            continue
+        for position, action in zip(thumb_positions, base_actions):
+            ir_layers[layer_name][positions[position]] = action
+    if profile.get("extended_thumbs", False):
+        left_selectors = {
+            "L_THUMB_OPTIONAL": {"layer": "Mouse", "mode": "momentary"},
+            "L_THUMB_A": {"layer": "Sym", "mode": "momentary"},
+            "L_THUMB_B": {"layer": "Nav", "mode": "momentary"},
+        }
+        right_selectors = {
+            "R_THUMB_A": "none",
+            "R_THUMB_B": {"layer": "Num", "mode": "momentary"} if dedicated_num else "none",
+            "R_THUMB_OPTIONAL": {"layer": "Fn", "mode": "momentary"},
+        }
+        extended_positions = (
+            "L_THUMB_OPTIONAL",
+            "L_THUMB_A",
+            "L_THUMB_B",
+            "R_THUMB_A",
+            "R_THUMB_B",
+            "R_THUMB_OPTIONAL",
+        )
+        left_active = {"Nav", "Sym"}
+        if thumb_layout["number_layer"] == "trilayer":
+            left_active.add("Num")
+        for layer_name, cells in ir_layers.items():
+            if layer_name in model["root"]["alpha_layers"]:
+                continue
+            if layer_name == "Mouse":
+                mouse_actions = ("none", "none", "none", {"mouse": "LCLK"}, {"mouse": "RCLK"}, {"mouse": "MCLK"})
+                for position, action in zip(extended_positions, mouse_actions):
+                    cells[positions[position]] = action
+            elif layer_name == "Fn":
+                for position in extended_positions:
+                    cells[positions[position]] = "none"
+            elif layer_name in left_active:
+                for position, action in left_selectors.items():
+                    cells[positions[position]] = action
+                for position, action in right_context.items():
+                    cells[positions[position]] = action
+            elif layer_name == "Num":
+                for position, action in left_context.items():
+                    cells[positions[position]] = action
+                for position, action in right_selectors.items():
+                    cells[positions[position]] = action
+        return
+    if thumb_layout["number_layer"] == "trilayer":
+        if "Nav" in ir_layers:
+            ir_layers["Nav"][positions["L_THUMB_A"]] = "trans"
+            ir_layers["Nav"][positions["R_THUMB_B"]] = {"layer": "Mouse", "mode": "momentary"}
+        if "Sym" in ir_layers:
+            ir_layers["Sym"][positions["R_THUMB_B"]] = {"layer": "Fn", "mode": "momentary"}
 
 
 def active_layers(model: dict[str, Any], profile: dict[str, Any]) -> list[str]:
@@ -774,12 +928,26 @@ def compile_profile(model: dict[str, Any], profile_name: str, backend: str, os_n
         defaults = profile.get("defaults", {})
         overlay = profile.get("overlays", {}).get(layer_name, {})
         cells = [overlay.get(slot, values.get(slot, defaults.get(slot, "none"))) for slot in slots]
-        compiled_layers[layer_name] = [cell if action_layer_refs(model, cell).issubset(layers) else "none" for cell in cells]
+        if not feature_enabled(model, "home_row_mods", variant):
+            cells = [
+                {"tap": cell["tap"], "adaptive": cell["adaptive"]}
+                if isinstance(cell, dict) and cell.get("hand") and cell.get("adaptive")
+                else cell["tap"] if isinstance(cell, dict) and cell.get("hand") else cell
+                for cell in cells
+            ]
+        compiled_layers[layer_name] = cells
+    apply_thumb_layout(model, profile, compiled_layers, slots, variant)
+    compiled_layers = {
+        layer_name: [cell if action_layer_refs(model, cell).issubset(layers) else "none" for cell in cells]
+        for layer_name, cells in compiled_layers.items()
+    }
     layer_index = {name: index for index, name in enumerate(layers)}
     combos = []
     slot_index = {slot: index for index, slot in enumerate(slots)}
     for combo in model["behaviors"].get("combos", []):
         if combo.get("variants") and variant not in combo["variants"]:
+            continue
+        if combo.get("number_layer") and combo["number_layer"] != model["root"]["thumb_layout"]["number_layer"]:
             continue
         if not set(combo["layers"]).intersection(layers):
             continue
@@ -798,6 +966,7 @@ def compile_profile(model: dict[str, Any], profile_name: str, backend: str, os_n
         conditional
         for conditional in model["root"].get("conditional_layers", [])
         if (not conditional.get("variants") or variant in conditional["variants"])
+        and (not conditional.get("number_layer") or conditional["number_layer"] == model["root"]["thumb_layout"]["number_layer"])
         and set(conditional["if_layers"] + [conditional["then_layer"]]).issubset(layers)
     ]
     return {
@@ -969,7 +1138,7 @@ def zmk_action(model: dict[str, Any], ir: dict[str, Any], value: Any, adaptive_n
         return f"&kp {zmk_key(model, value)}"
     if "tap" in value:
         tap = value["tap"]
-        hold = value["hold"]
+        hold = value.get("hold")
         adaptive = value.get("adaptive", adaptive_name)
         if adaptive and resolved_key(model, tap) in {resolved_key(model, item) for item in adaptive_inputs(model, adaptive, ir["variant"])}:
             base = f"adaptive_{ident(adaptive).lower()}_{ident(resolved_key(model, tap)).lower()}"
@@ -1070,17 +1239,25 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
     right_positions = [index for index, slot in enumerate(ir["slots"]) if slot.startswith("R_") and "THUMB" not in slot]
     thumbs = [index for index, slot in enumerate(ir["slots"]) if "THUMB" in slot]
     slot_indices = {slot: index for index, slot in enumerate(ir["slots"])}
-    left_trigger = f'; hold-trigger-key-positions = <{" ".join(map(str, right_positions + thumbs))}>; hold-trigger-on-release' if h["opposite_hand_hold"] else ""
-    right_trigger = f'; hold-trigger-key-positions = <{" ".join(map(str, left_positions + thumbs))}>; hold-trigger-on-release' if h["opposite_hand_hold"] else ""
-    immediate_hold = "; hold-while-undecided" if h.get("hold_while_undecided", False) else ""
+    home_row_mods = feature_enabled(model, "home_row_mods", ir["variant"])
+    left_trigger = f'; hold-trigger-key-positions = <{" ".join(map(str, right_positions + thumbs))}>; hold-trigger-on-release' if home_row_mods and h["opposite_hand_hold"] else ""
+    right_trigger = f'; hold-trigger-key-positions = <{" ".join(map(str, left_positions + thumbs))}>; hold-trigger-on-release' if home_row_mods and h["opposite_hand_hold"] else ""
+    prior_idle = f'; require-prior-idle-ms = <{h["prior_idle_ms"]}>' if home_row_mods else ""
+    immediate_hold = "; hold-while-undecided" if home_row_mods and h.get("hold_while_undecided", False) else ""
+    flavor = h["flavor"] if home_row_mods else "tap-preferred"
     lines = [
-        f'ZMK_HOLD_TAP(hml, bindings = <&kp>, <&kp>; flavor = "{h["flavor"]}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>; require-prior-idle-ms = <{h["prior_idle_ms"]}>{left_trigger}{immediate_hold};)',
-        f'ZMK_HOLD_TAP(hmr, bindings = <&kp>, <&kp>; flavor = "{h["flavor"]}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>; require-prior-idle-ms = <{h["prior_idle_ms"]}>{right_trigger}{immediate_hold};)',
+        f'ZMK_HOLD_TAP(hml, bindings = <&kp>, <&kp>; flavor = "{flavor}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>{prior_idle}{left_trigger}{immediate_hold};)',
+        f'ZMK_HOLD_TAP(hmr, bindings = <&kp>, <&kp>; flavor = "{flavor}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>{prior_idle}{right_trigger}{immediate_hold};)',
     ]
     if any(is_sticky_key_layer_tap_hold(model, item) and resolved_key(model, behavior(model, item["tap"]["use"])["key"]) in {"LSHFT", "RSHFT"} for item in model["behaviors"]["behaviors"].values()):
         lines.append("ZMK_MOD_MORPH(smart_shift, bindings = <&sk LSHFT>, <&caps_word>; mods = <(MOD_LSFT|MOD_RSFT)>;)")
     layer_chords = []
     layer_sticky_mods = []
+    combo_behaviors = {
+        combo["action"]["use"]
+        for combo in ir["combos"]
+        if isinstance(combo["action"], dict) and "use" in combo["action"]
+    }
     for name, timing_name in (("thumb_ht", "thumb"), ("layer_thumb", "layer_thumb"), ("thumb_tp", "thumb_tap_preferred")):
         timing = timings[timing_name]
         immediate_hold = "; hold-while-undecided" if timing_name == "layer_thumb" else ""
@@ -1105,7 +1282,7 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
         elif recipe == "macro":
             bindings = ", ".join(f"<{zmk_action(model, ir, step)}>" for step in item["steps"])
             lines.append(f"ZMK_MACRO({name}, bindings = {bindings};)")
-        elif recipe == "layer_sticky_mod":
+        elif recipe == "layer_sticky_mod" and name in combo_behaviors:
             layer_sticky_mods.append((name, item))
         elif recipe == "layer_chord":
             chord_name = f"{name}_hold" if "tap" in item else name
@@ -1177,10 +1354,9 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
                 "        };",
             ])
         for name, item in layer_sticky_mods:
-            bindings = [
-                f"<&sk {zmk_key(model, behavior(model, modifier_behavior)['key'])}>"
-                for modifier_behavior in item["modifier_behaviors"]
-            ]
+            modifiers = [zmk_key(model, behavior(model, value)["key"]) for value in item["modifier_behaviors"]]
+            bindings = [f"<&kp {modifier}>" for modifier in modifiers]
+            sticky_bindings = [f"<&sk {modifier}>" for modifier in modifiers]
             positions = " ".join(str(slot_indices[position]) for position in item["modifier_positions"])
             lines.extend([
                 f"        {name}: {name} {{",
@@ -1189,15 +1365,31 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
                 f'            layer = <LAYER_{item["layer"]}>;',
                 f'            layer-position = <{slot_indices[item["layer_position"]]}>;',
                 f'            modifier-positions = <{positions}>;',
+                f'            activation-layers = <{" ".join(f"LAYER_{layer}" for layer in item["activation_layers"] if layer in ir["layers"])}>;',
+                f'            trigger-modifiers = <{item["trigger_modifiers"]}>;',
+                f'            combo-term-ms = <{item["combo_term_ms"]}>;',
                 f'            bindings = {", ".join(bindings)};',
+                f'            sticky-bindings = {", ".join(sticky_bindings)};',
+                f'            tapping-term-ms = <{timings["layer_modifier"]["tapping_term_ms"]}>;',
                 "        };",
             ])
         lines.extend(["    };", "};", ""])
     magic = behavior(model, "thumb_magic")
-    repeat_keys = " ".join(chr(value) for value in range(ord("A"), ord("Z") + 1))
+    alpha_keys = sorted(zmk_key(model, chr(value)) for value in range(ord("A"), ord("Z") + 1))
+    nonalpha_keys = sorted({zmk_key(model, key) for key in KEYS - MODS} - set(alpha_keys))
+    repeat_rules = [
+        f"repeat_alpha {{ trigger-keys = <{' '.join(alpha_keys)}>; bindings = <&alpha_repeat>; max-prior-idle-ms = <{magic['repeat_timeout_ms']}>; }};"
+    ]
+    for modifier, wrapper in ZMK_MODS.items():
+        for index in range(0, len(nonalpha_keys), 32):
+            keys = " ".join(f"{wrapper}({key})" for key in nonalpha_keys[index:index + 32])
+            repeat_rules.append(
+                f"repeat_{modifier.lower()}_{index // 32} {{ trigger-keys = <{keys}>; bindings = <&alpha_repeat>; max-prior-idle-ms = <{magic['repeat_timeout_ms']}>; }};"
+            )
+    repeat_triggers = " ".join(repeat_rules)
     lines.extend([
         '/ { behaviors { alpha_repeat: alpha_repeat { compatible = "zmk,behavior-alpha-repeat"; #binding-cells = <0>; }; }; };',
-        f"ZMK_ADAPTIVE_KEY(thumb_magic_adaptive, bindings = <&sk LSHFT>; repeat {{ trigger-keys = <{repeat_keys}>; bindings = <&alpha_repeat>; max-prior-idle-ms = <{magic['repeat_timeout_ms']}>; strict-modifiers; }};)",
+        f"ZMK_ADAPTIVE_KEY(thumb_magic_adaptive, bindings = <&sk LSHFT>; {repeat_triggers})",
         "ZMK_MOD_MORPH(thumb_magic_tap, bindings = <&thumb_magic_adaptive>, <&caps_word>; mods = <(MOD_LSFT|MOD_RSFT)>;)",
         f'ZMK_HOLD_TAP(thumb_magic, bindings = <&kp>, <&thumb_magic_tap>; flavor = "{timings[magic["timing"]]["flavor"]}"; tapping-term-ms = <{timings[magic["timing"]]["tapping_term_ms"]}>; quick-tap-ms = <{timings[magic["timing"]]["quick_tap_ms"]}>;)',
     ])
@@ -1233,8 +1425,8 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
             for hand in sorted({cell.get("hand") for cell in used_cells if isinstance(cell, dict) and cell.get("hand")}):
                 side = "hml" if hand == "left" else "hmr"
                 positions = right_positions + thumbs if hand == "left" else left_positions + thumbs
-                trigger = f'; hold-trigger-key-positions = <{" ".join(map(str, positions))}>; hold-trigger-on-release' if h["opposite_hand_hold"] else ""
-                lines.append(f'ZMK_HOLD_TAP({base}_{side}, bindings = <&kp>, <&{base}>; flavor = "{h["flavor"]}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>; require-prior-idle-ms = <{h["prior_idle_ms"]}>{trigger};)')
+                trigger = f'; hold-trigger-key-positions = <{" ".join(map(str, positions))}>; hold-trigger-on-release' if home_row_mods and h["opposite_hand_hold"] else ""
+                lines.append(f'ZMK_HOLD_TAP({base}_{side}, bindings = <&kp>, <&{base}>; flavor = "{flavor}"; tapping-term-ms = <{h["tapping_term_ms"]}>; quick-tap-ms = <{h["quick_tap_ms"]}>{prior_idle}{trigger};)')
     return lines
 
 
@@ -1406,7 +1598,7 @@ def qmk_native_tap_hold_spec(model: dict[str, Any], value: Any) -> dict[str, Any
                 "timing": item["timing"],
                 "oneshot_layer": item["tap"]["layer"],
             }
-    if isinstance(value, dict) and "tap" in value and not value.get("hand"):
+    if isinstance(value, dict) and "tap" in value and "hold" in value and not value.get("hand"):
         hold = value["hold"]
         if isinstance(hold, dict) and "layer" in hold and hold.get("mode", "momentary") == "momentary":
             return {
@@ -1453,7 +1645,7 @@ def tap_dance_spec(model: dict[str, Any], value: Any) -> dict[str, Any] | None:
             "hold": qmk_layer(value["hold"]["layer"]),
             "timing": value["timing"],
         }
-    if isinstance(value, dict) and "tap" in value and not value.get("hand"):
+    if isinstance(value, dict) and "tap" in value and "hold" in value and not value.get("hand"):
         hold = value["hold"]
         if isinstance(hold, str):
             hold_key = qmk_key(model, hold)
@@ -1518,6 +1710,8 @@ def qmk_action(model: dict[str, Any], ir: dict[str, Any], value: Any, td_keys: d
             return "KC_TRNS"
         return qmk_key(model, value)
     if "tap" in value:
+        if value.get("adaptive") and "hold" not in value:
+            return qmk_key(model, value["tap"])
         if value.get("hand"):
             mod = resolved_key(model, value["hold"])
             return qmk_mod_tap(mod, qmk_key(model, value["tap"]))
@@ -1543,6 +1737,8 @@ def qmk_action(model: dict[str, Any], ir: dict[str, Any], value: Any, td_keys: d
             return qmk_layer_action(item["layer"], item["mode"])
         if recipe == "layer_chord":
             return custom_name("LAYER_CHORD", name)
+        if recipe == "layer_sticky_mod":
+            return custom_name("LAYER_MOD_CHORD", name)
         if recipe == "smart_layer":
             return custom_name("SMART_LAYER", name)
         if recipe == "sticky_key":
@@ -1597,6 +1793,8 @@ def qmk_custom_ids(model: dict[str, Any], ir: dict[str, Any]) -> list[str]:
             result.append(custom_name("SMART_LAYER", name))
         elif item["recipe"] == "layer_chord":
             result.append(custom_name("LAYER_CHORD", name))
+        elif item["recipe"] == "layer_sticky_mod":
+            result.append(custom_name("LAYER_MOD_CHORD", name))
     return result
 
 
@@ -1654,6 +1852,16 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
         for name, item in model["behaviors"]["behaviors"].items()
         if item["recipe"] == "layer_chord" and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"])
     ]
+    combo_behaviors = {
+        combo["action"]["use"]
+        for combo in ir["combos"]
+        if isinstance(combo["action"], dict) and "use" in combo["action"]
+    }
+    layer_mod_chords = [
+        (name, item)
+        for name, item in model["behaviors"]["behaviors"].items()
+        if item["recipe"] == "layer_sticky_mod" and name in combo_behaviors and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"])
+    ]
     lines.extend([
         "};",
         "",
@@ -1693,6 +1901,25 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
         lines.extend([
             "};",
             "const uint8_t razen_layer_chord_count = sizeof(razen_layer_chords) / sizeof(razen_layer_chords[0]);",
+            "",
+        ])
+    if layer_mod_chords:
+        slot_positions = dict(zip(ir["slots"], position_ids))
+        lines.append("razen_layer_mod_chord_t razen_layer_mod_chords[] = {")
+        for name, item in layer_mod_chords:
+            modifiers = [QMK_ONESHOT_MODS[resolved_key(model, behavior(model, modifier)["key"])] for modifier in item["modifier_behaviors"]]
+            timing_name = behavior(model, item["modifier_behaviors"][0])["timing"]
+            term = model["behaviors"]["timings"][timing_name]["tapping_term_ms"]
+            modifier_positions = [slot_positions[position] for position in item["modifier_positions"]]
+            activation_layers = " | ".join(f"(1UL << {qmk_layer(layer)})" for layer in item["activation_layers"] if layer in ir["layers"])
+            lines.append(
+                f"    {{{custom_name('LAYER_MOD_CHORD', name)}, {qmk_layer(item['layer'])}, {activation_layers}, {slot_positions[item['layer_position']]}, "
+                f"{{{', '.join(modifier_positions)}}}, {{{', '.join(modifiers)}}}, {len(modifiers)}, {item['trigger_modifiers']}, "
+                f"{term}, {item['combo_term_ms']}, 0, 0, 0, false, false, false, 0, {{0}}, {{0}}}},"
+            )
+        lines.extend([
+            "};",
+            "const uint8_t razen_layer_mod_chord_count = sizeof(razen_layer_mod_chords) / sizeof(razen_layer_mod_chords[0]);",
             "",
         ])
     lines.append("enum generated_tap_dances {")
@@ -1747,12 +1974,16 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
     lines.append("    " + ", ".join(home_keys))
     balanced_keys = []
     hold_preferred_keys = []
+    quick_taps = {}
     for spec in native_tap_holds:
-        flavor = model["behaviors"]["timings"][spec["timing"]]["flavor"]
+        timing = model["behaviors"]["timings"][spec["timing"]]
+        flavor = timing["flavor"]
         if flavor == "balanced" and spec["keycode"] not in balanced_keys:
             balanced_keys.append(spec["keycode"])
         if flavor == "hold-preferred" and spec["keycode"] not in hold_preferred_keys:
             hold_preferred_keys.append(spec["keycode"])
+        if timing.get("quick_tap_ms"):
+            quick_taps[spec["keycode"]] = timing["quick_tap_ms"]
     lines.extend([
         "};",
         "const uint8_t razen_home_row_key_count = sizeof(razen_home_row_keys) / sizeof(razen_home_row_keys[0]);",
@@ -1766,6 +1997,11 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
         "    " + ", ".join(hold_preferred_keys),
         "};",
         "const uint8_t razen_hold_preferred_key_count = sizeof(razen_hold_preferred_keys) / sizeof(razen_hold_preferred_keys[0]);",
+        "",
+        "const razen_quick_tap_t razen_quick_taps[] = {",
+        *(f"    {{{keycode}, {term_ms}}}," for keycode, term_ms in quick_taps.items()),
+        "};",
+        "const uint8_t razen_quick_tap_count = sizeof(razen_quick_taps) / sizeof(razen_quick_taps[0]);",
         "",
         "const razen_oneshot_layer_t razen_oneshot_layers[] = {",
     ])
@@ -1811,13 +2047,19 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
         mask = " | ".join(f"(1UL << {qmk_layer(layer)})" for layer in combo["layers"])
         lines.append(f"    {{{mask}, {combo.get('term_ms', combo_timing['term_ms'])}, {combo.get('prior_idle_ms', combo_timing['prior_idle_ms'])}}},")
     lines.extend(["};", "const uint8_t razen_combo_count = sizeof(razen_combos) / sizeof(razen_combos[0]);", ""])
-    if ir["conditional_layers"] or layer_chords:
+    if ir["conditional_layers"] or layer_chords or layer_mod_chords:
         lines.append("layer_state_t layer_state_set_user(layer_state_t state) {")
         if layer_chords:
             lines.extend([
                 "    for (uint8_t index = 0; index < razen_layer_chord_count; index++) {",
                 "        if (razen_layer_chords[index].parent_pressed) state |= 1UL << razen_layer_chords[index].parent_layer;",
                 "        if (razen_layer_chords[index].child_pressed) state |= 1UL << razen_layer_chords[index].child_layer;",
+                "    }",
+            ])
+        if layer_mod_chords:
+            lines.extend([
+                "    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {",
+                "        if (razen_layer_mod_chords[index].layer_pressed) state |= 1UL << razen_layer_mod_chords[index].layer;",
                 "    }",
             ])
         for conditional in ir["conditional_layers"]:
@@ -1842,6 +2084,7 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
 def render_qmk_config(model: dict[str, Any], ir: dict[str, Any]) -> str:
     timing = model["behaviors"]["timings"]
     magic = behavior(model, "thumb_magic")
+    home_row_mods = feature_enabled(model, "home_row_mods", ir["variant"])
     move = timing["mouse_move"]
     scroll = timing["mouse_scroll"]
     move_max_speed = max(1, round(move["value"] * move["interval_ms"] / 1000))
@@ -1864,8 +2107,18 @@ def render_qmk_config(model: dict[str, Any], ir: dict[str, Any]) -> str:
             else []
         ),
         *(
-            ["#define RAZEN_LAYER_CHORD_ENABLE", "#define COMBO_PROCESS_KEY_RELEASE", "#define COMBO_PROCESS_KEY_REPRESS"]
-            if any(item["recipe"] == "layer_chord" and behavior_available(item, "qmk") for item in model["behaviors"]["behaviors"].values())
+            ["#define RAZEN_LAYER_CHORD_ENABLE"]
+            if any(item["recipe"] == "layer_chord" and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"]) for item in model["behaviors"]["behaviors"].values())
+            else []
+        ),
+        *(
+            ["#define RAZEN_LAYER_MOD_CHORD_ENABLE"]
+            if any(item["recipe"] == "layer_sticky_mod" and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"]) for item in model["behaviors"]["behaviors"].values())
+            else []
+        ),
+        *(
+            ["#define COMBO_PROCESS_KEY_RELEASE", "#define COMBO_PROCESS_KEY_REPRESS"]
+            if any(item["recipe"] in {"layer_chord", "layer_sticky_mod"} and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"]) for item in model["behaviors"]["behaviors"].values())
             else []
         ),
         f"#define RAZEN_HOME_ROW_TAPPING_TERM {timing['home_row']['tapping_term_ms']}",
@@ -1873,17 +2126,13 @@ def render_qmk_config(model: dict[str, Any], ir: dict[str, Any]) -> str:
         f"#define RAZEN_MAGIC_TAPPING_TERM {timing[magic['timing']]['tapping_term_ms']}",
         f"#define RAZEN_MAGIC_QUICK_TAP_TERM {timing[magic['timing']]['quick_tap_ms']}",
         f"#define RAZEN_MAGIC_REPEAT_TIMEOUT {magic['repeat_timeout_ms']}",
-        *(
-            ["#define CHORDAL_HOLD"]
-            if timing["home_row"]["opposite_hand_hold"]
-            else []
-        ),
+        *(["#define RAZEN_HOME_ROW_MODS", "#define CHORDAL_HOLD"] if home_row_mods else []),
         f"#define RAZEN_SEQUENCE_DELAY {timing['sequence']['tap_ms']}",
         f"#define TAPPING_TERM {timing['thumb']['tapping_term_ms']}",
         "#define TAPPING_TERM_PER_KEY",
         f"#define QUICK_TAP_TERM {timing['thumb']['quick_tap_ms']}",
         "#define QUICK_TAP_TERM_PER_KEY",
-        f"#define FLOW_TAP_TERM {timing['home_row']['prior_idle_ms']}",
+        *([f"#define FLOW_TAP_TERM {timing['home_row']['prior_idle_ms']}"] if home_row_mods else []),
         "#define PERMISSIVE_HOLD_PER_KEY",
         "#define HOLD_ON_OTHER_KEY_PRESS_PER_KEY",
         f"#define ONESHOT_TIMEOUT {timing['sticky_mod']['release_after_ms']}",
@@ -1926,6 +2175,8 @@ def label_action(model: dict[str, Any], ir: dict[str, Any], value: Any) -> Any:
             return {"t": "▽", "type": "trans"}
         return label_key(model, value)
     if "tap" in value:
+        if "hold" not in value:
+            return label_action(model, ir, value["tap"])
         hold = value["hold"]
         hold_label = label_key(model, hold) if isinstance(hold, str) else hold.get("layer", "Hold")
         return {"t": label_action(model, ir, value["tap"]), "h": hold_label}
@@ -1943,8 +2194,8 @@ def label_action(model: dict[str, Any], ir: dict[str, Any], value: Any) -> Any:
         if item["recipe"] == "layer_action":
             layer = item["layer"]
             return {
-                "t": {"Graphite": "GRA", "Bunya": "BUN"}.get(layer, layer),
-                "type": f"{ident(layer).lower()}-activator" if layer in {"Graphite", "Bunya", *model["root"].get("draw_hidden_layers", [])} else "layer-activator",
+                "t": {"Graphium": "GRA", "Bunya": "BUN"}.get(layer, layer),
+                "type": f"{ident(layer).lower()}-activator" if layer in {"Graphium", "Bunya", *model["root"].get("draw_hidden_layers", [])} else "layer-activator",
             }
         if item["recipe"] == "smart_layer":
             return {"t": item["layer"], "type": "layer-activator"}
@@ -1965,8 +2216,10 @@ def label_action(model: dict[str, Any], ir: dict[str, Any], value: Any) -> Any:
             result = label_action(model, ir, item["tap"])
             result = dict(result) if isinstance(result, dict) else {"t": result}
             result.pop("type", None)
-            if is_shift_morph_layer_tap_hold(model, item):
+            if is_shift_morph_layer_tap_hold(model, item) and not item.get("draw_shifted"):
                 result.pop("s", None)
+            if "draw_tap" in item:
+                result["t"] = item["draw_tap"]
             result["h"] = item["hold"]["layer"]
             return result
         if is_key_layer_tap_hold(item):
@@ -2103,9 +2356,10 @@ def render_draw(model: dict[str, Any], ir: dict[str, Any]) -> str:
                 if target not in layers:
                     continue
                 indices = held[source] | {index}
-                before = len(held.get(target, set()))
-                held.setdefault(target, set()).update(indices)
-                changed |= len(held[target]) != before
+                current = held.get(target)
+                if current is None or len(indices) < len(current):
+                    held[target] = indices
+                    changed = True
         for conditional in ir["conditional_layers"]:
             if not all(source in held for source in conditional["if_layers"]):
                 continue
@@ -2120,19 +2374,31 @@ def render_draw(model: dict[str, Any], ir: dict[str, Any]) -> str:
         target = item["child_layer"] if item and item["recipe"] == "layer_chord" else held_layer(model, action)
         if target in layers:
             indices = combo["indices"]
-            if item and item["recipe"] == "layer_sticky_mod":
-                offset = combo["positions"].index(item["layer_position"])
-                indices = [indices[offset]]
-            held.setdefault(target, set()).update(indices)
+            if item and item["recipe"] == "layer_chord":
+                held[target] = set(indices)
+            else:
+                if item and item["recipe"] == "layer_sticky_mod":
+                    offset = combo["positions"].index(item["layer_position"])
+                    indices = [indices[offset]]
+                held.setdefault(target, set()).update(indices)
     for layer, indices in held.items():
         for index in indices:
             layers[layer][index] = {"type": "held"}
+    activators: dict[str, set[int]] = {}
+    for alpha in model["root"]["alpha_layers"]:
+        for index, cell in enumerate(ir["layers"].get(alpha, [])):
+            target = held_layer(model, cell)
+            if target:
+                activators.setdefault(target, set()).add(index)
     for conditional in ir["conditional_layers"]:
         sources = conditional["if_layers"]
         for source in sources:
             if source not in layers:
                 continue
-            opposite = set().union(*(held.get(other, set()) for other in sources if other != source)) - held.get(source, set())
+            for index, rendered in enumerate(layers[source]):
+                if isinstance(rendered, dict) and rendered.get("type") == "held" and index not in activators.get(source, set()):
+                    layers[source][index] = label_action(model, ir, ir["layers"][source][index])
+            opposite = set().union(*(activators.get(other, set()) for other in sources if other != source))
             for index in opposite:
                 layers[source][index] = {"type": "num-activator"}
     data: dict[str, Any] = {"layers": layers}
@@ -2253,6 +2519,45 @@ def generate_one(model: dict[str, Any], repo: Path, backend: str, profile: str, 
     return outputs
 
 
+def check_thumb_drawings(model: dict[str, Any], os_name: str) -> None:
+    selected = dict(model["root"]["thumb_layout"])
+    try:
+        for style in ("right_space", "left_space_repeat"):
+            for number_layer in ("dedicated", "trilayer"):
+                model["root"]["thumb_layout"].update(style=style, number_layer=number_layer)
+                expected = {
+                    "totem_38": {
+                        "Nav": {"L_THUMB_B"},
+                        "Sym": {"L_THUMB_A"},
+                        "Num": {"R_THUMB_B"} if number_layer == "dedicated" else {"L_THUMB_A", "L_THUMB_B"},
+                        "Mouse": {"L_THUMB_OPTIONAL"},
+                        "Fn": {"R_THUMB_OPTIONAL"},
+                    },
+                    "dartyl_34": {
+                        "Nav": {"L_THUMB_B"},
+                        "Sym": {"L_THUMB_A"},
+                        "Num": {"R_THUMB_B"} if number_layer == "dedicated" else {"L_THUMB_A", "L_THUMB_B"},
+                        "Mouse": {"L_THUMB_A", "L_THUMB_B"} if number_layer == "dedicated" else {"L_THUMB_B", "R_THUMB_B"},
+                        "Fn": {"R_THUMB_A", "R_THUMB_B"} if number_layer == "dedicated" else {"L_THUMB_A", "R_THUMB_B"},
+                    },
+                }
+                for profile_name, expected_layers in expected.items():
+                    profile = model["profiles"]["profiles"][profile_name]
+                    backend = "qmk" if "qmk" in profile else "zmk"
+                    ir = draw_ir(model, compile_profile(model, profile_name, backend, os_name))
+                    drawing = json.loads(render_draw(model, ir))["layers"]
+                    for layer_name, positions in expected_layers.items():
+                        actual = {
+                            slot
+                            for slot, cell in zip(ir["slots"], drawing[layer_name])
+                            if "THUMB" in slot and isinstance(cell, dict) and cell.get("type") == "held"
+                        }
+                        if actual != positions:
+                            fail(f"{profile_name} {style}/{number_layer}: {layer_name} activators {sorted(actual)} != {sorted(positions)}")
+    finally:
+        model["root"]["thumb_layout"] = selected
+
+
 def check_all(model: dict[str, Any], repo: Path, os_name: str) -> None:
     with tempfile.TemporaryDirectory(prefix="keymap-check-") as temporary:
         root = Path(temporary)
@@ -2270,6 +2575,7 @@ def check_all(model: dict[str, Any], repo: Path, os_name: str) -> None:
                     fail(f"{backend}/{profile_name}: nondeterministic output")
             if "zmk" in profile or "qmk" in profile:
                 generate_one(model, repo, "draw", profile_name, os_name, root / "draw" / profile_name, False)
+        check_thumb_drawings(model, os_name)
 
 
 def parser() -> argparse.ArgumentParser:

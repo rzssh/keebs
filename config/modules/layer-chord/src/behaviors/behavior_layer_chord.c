@@ -89,6 +89,16 @@ static const struct behavior_driver_api layer_chord_driver_api = {
 static const struct device *layer_chord_devices[] = {
     DT_INST_FOREACH_STATUS_OKAY(LAYER_CHORD_DEVICE)};
 
+bool zmk_layer_chord_position(uint32_t position) {
+    for (size_t index = 0; index < ARRAY_SIZE(layer_chord_devices); index++) {
+        const struct behavior_layer_chord_config *config = layer_chord_devices[index]->config;
+        if (position == config->parent_position || position == config->child_position) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static int layer_chord_position_listener(const zmk_event_t *event) {
     const struct zmk_position_state_changed *position_event =
         as_zmk_position_state_changed(event);

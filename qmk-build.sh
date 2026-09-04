@@ -52,8 +52,8 @@ clone_or_update_qmk() {
     fi
 
     git -C "$QMK_HOME" remote set-url origin "$QMK_REPO"
-    git -C "$QMK_HOME" fetch --tags origin
     if ! git -C "$QMK_HOME" cat-file -e "$QMK_REF^{commit}" 2>/dev/null; then
+        git -C "$QMK_HOME" fetch --tags origin
         git -C "$QMK_HOME" fetch origin "$QMK_REF"
     fi
     git -C "$QMK_HOME" checkout "$QMK_REF"

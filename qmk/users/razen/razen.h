@@ -68,6 +68,11 @@ typedef struct {
 
 typedef struct {
     uint16_t keycode;
+    uint16_t term_ms;
+} razen_quick_tap_t;
+
+typedef struct {
+    uint16_t keycode;
     uint8_t layer;
 } razen_oneshot_layer_t;
 
@@ -84,6 +89,28 @@ typedef struct {
     bool parent_pressed;
     bool child_pressed;
 } razen_layer_chord_t;
+
+typedef struct {
+    uint16_t trigger;
+    uint8_t layer;
+    uint32_t activation_layers;
+    uint16_t layer_position;
+    uint16_t modifier_positions[4];
+    uint8_t modifiers[4];
+    uint8_t modifier_count;
+    uint8_t trigger_modifiers;
+    uint16_t tapping_term;
+    uint16_t combo_term;
+    uint8_t modifier_positions_pressed;
+    uint8_t modifiers_pressed;
+    uint8_t modifiers_used;
+    bool active;
+    bool layer_position_pressed;
+    bool layer_pressed;
+    uint32_t layer_timer;
+    uint32_t modifier_timers[4];
+    uint16_t timers[4];
+} razen_layer_mod_chord_t;
 
 extern const razen_morph_t razen_morphs[];
 extern const uint8_t razen_morph_count;
@@ -117,11 +144,17 @@ extern const uint16_t razen_balanced_keys[];
 extern const uint8_t razen_balanced_key_count;
 extern const uint16_t razen_hold_preferred_keys[];
 extern const uint8_t razen_hold_preferred_key_count;
+extern const razen_quick_tap_t razen_quick_taps[];
+extern const uint8_t razen_quick_tap_count;
 extern const razen_oneshot_layer_t razen_oneshot_layers[];
 extern const uint8_t razen_oneshot_layer_count;
 #ifdef RAZEN_LAYER_CHORD_ENABLE
 extern razen_layer_chord_t razen_layer_chords[];
 extern const uint8_t razen_layer_chord_count;
+#endif
+#ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
+extern razen_layer_mod_chord_t razen_layer_mod_chords[];
+extern const uint8_t razen_layer_mod_chord_count;
 #endif
 
 void razen_tap_dance_finished(tap_dance_state_t *state, void *user_data);

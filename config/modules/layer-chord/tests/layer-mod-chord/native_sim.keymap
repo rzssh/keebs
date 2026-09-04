@@ -4,13 +4,32 @@
 
 / {
     behaviors {
+        lmc_ctrl: layer_mod_ctrl_chord {
+            compatible = "zmk,behavior-layer-mod-chord";
+            #binding-cells = <0>;
+            layer = <1>;
+            layer-position = <0>;
+            modifier-positions = <1 2>;
+            activation-layers = <0 1>;
+            trigger-modifiers = <1>;
+            combo-term-ms = <60>;
+            bindings = <&kp LCTRL>, <&kp LSHFT>;
+            sticky-bindings = <&sk LCTRL>, <&sk LSHFT>;
+            tapping-term-ms = <175>;
+        };
+
         lmc_shift: layer_mod_shift_chord {
             compatible = "zmk,behavior-layer-mod-chord";
             #binding-cells = <0>;
             layer = <1>;
             layer-position = <0>;
-            modifier-positions = <2>;
-            bindings = <&sk LSHFT>;
+            modifier-positions = <1 2>;
+            activation-layers = <0 1>;
+            trigger-modifiers = <2>;
+            combo-term-ms = <60>;
+            bindings = <&kp LCTRL>, <&kp LSHFT>;
+            sticky-bindings = <&sk LCTRL>, <&sk LSHFT>;
+            tapping-term-ms = <175>;
         };
 
         lmc_ctrl_shift: layer_mod_ctrl_shift_chord {
@@ -19,12 +38,23 @@
             layer = <1>;
             layer-position = <0>;
             modifier-positions = <1 2>;
-            bindings = <&sk LCTRL>, <&sk LSHFT>;
+            activation-layers = <0 1>;
+            trigger-modifiers = <3>;
+            combo-term-ms = <60>;
+            bindings = <&kp LCTRL>, <&kp LSHFT>;
+            sticky-bindings = <&sk LCTRL>, <&sk LSHFT>;
+            tapping-term-ms = <175>;
         };
     };
 
     combos {
         compatible = "zmk,combos";
+        layer_ctrl {
+            timeout-ms = <60>;
+            key-positions = <0 1>;
+            bindings = <&lmc_ctrl>;
+            slow-release;
+        };
         layer_shift {
             timeout-ms = <60>;
             key-positions = <0 2>;
@@ -43,11 +73,11 @@
         compatible = "zmk,keymap";
 
         default_layer {
-            bindings = <&kp A &kp B &kp C &kp D>;
+            bindings = <&mo 1 &kp B &kp C &kp D>;
         };
 
         modified_layer {
-            bindings = <&kp E &kp F &kp G &kp H>;
+            bindings = <&none &sk LCTRL &sk LSHFT &kp E>;
         };
     };
 };
@@ -55,23 +85,74 @@
 &kscan {
     events = <
         ZMK_MOCK_PRESS(0,0,10)
-        ZMK_MOCK_PRESS(1,0,10)
         ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
         ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_RELEASE(1,0,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_RELEASE(1,0,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(1,1,200)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(1,0,10)
         ZMK_MOCK_RELEASE(1,0,10)
         ZMK_MOCK_RELEASE(0,0,10)
         ZMK_MOCK_PRESS(1,1,10)
         ZMK_MOCK_RELEASE(1,1,10)
 
-        ZMK_MOCK_PRESS(1,0,10)
         ZMK_MOCK_PRESS(0,0,10)
-        ZMK_MOCK_PRESS(0,1,200)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_RELEASE(0,0,10)
         ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_RELEASE(1,0,10)
         ZMK_MOCK_PRESS(1,1,10)
         ZMK_MOCK_RELEASE(1,1,10)
+
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,1,10)
         ZMK_MOCK_RELEASE(0,0,10)
         ZMK_MOCK_PRESS(1,1,10)
         ZMK_MOCK_RELEASE(1,1,10)
+
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,1,10)
         ZMK_MOCK_RELEASE(1,0,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
     >;
 };

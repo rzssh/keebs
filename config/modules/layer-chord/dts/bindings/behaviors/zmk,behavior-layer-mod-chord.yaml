@@ -8,6 +8,13 @@ properties:
   bindings:
     type: phandle-array
     required: true
+  sticky-bindings:
+    type: phandle-array
+    specifier-space: binding
+    required: true
+  tapping-term-ms:
+    type: int
+    required: true
   layer:
     type: int
     required: true
@@ -16,4 +23,13 @@ properties:
     required: true
   modifier-positions:
     type: array
+    required: true
+  activation-layers:
+    type: array
+    required: true
+  trigger-modifiers:
+    type: int
+    required: true
+  combo-term-ms:
+    type: int
     required: true

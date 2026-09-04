@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="$(cd "$(dirname "$0")/.." && pwd)"
+workspace="${1:?workspace required}"
+
+for patch in "$repo"/config/patches/*.patch; do
+    project="$(basename "$patch" .patch)"
+    target="$workspace/$project"
+    [[ -d "$target/.git" ]] || {
+        echo "Missing patched project: $target" >&2
+        exit 1
+    }
+    if git -C "$target" apply --reverse --check "$patch" 2>/dev/null; then
+        continue
+    fi
+    git -C "$target" apply --check "$patch"
+    git -C "$target" apply "$patch"
+done

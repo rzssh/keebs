@@ -11,6 +11,7 @@ static uint16_t suppressed_keycode = KC_NO;
 static uint32_t last_keypress_timer;
 static uint32_t current_keypress_idle = UINT32_MAX;
 static uint32_t repeat_timer;
+static uint8_t repeat_mods;
 #ifdef RAZEN_SMART_LAYER_ENABLE
 static bool smart_layer_active;
 #endif
@@ -65,12 +66,22 @@ static void pop_history(void) {
         if (history[index - 1] >= KC_A && history[index - 1] <= KC_Z) {
             set_last_keycode(history[index - 1]);
             set_last_mods(history_mods[index - 1]);
+            repeat_mods = history_mods[index - 1];
             repeat_timer = history_timer;
             return;
         }
     }
     set_last_keycode(KC_NO);
+    set_last_mods(0);
+    repeat_mods = 0;
     repeat_timer = 0;
+}
+
+static void remember_repeat(uint16_t keycode, uint8_t mods) {
+    set_last_keycode(keycode);
+    set_last_mods(mods);
+    repeat_mods = mods;
+    repeat_timer = timer_read32();
 }
 
 static bool text_key(uint16_t keycode) {
@@ -119,12 +130,16 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
     if (basic == KC_NO) {
         return true;
     }
+    uint8_t mods = get_mods() | get_oneshot_mods() | get_weak_mods();
     if (basic == KC_BSPC) {
-        pop_history();
+        if (mods) {
+            clear_history();
+        } else {
+            pop_history();
+        }
         return true;
     }
 
-    uint8_t mods = get_mods() | get_oneshot_mods() | get_weak_mods();
     uint8_t layer = get_highest_layer(layer_state | default_layer_state);
     for (uint8_t index = 0; index < razen_adaptive_rule_count; index++) {
         const razen_adaptive_rule_t *rule = &razen_adaptive_rules[index];
@@ -148,8 +163,7 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
             }
         }
         if (repeated != KC_NO) {
-            set_last_keycode(repeated);
-            set_last_mods(0);
+            remember_repeat(repeated, 0);
         }
         return false;
     }
@@ -164,7 +178,7 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
 
 static void repeat_adaptive(void) {
     uint16_t repeated = get_last_keycode();
-    uint8_t mods = get_last_mods();
+    uint8_t mods = repeat_mods;
     uint8_t active_mods = get_mods() | get_oneshot_mods() | get_weak_mods();
     bool substituted = false;
     bool modifiers_match = !razen_adaptive_repeat_strict_modifiers || !active_mods;
@@ -176,13 +190,13 @@ static void repeat_adaptive(void) {
             repeated = razen_adaptive_repeat_rules[index].emit;
             mods = 0;
             tap_code16(repeated);
-            set_last_keycode(repeated);
-            set_last_mods(0);
+            remember_repeat(repeated, 0);
             substituted = true;
             break;
         }
     }
     if (!substituted && repeated != KC_NO) {
+        set_last_mods(repeat_mods);
         keyevent_t event = MAKE_KEYEVENT(0, 0, true);
         repeat_key_invoke(&event);
         event.pressed = false;
@@ -199,10 +213,13 @@ static void repeat_magic(void) {
         caps_word_on();
         return;
     }
-    if (get_last_keycode() == KC_NO || !repeat_timer || timer_elapsed32(repeat_timer) > RAZEN_MAGIC_REPEAT_TIMEOUT) {
+    uint16_t repeated = get_last_keycode();
+    if (repeated == KC_NO || !repeat_timer || timer_elapsed32(repeat_timer) > RAZEN_MAGIC_REPEAT_TIMEOUT ||
+        (!(repeated >= KC_A && repeated <= KC_Z) && !repeat_mods)) {
         add_oneshot_mods(MOD_BIT(razen_magic_hold_keycode));
         return;
     }
+    set_last_mods(repeat_mods);
     keyevent_t event = MAKE_KEYEVENT(0, 0, true);
     repeat_key_invoke(&event);
     event.pressed = false;
@@ -303,6 +320,13 @@ static bool custom_keycode(uint16_t keycode) {
         }
     }
 #endif
+#ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        if (razen_layer_mod_chords[index].trigger == keycode) {
+            return true;
+        }
+    }
+#endif
     for (uint8_t index = 0; index < razen_morph_count; index++) {
         if (razen_morphs[index].trigger == keycode) {
             return true;
@@ -333,7 +357,215 @@ static bool smart_layer_position(keyrecord_t *record) {
 }
 #endif
 
+#ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
+static void press_layer_mod(razen_layer_mod_chord_t *chord, uint8_t index) {
+    uint8_t mask = 1U << index;
+    if (chord->modifiers_pressed & mask) {
+        return;
+    }
+    uint8_t modifier = chord->modifiers[index];
+    set_oneshot_mods(get_oneshot_mods() & ~modifier);
+    register_mods(modifier);
+    chord->modifiers_pressed |= mask;
+    chord->modifiers_used &= ~mask;
+    chord->timers[index] = timer_read();
+}
+
+static void release_layer_mod(razen_layer_mod_chord_t *chord, uint8_t index) {
+    uint8_t mask = 1U << index;
+    if (!(chord->modifiers_pressed & mask)) {
+        return;
+    }
+    uint8_t modifier = chord->modifiers[index];
+    unregister_mods(modifier);
+    if (!(chord->modifiers_used & mask) && timer_elapsed(chord->timers[index]) < chord->tapping_term) {
+        add_oneshot_mods(modifier);
+    }
+    chord->modifiers_pressed &= ~mask;
+    chord->modifiers_used &= ~mask;
+}
+
+static razen_layer_mod_chord_t *active_layer_mod_session(uint8_t layer) {
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        if (razen_layer_mod_chords[index].layer == layer && razen_layer_mod_chords[index].active) {
+            return &razen_layer_mod_chords[index];
+        }
+    }
+    return NULL;
+}
+
+static bool layer_control_position(uint16_t position) {
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        if (razen_layer_mod_chords[index].layer_position == position) {
+            return true;
+        }
+    }
+#ifdef RAZEN_LAYER_CHORD_ENABLE
+    for (uint8_t index = 0; index < razen_layer_chord_count; index++) {
+        if (razen_layer_chords[index].parent_position == position ||
+            razen_layer_chords[index].child_position == position) {
+            return true;
+        }
+    }
+#endif
+    return false;
+}
+
+static bool eager_layer_mod_candidate(const razen_layer_mod_chord_t *chord) {
+    uint8_t layer = get_highest_layer(layer_state | default_layer_state);
+    if (!(chord->activation_layers & (1UL << layer)) || !chord->layer_position_pressed ||
+        (chord->modifier_positions_pressed & chord->trigger_modifiers) != chord->trigger_modifiers ||
+        timer_elapsed32(chord->layer_timer) > chord->combo_term) {
+        return false;
+    }
+    for (uint8_t index = 0; index < chord->modifier_count; index++) {
+        if ((chord->trigger_modifiers & (1U << index)) &&
+            timer_elapsed32(chord->modifier_timers[index]) > chord->combo_term) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static razen_layer_mod_chord_t *best_eager_layer_mod_candidate(uint8_t layer) {
+    razen_layer_mod_chord_t *best = NULL;
+    uint8_t best_count = 0;
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        razen_layer_mod_chord_t *chord = &razen_layer_mod_chords[index];
+        uint8_t count = __builtin_popcount(chord->trigger_modifiers);
+        if (chord->layer == layer && count > best_count && eager_layer_mod_candidate(chord)) {
+            best = chord;
+            best_count = count;
+        }
+    }
+    return best;
+}
+
+static void start_layer_mod_session(razen_layer_mod_chord_t *chord, bool sticky_released) {
+    chord->active = true;
+    chord->layer_pressed = chord->layer_position_pressed;
+    chord->modifiers_pressed = 0;
+    chord->modifiers_used = 0;
+    if (chord->layer_pressed) {
+        layer_on(chord->layer);
+    }
+    for (uint8_t index = 0; index < chord->modifier_count; index++) {
+        uint8_t mask = 1U << index;
+        if (chord->modifier_positions_pressed & mask) {
+            press_layer_mod(chord, index);
+        } else if (sticky_released && (chord->trigger_modifiers & mask)) {
+            add_oneshot_mods(chord->modifiers[index]);
+        }
+    }
+    if (!chord->layer_pressed && !chord->modifiers_pressed) {
+        chord->active = false;
+    }
+}
+#endif
+
+#if defined(RAZEN_LAYER_CHORD_ENABLE) || defined(RAZEN_LAYER_MOD_CHORD_ENABLE)
+static void release_chord_position(uint16_t position) {
+#ifdef RAZEN_LAYER_CHORD_ENABLE
+    for (uint8_t index = 0; index < razen_layer_chord_count; index++) {
+        razen_layer_chord_t *chord = &razen_layer_chords[index];
+        if (position == chord->parent_position && chord->parent_pressed) {
+            chord->parent_pressed = false;
+            layer_off(chord->parent_layer);
+        } else if (position == chord->child_position && chord->child_pressed) {
+            chord->child_pressed = false;
+            layer_off(chord->child_layer);
+        }
+    }
+#endif
+}
+#endif
+
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    bool continue_processing = true;
+#if defined(RAZEN_LAYER_CHORD_ENABLE) || defined(RAZEN_LAYER_MOD_CHORD_ENABLE)
+    uint16_t position = keymap_key_to_keycode(L_COMBO_REF, record->event.key);
+#endif
+#ifdef RAZEN_LAYER_CHORD_ENABLE
+    if (!record->event.pressed) {
+        release_chord_position(position);
+    }
+#endif
+#ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        razen_layer_mod_chord_t *chord = &razen_layer_mod_chords[index];
+        if (position == chord->layer_position) {
+            chord->layer_position_pressed = record->event.pressed;
+            if (record->event.pressed) {
+                chord->layer_timer = timer_read32();
+            }
+        }
+        for (uint8_t modifier = 0; modifier < chord->modifier_count; modifier++) {
+            if (position == chord->modifier_positions[modifier]) {
+                if (record->event.pressed) {
+                    chord->modifier_positions_pressed |= 1U << modifier;
+                    chord->modifier_timers[modifier] = timer_read32();
+                } else {
+                    chord->modifier_positions_pressed &= ~(1U << modifier);
+                }
+            }
+        }
+    }
+    if (record->event.pressed) {
+        for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+            razen_layer_mod_chord_t *chord = &razen_layer_mod_chords[index];
+            if (!chord->layer_position_pressed || !chord->modifier_positions_pressed ||
+                active_layer_mod_session(chord->layer) != NULL) {
+                continue;
+            }
+            razen_layer_mod_chord_t *candidate = best_eager_layer_mod_candidate(chord->layer);
+            if (candidate != NULL) {
+                start_layer_mod_session(candidate, false);
+            }
+        }
+    }
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        razen_layer_mod_chord_t *chord = &razen_layer_mod_chords[index];
+        if (!chord->active) {
+            continue;
+        }
+        bool layer_position = position == chord->layer_position;
+        int8_t modifier_index = -1;
+        for (uint8_t modifier = 0; modifier < chord->modifier_count; modifier++) {
+            if (position == chord->modifier_positions[modifier]) {
+                modifier_index = modifier;
+                break;
+            }
+        }
+        bool managed_modifier =
+            modifier_index >= 0 && (chord->modifiers_pressed & (1U << modifier_index));
+        if (record->event.pressed) {
+            if (layer_position) {
+                if (!chord->layer_pressed) {
+                    chord->layer_pressed = true;
+                    layer_on(chord->layer);
+                }
+            } else if (modifier_index >= 0 && chord->layer_position_pressed) {
+                press_layer_mod(chord, modifier_index);
+                managed_modifier = chord->modifiers_pressed & (1U << modifier_index);
+            } else if (!layer_control_position(position)) {
+                chord->modifiers_used |= chord->modifiers_pressed;
+            }
+        } else {
+            if (layer_position && chord->layer_pressed) {
+                chord->layer_pressed = false;
+                layer_off(chord->layer);
+            } else if (managed_modifier) {
+                release_layer_mod(chord, modifier_index);
+            }
+            if (!chord->layer_pressed && !chord->modifiers_pressed) {
+                chord->active = false;
+            }
+        }
+        if (managed_modifier && !(chord->trigger_modifiers & (1U << modifier_index))) {
+            continue_processing = false;
+        }
+    }
+#endif
 #ifdef RAZEN_SMART_LAYER_ENABLE
     if (smart_layer_active && !(layer_state & (1UL << razen_smart_layer))) {
         smart_layer_active = false;
@@ -347,7 +579,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         current_keypress_idle = last_keypress_timer ? timer_elapsed32(last_keypress_timer) : UINT32_MAX;
         last_keypress_timer = timer_read32();
     }
-    return true;
+    return continue_processing;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -374,6 +606,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             chord->child_pressed = true;
             layer_on(chord->parent_layer);
             layer_on(chord->child_layer);
+            clear_history();
+        } else {
+            chord->parent_pressed = false;
+            chord->child_pressed = false;
+            layer_off(chord->child_layer);
+            layer_off(chord->parent_layer);
+        }
+        return false;
+    }
+#endif
+
+#ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        razen_layer_mod_chord_t *chord = &razen_layer_mod_chords[index];
+        if (chord->trigger != keycode) {
+            continue;
+        }
+        if (record->event.pressed && active_layer_mod_session(chord->layer) == NULL) {
+            start_layer_mod_session(chord, true);
             clear_history();
         }
         return false;
@@ -425,8 +676,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (razen_morphs[index].trigger != keycode) {
             continue;
         }
-        uint16_t output = shift_active() ? razen_morphs[index].shifted : razen_morphs[index].tap;
+        uint8_t mods = get_mods() | get_oneshot_mods() | get_weak_mods();
+        bool shifted = mods & MOD_MASK_SHIFT;
+        uint16_t output = shifted ? razen_morphs[index].shifted : razen_morphs[index].tap;
         tap_morph(razen_morphs[index].tap, razen_morphs[index].shifted);
+        remember_repeat(output, shifted ? mods & ~MOD_MASK_SHIFT : mods);
         if (output == KC_BSPC) {
             pop_history();
         } else if (text_key(output)) {
@@ -454,6 +708,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         for (uint8_t key = 0; key < razen_sequences[index].length; key++) {
             tap_code16_delay(razen_sequences[index].keys[key], RAZEN_SEQUENCE_DELAY);
         }
+        remember_repeat(razen_sequences[index].keys[razen_sequences[index].length - 1], 0);
         clear_history();
         return false;
     }
@@ -462,12 +717,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool remember_last_key_user(uint16_t keycode, keyrecord_t *record, uint8_t *remembered_mods) {
-    uint16_t basic = tap_keycode(keycode, record);
+    (void)record;
     bool remember = keycode != razen_magic_keycode && keycode != razen_adaptive_repeat_keycode &&
-                    !IS_QK_TAP_DANCE(keycode) && !custom_keycode(keycode) &&
-                    basic >= KC_A && basic <= KC_Z &&
-                    !(*remembered_mods & ~MOD_MASK_SHIFT);
+                    !IS_QK_TAP_DANCE(keycode) && !custom_keycode(keycode);
     if (remember) {
+        repeat_mods = *remembered_mods;
         repeat_timer = timer_read32();
     }
     return remember;
@@ -516,12 +770,25 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     if (keycode == razen_magic_keycode) {
         return RAZEN_MAGIC_QUICK_TAP_TERM;
     }
-    return home_row_key(keycode) ? RAZEN_HOME_ROW_QUICK_TAP_TERM : QUICK_TAP_TERM;
+    if (home_row_key(keycode)) {
+        return RAZEN_HOME_ROW_QUICK_TAP_TERM;
+    }
+    for (uint8_t index = 0; index < razen_quick_tap_count; index++) {
+        if (razen_quick_taps[index].keycode == keycode) {
+            return razen_quick_taps[index].term_ms;
+        }
+    }
+    return QUICK_TAP_TERM;
 }
 
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     (void)record;
-    return home_row_key(keycode) || balanced_key(keycode);
+#ifdef RAZEN_HOME_ROW_MODS
+    if (home_row_key(keycode)) {
+        return true;
+    }
+#endif
+    return balanced_key(keycode);
 }
 
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
@@ -529,6 +796,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     return hold_preferred_key(keycode);
 }
 
+#ifdef RAZEN_HOME_ROW_MODS
 uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t previous_keycode) {
     (void)record;
     uint16_t previous = get_tap_keycode(previous_keycode);
@@ -537,6 +805,7 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t previ
     }
     return FLOW_TAP_TERM;
 }
+#endif
 
 uint16_t get_combo_term(uint16_t combo_index, combo_t *combo) {
     (void)combo;
@@ -554,10 +823,11 @@ bool combo_should_trigger(uint16_t combo_index, combo_t *combo, uint16_t keycode
     return idle && (meta->layers & (1UL << layer));
 }
 
-#ifdef RAZEN_LAYER_CHORD_ENABLE
+#if defined(RAZEN_LAYER_CHORD_ENABLE) || defined(RAZEN_LAYER_MOD_CHORD_ENABLE)
 bool process_combo_key_release(uint16_t combo_index, combo_t *combo, uint8_t key_index, uint16_t keycode) {
     (void)combo_index;
     (void)key_index;
+#ifdef RAZEN_LAYER_CHORD_ENABLE
     for (uint8_t index = 0; index < razen_layer_chord_count; index++) {
         razen_layer_chord_t *chord = &razen_layer_chords[index];
         if (combo->keycode != chord->trigger) {
@@ -574,14 +844,37 @@ bool process_combo_key_release(uint16_t combo_index, combo_t *combo, uint8_t key
             !chord->interrupted && timer_elapsed(chord->timer) < chord->tapping_term) {
             tap_code16(chord->tap_keycode);
         }
-        break;
+        return false;
     }
+#endif
+#ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        razen_layer_mod_chord_t *chord = &razen_layer_mod_chords[index];
+        if (combo->keycode != chord->trigger) {
+            continue;
+        }
+        if (keycode == chord->layer_position) {
+            chord->layer_pressed = false;
+            layer_off(chord->layer);
+        }
+        for (uint8_t modifier = 0; modifier < chord->modifier_count; modifier++) {
+            if (keycode == chord->modifier_positions[modifier]) {
+                release_layer_mod(chord, modifier);
+            }
+        }
+        if (!chord->layer_pressed && !chord->modifiers_pressed) {
+            chord->active = false;
+        }
+        return false;
+    }
+#endif
     return false;
 }
 
 bool process_combo_key_repress(uint16_t combo_index, combo_t *combo, uint8_t key_index, uint16_t keycode) {
     (void)combo_index;
     (void)key_index;
+#ifdef RAZEN_LAYER_CHORD_ENABLE
     for (uint8_t index = 0; index < razen_layer_chord_count; index++) {
         razen_layer_chord_t *chord = &razen_layer_chords[index];
         if (combo->keycode != chord->trigger) {
@@ -598,6 +891,28 @@ bool process_combo_key_repress(uint16_t combo_index, combo_t *combo, uint8_t key
         }
         return true;
     }
+#endif
+#ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
+    for (uint8_t index = 0; index < razen_layer_mod_chord_count; index++) {
+        razen_layer_mod_chord_t *chord = &razen_layer_mod_chords[index];
+        if (combo->keycode != chord->trigger) {
+            continue;
+        }
+        chord->active = true;
+        if (keycode == chord->layer_position) {
+            chord->layer_pressed = true;
+            layer_on(chord->layer);
+            return true;
+        }
+        for (uint8_t modifier = 0; modifier < chord->modifier_count; modifier++) {
+            if (keycode == chord->modifier_positions[modifier]) {
+                press_layer_mod(chord, modifier);
+                return true;
+            }
+        }
+        return false;
+    }
+#endif
     return false;
 }
 #endif

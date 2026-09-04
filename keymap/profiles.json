@@ -143,34 +143,7 @@
       "position_set": "hillside_d50_50",
       "zmk_transform": "config/keyboards/hillside/shields/hillside/hillside.dtsi",
       "zmk": {"keyboard": "hillside", "board": "nice_nano/nrf52840/zmk", "shields": ["hillside_left", "hillside_right"]},
-      "defaults": {
-        "L_TOP_OUTER": "ESC",
-        "R_TOP_OUTER": "BSPC",
-        "L_MID_OUTER": "TAB",
-        "R_MID_OUTER": "RET",
-        "L_BOTTOM_OUTER": "LSHFT",
-        "R_BOTTOM_OUTER": "RSHFT",
-        "L_RING_EXTRA": "LEFT",
-        "L_MIDDLE_EXTRA": "RIGHT",
-        "R_MIDDLE_EXTRA": "UP",
-        "R_RING_EXTRA": "DOWN",
-        "L_THUMB_UPPER_OUTER": "LCTRL",
-        "L_THUMB_UPPER_INNER": "LALT",
-        "R_THUMB_UPPER_INNER": "RALT",
-        "R_THUMB_UPPER_OUTER": "RCTRL",
-        "L_THUMB_OPTIONAL": {"layer": "Num", "mode": "momentary"},
-        "R_THUMB_OPTIONAL": "RGUI"
-      },
-      "overlays": {
-        "Graphite": {"L_THUMB_A": {"layer": "Nav", "mode": "momentary"}},
-        "VestnikDm": {
-          "L_THUMB_A": {"layer": "Nav", "mode": "momentary"},
-          "L_RING_EXTRA": "Щ",
-          "R_MIDDLE_EXTRA": "Ъ",
-          "R_RING_EXTRA": "Ё"
-        }
-      },
-      "alpha_capacity": 38
+      "alpha_capacity": 34
     },
     "cradio_34": {
       "physical_keys": 34,
@@ -218,8 +191,37 @@
       "position_set": "totem_38",
       "zmk_transform": "config/keyboards/totem/shields/totem/totem.dtsi",
       "zmk": {"keyboard": "totem", "board": "xiao_ble/nrf52840/zmk", "shields": ["totem_left", "totem_right"]},
-      "overlays": {"Mantra": {"L_BOTTOM_EXTRA": "COMMA", "R_BOTTOM_EXTRA": "DOT"}},
-      "alpha_capacity": 38
+      "extended_thumbs": true,
+      "defaults": {
+        "L_THUMB_OPTIONAL": {"use": "esc_mouse"},
+        "R_THUMB_OPTIONAL": {"use": "tab_fn"}
+      },
+      "overlays": {
+        "Graphium": {
+          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
+          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
+        },
+        "Bunya": {
+          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
+          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
+        },
+        "VestnikDm": {
+          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
+          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
+        },
+        "Mantra": {
+          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
+          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
+        },
+        "Nav": {
+          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
+          "R_BOTTOM_EXTRA": {"os": "delete_word_right"},
+          "L_PINKY_BOTTOM": {"os": "undo"},
+          "L_INNER_HOME": {"os": "redo"},
+          "R_INDEX_BOTTOM": "none"
+        }
+      },
+      "alpha_capacity": 34
     },
     "cantor_ble_42": {
       "physical_keys": 42,
@@ -318,29 +320,7 @@
       "qmk_draw_layout": "LAYOUT",
       "position_set": "flake_medium_46",
       "zmk": {"keyboard": "flake", "board": "xiao_ble/nrf52840/zmk", "shields": ["anywhy_flake_left", "anywhy_flake_right"], "physical_layout": "medium_layout"},
-      "defaults": {
-        "L_TOP_OUTER": "ESC",
-        "R_TOP_OUTER": "BSPC",
-        "L_MID_OUTER": "TAB",
-        "R_MID_OUTER": "RET",
-        "L_BOTTOM_OUTER": "LCTRL",
-        "R_BOTTOM_OUTER": "DEL",
-        "L_RING_EXTRA": "LEFT",
-        "L_MIDDLE_EXTRA": "RIGHT",
-        "L_INDEX_EXTRA": {"layer": "Num", "mode": "momentary"},
-        "R_MIDDLE_EXTRA": "UP",
-        "R_RING_EXTRA": "DOWN"
-      },
-      "overlays": {
-        "Graphite": {"L_THUMB_A": {"layer": "Nav", "mode": "momentary"}},
-        "VestnikDm": {
-          "L_THUMB_A": {"layer": "Nav", "mode": "momentary"},
-          "L_RING_EXTRA": "Щ",
-          "R_INDEX_EXTRA": "Ъ",
-          "R_RING_EXTRA": "Ё"
-        }
-      },
-      "alpha_capacity": 38
+      "alpha_capacity": 34
     },
     "lintilla_42": {
       "physical_keys": 42,
@@ -360,7 +340,7 @@
         "L_THUMB_OPTIONAL": {"layer": "Num", "mode": "momentary"}
       },
       "overlays": {
-        "Graphite": {"L_THUMB_A": {"layer": "Nav", "mode": "momentary"}},
+        "Graphium": {"L_THUMB_A": {"layer": "Nav", "mode": "momentary"}},
         "VestnikDm": {
           "L_THUMB_A": {"layer": "Nav", "mode": "momentary"},
           "L_TOP_EXTRA": "Щ",
@@ -385,7 +365,7 @@
       "zmk_draw_keyboard": "glove80",
       "position_set": "glove80_80",
       "zmk": {"keyboard": "glove80", "board": "glove80", "shields": ["glove80_lh", "glove80_rh"]},
-      "layers": ["Graphite", "Bunya", "Mantra", "Nav", "Sym", "Num", "Fn", "Vestnik2", "Mouse", "Magic"],
+      "layers": ["Graphium", "Bunya", "VestnikDm", "Mantra", "Nav", "Sym", "Num", "Fn", "Vestnik2", "Mouse", "Magic"],
       "defaults": {"GLOVE_MAGIC_LEFT": {"use": "glove_magic"}, "GLOVE_MAGIC_RIGHT": {"use": "glove_magic"}},
       "alpha_capacity": 38
     },

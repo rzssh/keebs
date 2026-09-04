@@ -3,6 +3,7 @@ set -euo pipefail
 
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 workspace="${1:-${ZMK_TEST_WORKSPACE:-${ZMK_WORKSPACE_BASE:-${XDG_DATA_HOME:-$HOME/.local/share}/zmk-workspaces}/luna}}"
+workspace="$(realpath -m "$workspace")"
 expected_zmk="$(python3 - "$repo/config/default.west.yml" <<'PY'
 import sys
 import yaml
@@ -13,7 +14,7 @@ for project in yaml.safe_load(open(sys.argv[1]))["manifest"]["projects"]:
         break
 PY
 )"
-expected_zephyr=9df4b12b5af3438a8b9d7a33780dc3b3b2f516c1
+expected_zephyr=10ba6d0cb38bc3d258775d27982f707599320085
 expected_sdk=0.17.0
 sdk="${ZEPHYR_SDK_INSTALL_DIR:-$HOME/.local/zephyr-sdk-$expected_sdk}"
 
@@ -33,6 +34,8 @@ if [[ "$actual_zmk" != "$expected_zmk" || "$actual_zephyr" != "$expected_zephyr"
         "$actual_zmk" "$actual_zephyr" "$actual_sdk" >&2
     exit 1
 fi
+
+"$repo/scripts/apply-zmk-patches" "$workspace"
 
 mkdir -p "$repo/.cache/zmk-tests"
 cd "$workspace"

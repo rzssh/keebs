@@ -6,8 +6,8 @@ manifest:
       url-base: https://github.com/urob
     - name: rzssh
       url-base: https://github.com/rzssh
-    - name: hailee0710
-      url-base: https://github.com/hailee0710
+    - name: anywhy
+      url-base: https://github.com/anywhy-io
 
   projects:
     - name: zmk
@@ -21,8 +21,8 @@ manifest:
       remote: rzssh
       revision: 540b774f6da9d763e61bc64b694790757ed3bd84
     - name: flake-zmk-module
-      remote: hailee0710
-      revision: 37bd0a2650702816a5dbe7a62b90dee56176f245
+      remote: anywhy
+      revision: dc2f905b491be7b79d3c3ea348eacd80f8c46f98
 
   self:
     path: config

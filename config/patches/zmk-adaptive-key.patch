@@ -1,0 +1,51 @@
+--- a/src/behaviors/behavior_adaptive_key.c
++++ b/src/behaviors/behavior_adaptive_key.c
+@@ -283,6 +283,31 @@
+     return false;
+ }
+ 
++static void restore_history(int64_t timestamp) {
++    last_keycode = history[0];
++    prev_keycode = CONFIG_ZMK_ADAPTIVE_KEY_HISTORY_DEPTH > 1
++                       ? history[1]
++                       : (struct zmk_key_param){0};
++    last_timestamp = last_keycode.page ? timestamp : 0;
++    prev_timestamp = prev_keycode.page ? timestamp : 0;
++    last_keycode_is_dead = false;
++}
++
++static void rewind_history(int64_t timestamp) {
++    for (int i = 0; i < CONFIG_ZMK_ADAPTIVE_KEY_HISTORY_DEPTH - 1; i++) {
++        history[i] = history[i + 1];
++    }
++    history[CONFIG_ZMK_ADAPTIVE_KEY_HISTORY_DEPTH - 1] = (struct zmk_key_param){0};
++    restore_history(timestamp);
++}
++
++static void clear_history(void) {
++    for (int i = 0; i < CONFIG_ZMK_ADAPTIVE_KEY_HISTORY_DEPTH; i++) {
++        history[i] = (struct zmk_key_param){0};
++    }
++    restore_history(0);
++}
++
+ static int adaptive_key_keycode_state_changed_listener(const zmk_event_t *eh) {
+     struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
+     if (ev == NULL || (!ev->state && !last_keycode_is_dead)) {
+@@ -303,6 +328,16 @@
+         }
+     }
+ 
++    if (key.page == ZMK_HID_USAGE_PAGE(BACKSPACE) &&
++        key.id == ZMK_HID_USAGE_ID(BACKSPACE)) {
++        if (key.modifiers) {
++            clear_history();
++        } else {
++            rewind_history(ev->timestamp);
++        }
++        return ZMK_EV_EVENT_BUBBLE;
++    }
++
+     prev_keycode = last_keycode;
+     prev_timestamp = last_timestamp;
+ 

@@ -1,15 +1,25 @@
 [timings.home_row]
-tapping_term_ms = 240
+tapping_term_ms = 280
 quick_tap_ms = 175
-prior_idle_ms = 80
+prior_idle_ms = 150
 flavor = "balanced"
-opposite_hand_hold = false
+opposite_hand_hold = true
 hold_while_undecided = false
 
 [timings.thumb]
 tapping_term_ms = 175
 quick_tap_ms = 0
 flavor = "balanced"
+
+[timings.bspc_thumb]
+tapping_term_ms = 175
+quick_tap_ms = 175
+flavor = "balanced"
+
+[timings.enter_thumb]
+tapping_term_ms = 175
+quick_tap_ms = 175
+flavor = "hold-preferred"
 
 [timings.layer_thumb]
 tapping_term_ms = 175
@@ -240,6 +250,11 @@ recipe = "shift_morph"
 tap = "BSPC"
 shifted = { os = "delete_word_left" }
 
+[behaviors.word_bspc]
+recipe = "shift_morph"
+tap = { os = "delete_word_left" }
+shifted = "BSPC"
+
 [behaviors.del_word]
 recipe = "shift_morph"
 tap = "DEL"
@@ -306,23 +321,9 @@ child_layer = "Mouse"
 parent_position = "L_THUMB_A"
 child_position = "L_THUMB_B"
 
-[behaviors.mouse_chord_34]
-recipe = "layer_chord"
-parent_layer = "Nav"
-child_layer = "Mouse"
-parent_position = "L_THUMB_B"
-child_position = "L_THUMB_A"
-
 [behaviors.fn_chord]
 recipe = "layer_chord"
 parent_layer = "Sym"
-child_layer = "Fn"
-parent_position = "R_THUMB_B"
-child_position = "R_THUMB_A"
-
-[behaviors.fn_chord_34]
-recipe = "layer_chord"
-parent_layer = "Num"
 child_layer = "Fn"
 parent_position = "R_THUMB_B"
 child_position = "R_THUMB_A"
@@ -339,9 +340,9 @@ recipe = "layer_action"
 layer = "Game"
 mode = "move"
 
-[behaviors.to_graphite]
+[behaviors.to_graphium]
 recipe = "layer_action"
-layer = "Graphite"
+layer = "Graphium"
 mode = "move"
 
 [behaviors.to_bunya]
@@ -379,7 +380,7 @@ timing = "layer_modifier"
 name = "nav"
 layer = "Nav"
 layer_position = "L_THUMB_A"
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 term_ms = 60
 prior_idle_ms = 0
@@ -394,37 +395,7 @@ modifiers = [
 name = "nav_34"
 layer = "Nav"
 layer_position = "L_THUMB_B"
-layers = ["Graphite", "VestnikDm"]
-variants = ["core34"]
-term_ms = 60
-prior_idle_ms = 0
-modifiers = [
-  { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
-  { name = "alt", behavior = "osm_alt", position = "L_RING_HOME" },
-  { name = "ctrl", behavior = "osm_ctrl", position = "L_MIDDLE_HOME" },
-  { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
-]
-
-[[modifier_chords]]
-name = "sym"
-layer = "Sym"
-layer_position = "R_THUMB_B"
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
-variants = ["core30"]
-term_ms = 60
-prior_idle_ms = 0
-modifiers = [
-  { name = "shift", behavior = "osm_shift", position = "R_INDEX_HOME" },
-  { name = "ctrl", behavior = "osm_ctrl", position = "R_MIDDLE_HOME" },
-  { name = "alt", behavior = "osm_alt", position = "R_RING_HOME" },
-  { name = "gui", behavior = "osm_gui", position = "R_PINKY_HOME" },
-]
-
-[[modifier_chords]]
-name = "sym_34"
-layer = "Sym"
-layer_position = "L_THUMB_A"
-layers = ["Graphite", "VestnikDm"]
+layers = ["Graphium", "VestnikDm"]
 variants = ["core34"]
 term_ms = 60
 prior_idle_ms = 0
@@ -439,8 +410,9 @@ modifiers = [
 name = "num_34"
 layer = "Num"
 layer_position = "R_THUMB_B"
-layers = ["Graphite", "VestnikDm"]
+layers = ["Graphium", "VestnikDm", "Nav", "Sym"]
 variants = ["core34"]
+number_layer = "dedicated"
 term_ms = 60
 prior_idle_ms = 0
 modifiers = [
@@ -450,10 +422,46 @@ modifiers = [
   { name = "gui", behavior = "osm_gui", position = "R_PINKY_HOME" },
 ]
 
+[[modifier_chords]]
+name = "sym"
+layer = "Sym"
+layer_position = "R_THUMB_B"
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
+variants = ["core30"]
+term_ms = 60
+prior_idle_ms = 0
+modifiers = [
+  { name = "shift", behavior = "osm_shift", position = "R_INDEX_HOME" },
+  { name = "ctrl", behavior = "osm_ctrl", position = "R_MIDDLE_HOME" },
+  { name = "alt", behavior = "osm_alt", position = "R_RING_HOME" },
+  { name = "gui", behavior = "osm_gui", position = "R_PINKY_HOME" },
+]
+
+[[modifier_chords]]
+name = "sym_34"
+layer = "Sym"
+layer_position = "L_THUMB_A"
+layers = ["Graphium", "VestnikDm"]
+variants = ["core34"]
+term_ms = 60
+prior_idle_ms = 0
+modifiers = [
+  { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
+  { name = "alt", behavior = "osm_alt", position = "L_RING_HOME" },
+  { name = "ctrl", behavior = "osm_ctrl", position = "L_MIDDLE_HOME" },
+  { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
+]
+
 [behaviors.shift_nav]
 recipe = "tap_hold"
 timing = "layer_thumb"
 hold = { layer = "Nav", mode = "momentary" }
+tap = { use = "osm_shift" }
+
+[behaviors.shift_sym]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Sym", mode = "momentary" }
 tap = { use = "osm_shift" }
 
 [behaviors.bspc_sym]
@@ -461,6 +469,13 @@ recipe = "tap_hold"
 timing = "layer_thumb"
 hold = { layer = "Sym", mode = "momentary" }
 tap = "BSPC"
+
+[behaviors.bspc_word_sym]
+recipe = "tap_hold"
+timing = "bspc_thumb"
+draw_tap = "$$mdi:backspace-outline$$"
+hold = { layer = "Sym", mode = "momentary" }
+tap = { use = "word_bspc" }
 
 [behaviors.sqt_sym]
 recipe = "tap_hold"
@@ -470,15 +485,45 @@ tap = "SQT"
 
 [behaviors.bspc_nav]
 recipe = "tap_hold"
-timing = "thumb"
+timing = "bspc_thumb"
 hold = { layer = "Nav", mode = "momentary" }
 tap = { use = "bspc_word" }
+
+[behaviors.bspc_plain_nav]
+recipe = "tap_hold"
+timing = "bspc_thumb"
+hold = { layer = "Nav", mode = "momentary" }
+tap = "BSPC"
 
 [behaviors.ret_sym]
 recipe = "tap_hold"
 timing = "layer_thumb"
 hold = { layer = "Sym", mode = "momentary" }
 tap = "RET"
+
+[behaviors.ret_nav]
+recipe = "tap_hold"
+timing = "enter_thumb"
+hold = { layer = "Nav", mode = "momentary" }
+tap = "RET"
+
+[behaviors.ret_num]
+recipe = "tap_hold"
+timing = "enter_thumb"
+hold = { layer = "Num", mode = "momentary" }
+tap = "RET"
+
+[behaviors.ret_fn]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Fn", mode = "momentary" }
+tap = "RET"
+
+[behaviors.space_mouse]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Mouse", mode = "momentary" }
+tap = "SPACE"
 
 [behaviors.space_nav]
 recipe = "tap_hold"
@@ -491,6 +536,18 @@ recipe = "tap_hold"
 timing = "layer_thumb"
 hold = { layer = "Num", mode = "momentary" }
 tap = "BSPC"
+
+[behaviors.esc_mouse]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Mouse", mode = "momentary" }
+tap = "ESC"
+
+[behaviors.tab_fn]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Fn", mode = "momentary" }
+tap = "TAB"
 
 [behaviors.vestnik2_nav]
 recipe = "tap_hold"
@@ -509,7 +566,7 @@ tap = { platform = "rgb_status" }
 [behaviors.lang_en]
 recipe = "macro"
 steps = [
-  { layer = "Graphite", mode = "move" },
+  { layer = "Graphium", mode = "move" },
   { key = "N1", mods = ["LCTRL", "LSHIFT", "LGUI"] },
 ]
 
@@ -574,7 +631,7 @@ recipe = "platform"
 targets = ["zmk"]
 action = "bt_clear_all"
 
-[adaptives.graphite]
+[adaptives.graphium]
 enabled = true
 timeout_ms = 1000
 strict_modifiers = true
@@ -594,7 +651,7 @@ rules = [
   { input = "T", after = ["N", "R"], emit = ["BSPC", "T", "R"] },
 ]
 
-[adaptives.graphite.variant_swaps]
+[adaptives.graphium.variant_swaps]
 core30 = [["R", "L", "J"]]
 core34 = [["R", "L", "Z"]]
 
@@ -650,7 +707,7 @@ rules = []
 [[combos]]
 name = "core30_q"
 positions = ["L_RING_HOME", "L_RING_BOTTOM"]
-layers = ["Graphite", "Bunya"]
+layers = ["Graphium", "Bunya"]
 variants = ["core30"]
 action = "Q"
 term_ms = 25
@@ -659,7 +716,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "select_all_core30"
 positions = ["L_INDEX_BOTTOM", "L_INNER_BOTTOM"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { os = "select_all" }
 term_ms = 25
@@ -668,7 +725,7 @@ prior_idle_ms = 120
 [[combos]]
 name = "core30_z"
 positions = ["L_INDEX_TOP", "L_INDEX_HOME"]
-layers = ["Graphite", "Bunya"]
+layers = ["Graphium", "Bunya"]
 variants = ["core30"]
 action = "Z"
 term_ms = 25
@@ -677,7 +734,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "undo_redo_core30"
 positions = ["L_PINKY_HOME", "L_RING_BOTTOM"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { use = "undo_redo" }
 term_ms = 35
@@ -686,7 +743,7 @@ prior_idle_ms = 120
 [[combos]]
 name = "core30_minus"
 positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
-layers = ["Graphite", "Bunya"]
+layers = ["Graphium", "Bunya"]
 variants = ["core30"]
 action = "MINUS"
 term_ms = 35
@@ -695,7 +752,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "core30_slash"
 positions = ["R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM"]
-layers = ["Graphite"]
+layers = ["Graphium"]
 variants = ["core30"]
 action = "FSLH"
 term_ms = 18
@@ -715,7 +772,7 @@ slow_release = true
 [[combos]]
 name = "core30_semicolon"
 positions = ["R_PINKY_HOME", "R_RING_BOTTOM"]
-layers = ["Graphite"]
+layers = ["Graphium"]
 variants = ["core30"]
 action = "SEMI"
 term_ms = 18
@@ -880,27 +937,9 @@ term_ms = 25
 prior_idle_ms = 0
 
 [[combos]]
-name = "escape_core34"
-positions = ["L_RING_BOTTOM", "L_MIDDLE_BOTTOM"]
-layers = ["Graphite", "VestnikDm"]
-variants = ["core34"]
-action = "ESC"
-term_ms = 25
-prior_idle_ms = 0
-
-[[combos]]
-name = "delete_word_core34"
-positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
-layers = ["Graphite", "VestnikDm"]
-variants = ["core34"]
-action = { os = "delete_word_left" }
-term_ms = 25
-prior_idle_ms = 0
-
-[[combos]]
 name = "mouse"
 positions = ["L_THUMB_A", "L_THUMB_B"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { use = "mouse_chord" }
 term_ms = 60
@@ -909,20 +948,9 @@ slow_release = true
 draw = { type = "mouse-activator" }
 
 [[combos]]
-name = "mouse_34"
-positions = ["L_THUMB_A", "L_THUMB_B"]
-layers = ["Graphite", "VestnikDm"]
-variants = ["core34"]
-action = { use = "mouse_chord_34" }
-term_ms = 60
-prior_idle_ms = 0
-slow_release = true
-draw = { type = "mouse-activator" }
-
-[[combos]]
 name = "fn"
 positions = ["R_THUMB_A", "R_THUMB_B"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { use = "fn_chord" }
 term_ms = 60
@@ -931,20 +959,9 @@ slow_release = true
 draw = { type = "fn-activator" }
 
 [[combos]]
-name = "fn_34"
-positions = ["R_THUMB_A", "R_THUMB_B"]
-layers = ["Graphite", "VestnikDm"]
-variants = ["core34"]
-action = { use = "fn_chord_34" }
-term_ms = 60
-prior_idle_ms = 0
-slow_release = true
-draw = { type = "fn-activator" }
-
-[[combos]]
 name = "num"
 positions = ["L_THUMB_A", "R_THUMB_B"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { use = "num_chord" }
 term_ms = 25
@@ -957,7 +974,7 @@ draw = false
 name = "exit_game"
 positions = ["R_THUMB_A", "R_THUMB_B"]
 layers = ["Game"]
-action = { use = "to_graphite" }
+action = { use = "to_graphium" }
 term_ms = 60
 prior_idle_ms = 0
 
@@ -984,57 +1001,57 @@ draw = { layers = ["Game"] }
 [[combos]]
 name = "backspace"
 positions = ["R_MIDDLE_TOP", "R_RING_TOP"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra", "Sym", "Num"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra", "Sym", "Num"]
 variants = ["core30"]
 action = { use = "bspc_word" }
 term_ms = 25
 prior_idle_ms = 100
-draw = { action = "BSPC", layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"] }
+draw = { action = "BSPC", layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"] }
 
 [[combos]]
 name = "delete"
 positions = ["R_RING_TOP", "R_PINKY_TOP"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra", "Sym", "Num"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra", "Sym", "Num"]
 variants = ["core30"]
 action = { use = "del_word" }
 term_ms = 25
 prior_idle_ms = 100
-draw = { action = "DEL", layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"] }
+draw = { action = "DEL", layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"] }
 
 [[combos]]
 name = "escape"
 positions = ["L_RING_TOP", "L_MIDDLE_TOP"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra", "Sym", "Num"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra", "Sym", "Num"]
 variants = ["core30"]
 action = "ESC"
 term_ms = 25
 prior_idle_ms = 100
-draw = { layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"] }
+draw = { layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"] }
 
 [[combos]]
 name = "tab"
 positions = ["L_RING_HOME", "L_MIDDLE_HOME"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra", "Sym", "Num"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra", "Sym", "Num"]
 variants = ["core30"]
 action = "TAB"
 term_ms = 25
 prior_idle_ms = 100
-draw = { layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"] }
+draw = { layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"] }
 
 [[combos]]
 name = "enter"
 positions = ["R_MIDDLE_HOME", "R_RING_HOME"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = "RET"
 term_ms = 25
 prior_idle_ms = 100
-draw = { layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"] }
+draw = { layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"] }
 
 [[combos]]
 name = "cut"
 positions = ["L_RING_BOTTOM", "L_INDEX_BOTTOM"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { os = "cut" }
 term_ms = 25
@@ -1044,7 +1061,7 @@ draw = { align = "bottom", offset = -0.15 }
 [[combos]]
 name = "copy"
 positions = ["L_RING_BOTTOM", "L_MIDDLE_BOTTOM"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { os = "copy" }
 term_ms = 25
@@ -1053,7 +1070,7 @@ prior_idle_ms = 120
 [[combos]]
 name = "paste"
 positions = ["L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM"]
-layers = ["Graphite", "Bunya", "VestnikDm", "Mantra"]
+layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { os = "paste" }
 term_ms = 25

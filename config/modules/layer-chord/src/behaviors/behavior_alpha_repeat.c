@@ -61,29 +61,20 @@ static const struct behavior_driver_api alpha_repeat_driver_api = {
     .binding_released = alpha_repeat_released,
 };
 
-static bool is_alpha(const struct alpha_repeat_key *key) {
-    return key->usage_page == ZMK_HID_USAGE_PAGE(A) && key->keycode >= ZMK_HID_USAGE_ID(A) &&
-           key->keycode <= ZMK_HID_USAGE_ID(Z) &&
-           !(key->modifiers & ~(MOD_LSFT | MOD_RSFT));
+static bool is_backspace(const struct alpha_repeat_key *key) {
+    return key->usage_page == ZMK_HID_USAGE_PAGE(BACKSPACE) &&
+           key->keycode == ZMK_HID_USAGE_ID(BACKSPACE);
 }
 
-static bool is_text(const struct alpha_repeat_key *key) {
-    if (key->usage_page != ZMK_HID_USAGE_PAGE(A) ||
-        (key->modifiers & ~(MOD_LSFT | MOD_RSFT))) {
-        return false;
-    }
-    return (key->keycode >= ZMK_HID_USAGE_ID(A) && key->keycode <= ZMK_HID_USAGE_ID(Z)) ||
-           (key->keycode >= ZMK_HID_USAGE_ID(N1) && key->keycode <= ZMK_HID_USAGE_ID(N0)) ||
-           key->keycode == ZMK_HID_USAGE_ID(RET) || key->keycode == ZMK_HID_USAGE_ID(TAB) ||
-           key->keycode == ZMK_HID_USAGE_ID(SPACE) ||
-           (key->keycode >= ZMK_HID_USAGE_ID(MINUS) &&
-            key->keycode <= ZMK_HID_USAGE_ID(FSLH));
+static bool is_repeatable(const struct alpha_repeat_key *key) {
+    return key->usage_page == ZMK_HID_USAGE_PAGE(A) &&
+           !is_mod(key->usage_page, key->keycode);
 }
 
 static void update_remembered(struct behavior_alpha_repeat_data *data) {
     data->remembered = (struct zmk_keycode_state_changed){0};
     for (int i = data->history_len - 1; i >= 0; i--) {
-        if (!is_alpha(&data->history[i])) {
+        if (!is_repeatable(&data->history[i])) {
             continue;
         }
         data->remembered.usage_page = data->history[i].usage_page;
@@ -117,17 +108,14 @@ static int alpha_repeat_listener(const zmk_event_t *event) {
     };
     const struct device *dev = DEVICE_DT_INST_GET(0);
     struct behavior_alpha_repeat_data *data = dev->data;
-    if (pressed.usage_page == ZMK_HID_USAGE_PAGE(BACKSPACE) &&
-        pressed.keycode == ZMK_HID_USAGE_ID(BACKSPACE)) {
+    if (is_backspace(&pressed)) {
         if (pressed.modifiers) {
             data->history_len = 0;
         } else if (data->history_len) {
             data->history_len--;
         }
         update_remembered(data);
-        return ZMK_EV_EVENT_BUBBLE;
-    }
-    if (is_text(&pressed)) {
+    } else if (is_repeatable(&pressed)) {
         append_history(data, pressed);
     }
     return ZMK_EV_EVENT_BUBBLE;
