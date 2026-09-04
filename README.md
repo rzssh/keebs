@@ -1,18 +1,24 @@
 # keebs
 
-Personal Graphite and Vestnik keymap compiled from one semantic model to ZMK, QMK, and keymap-drawer.
+Personal Graphium and Vestnik keymap compiled from one semantic model to ZMK, QMK, and keymap-drawer.
 
-<details>
-<summary>30-key layout</summary>
+## Current layout
 
-<img src="draw/generated/luna_30.svg" alt="30-key layout preview">
+<img src="draw/generated/totem_38.svg" alt="Totem 38-key layout preview">
 
-</details>
+Other sizes: [34-key](draw/generated/cradio_34.svg) · [30-key](draw/generated/luna_30.svg)
 
 <details>
 <summary>34-key layout</summary>
 
 <img src="draw/generated/cradio_34.svg" alt="34-key layout preview">
+
+</details>
+
+<details>
+<summary>30-key layout</summary>
+
+<img src="draw/generated/luna_30.svg" alt="30-key layout preview">
 
 </details>
 

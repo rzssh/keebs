@@ -14,3 +14,4 @@ draw/*
 draw/generated/*
 !draw/generated/cradio_34.svg
 !draw/generated/luna_30.svg
+!draw/generated/totem_38.svg
