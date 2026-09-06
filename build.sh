@@ -315,9 +315,25 @@ if [[ ! -d "$WORKSPACE/.west" ]]; then
     exit 1
 fi
 
+reset_conf="$KB_DIR/$KEYBOARD.reset.conf"
+if [[ "$ACTION" == "reset" && ! -f "$reset_conf" ]]; then
+    IFS='|' read -r board _ _ <<< "$(get_board_shield)"
+    export ZEPHYR_BASE="$WORKSPACE/zephyr"
+    export CMAKE_PREFIX_PATH="$WORKSPACE/zephyr/share/zephyr-package/cmake"
+    [[ -d "$WORKSPACE/.venv" ]] && source "$WORKSPACE/.venv/bin/activate"
+    cd "$WORKSPACE"
+    cmake -E remove_directory "build/settings_reset"
+    west build -d "build/settings_reset" -s zmk/app -b "$board" -- -DSHIELD=settings_reset
+    out="$REPO_ROOT/build/$KEYBOARD"
+    mkdir -p "$out"
+    cp "build/settings_reset/zephyr/zmk.uf2" "$out/settings_reset.uf2"
+    echo "→ build/$KEYBOARD/settings_reset.uf2"
+    echo "Flash this to BOTH halves to clear bonds."
+    exit 0
+fi
+
 "$REPO_ROOT/scripts/generate" check
 
-reset_conf="$KB_DIR/$KEYBOARD.reset.conf"
 if [[ "$ACTION" == "reset" && -f "$reset_conf" && -z "${EXTRA_CONF_PATH:-}" ]]; then
     export EXTRA_CONF_PATH="$reset_conf"
 fi
@@ -355,9 +371,9 @@ while IFS='|' read -r project revision project_path; do
     fi
 done < <(west list -f '{name}|{revision}|{abspath}')
 if ((${#revision_mismatches[@]})); then
-    echo "Workspace revisions do not match the manifest: ${revision_mismatches[*]}" >&2
-    echo "Run: $0 $KEYBOARD setup" >&2
-    exit 1
+    echo "Updating stale workspace projects: ${revision_mismatches[*]}"
+    west update
+    "$REPO_ROOT/scripts/apply-zmk-patches" "$WORKSPACE"
 fi
 
 build_entry() {
