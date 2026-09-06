@@ -77,6 +77,20 @@ typedef struct {
 } razen_oneshot_layer_t;
 
 typedef struct {
+    uint8_t parent_layer;
+    uint8_t child_layer;
+    uint8_t parent_overlay_layer;
+    uint8_t child_overlay_layer;
+    uint16_t parent_trigger;
+    uint16_t child_trigger;
+    uint16_t parent_position;
+    uint16_t child_position;
+    bool parent_pressed;
+    bool child_pressed;
+    bool child_latest;
+} razen_layer_stack_t;
+
+typedef struct {
     uint16_t trigger;
     uint8_t parent_layer;
     uint8_t child_layer;
@@ -148,6 +162,10 @@ extern const razen_quick_tap_t razen_quick_taps[];
 extern const uint8_t razen_quick_tap_count;
 extern const razen_oneshot_layer_t razen_oneshot_layers[];
 extern const uint8_t razen_oneshot_layer_count;
+#ifdef RAZEN_LAYER_STACK_ENABLE
+extern razen_layer_stack_t razen_layer_stacks[];
+extern const uint8_t razen_layer_stack_count;
+#endif
 #ifdef RAZEN_LAYER_CHORD_ENABLE
 extern razen_layer_chord_t razen_layer_chords[];
 extern const uint8_t razen_layer_chord_count;

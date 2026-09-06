@@ -72,10 +72,10 @@ rows = [
 
 [layers.Nav.core34]
 rows = [
-  ["ESC", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, { use = "tab_previous" }, { use = "tab_next" }, "none", { os = "home" }, "UP", { os = "end" }, "PG_UP"],
-  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "TAB", "none", "LEFT", "DOWN", "RIGHT", "PG_DN"],
+  ["ESC", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, { use = "tab_previous" }, { use = "tab_next" }, { mouse = "SCRL_UP" }, { os = "home" }, "UP", { os = "end" }, "PG_UP"],
+  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, { os = "delete_word_left" }, { mouse = "SCRL_DOWN" }, "LEFT", "DOWN", "RIGHT", "PG_DN"],
   [{ use = "undo_redo" }, { os = "cut" }, { os = "copy" }, { os = "paste" }, { os = "select_all" }, "CAPS", "TAB", "none", "BSPC", "DEL"],
-  [{ layer = "Mouse", mode = "momentary" }, "trans", "RET", { layer = "Num", mode = "momentary" }],
+  [{ layer = "Sym", mode = "momentary" }, "trans", "RET", { layer = "Num", mode = "momentary" }],
 ]
 
 [layers.Sym.core30]
@@ -91,7 +91,7 @@ rows = [
   ["PRCNT", "HASH", "STAR", "AMPS", "PIPE", { use = "grave_tilde" }, { use = "lpar_lbkt" }, { use = "rpar_rbkt" }, { use = "lbrc_lt" }, { use = "rbrc_gt" }],
   [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "AT", "PLUS", { use = "equal_plain" }, "UNDER", "COLON", { use = "semi_plain" }],
   ["EXCL", "CARET", "DLLR", { use = "comma_plain" }, "SQT", { use = "bslh_plain" }, { use = "minus_plain" }, { use = "slash_plain" }, { use = "dot_plain" }, "QMARK"],
-  ["trans", "trans", "SPACE", { layer = "Num", mode = "momentary" }],
+  ["trans", { layer = "Nav", mode = "momentary" }, "SPACE", { layer = "Num", mode = "momentary" }],
 ]
 
 [layers.Num.core30]

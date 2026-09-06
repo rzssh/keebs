@@ -15,14 +15,18 @@
 struct behavior_layer_chord_config {
     zmk_keymap_layer_id_t parent_layer;
     zmk_keymap_layer_id_t child_layer;
+    zmk_keymap_layer_id_t parent_overlay_layer;
+    zmk_keymap_layer_id_t child_overlay_layer;
     uint32_t parent_position;
     uint32_t child_position;
+    bool ordered;
 };
 
 struct behavior_layer_chord_data {
     bool active;
     bool parent_pressed;
     bool child_pressed;
+    bool child_latest;
 };
 
 static int activate_layer(zmk_keymap_layer_id_t layer) {
@@ -41,12 +45,50 @@ static int deactivate_layer(zmk_keymap_layer_id_t layer) {
 #endif
 }
 
+static void update_ordered_layers(const struct device *dev) {
+    const struct behavior_layer_chord_config *config = dev->config;
+    struct behavior_layer_chord_data *data = dev->data;
+    bool both = (data->parent_pressed || data->child_pressed) &&
+                zmk_keymap_layer_active(config->parent_layer) &&
+                zmk_keymap_layer_active(config->child_layer);
+    zmk_keymap_layer_id_t selected = data->child_latest ? config->child_overlay_layer
+                                                       : config->parent_overlay_layer;
+    zmk_keymap_layer_id_t rejected = data->child_latest ? config->parent_overlay_layer
+                                                       : config->child_overlay_layer;
+    if (zmk_keymap_layer_active(rejected)) {
+        deactivate_layer(rejected);
+    }
+    if (both) {
+        if (!zmk_keymap_layer_active(selected)) {
+            activate_layer(selected);
+        }
+    } else if (zmk_keymap_layer_active(selected)) {
+        deactivate_layer(selected);
+    }
+}
+
 static int layer_chord_pressed(struct zmk_behavior_binding *binding,
                                struct zmk_behavior_binding_event event) {
     (void)event;
     const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
     const struct behavior_layer_chord_config *config = dev->config;
     struct behavior_layer_chord_data *data = dev->data;
+    if (config->ordered) {
+        bool child = binding->param1;
+        if (child) {
+            data->child_pressed = true;
+            data->child_latest = true;
+        } else {
+            data->parent_pressed = true;
+            data->child_latest = false;
+        }
+        int ret = activate_layer(child ? config->child_layer : config->parent_layer);
+        if (ret < 0) {
+            return ret;
+        }
+        update_ordered_layers(dev);
+        return ZMK_BEHAVIOR_OPAQUE;
+    }
     int ret = activate_layer(config->parent_layer);
     if (ret < 0) {
         return ret;
@@ -68,6 +110,23 @@ static int layer_chord_released(struct zmk_behavior_binding *binding,
     const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
     const struct behavior_layer_chord_config *config = dev->config;
     struct behavior_layer_chord_data *data = dev->data;
+    if (config->ordered) {
+        bool child = binding->param1;
+        if (child) {
+            data->child_pressed = false;
+            if (data->parent_pressed) {
+                data->child_latest = false;
+            }
+        } else {
+            data->parent_pressed = false;
+            if (data->child_pressed) {
+                data->child_latest = true;
+            }
+        }
+        deactivate_layer(child ? config->child_layer : config->parent_layer);
+        update_ordered_layers(dev);
+        return ZMK_BEHAVIOR_OPAQUE;
+    }
     if (data->parent_pressed) {
         data->parent_pressed = false;
         deactivate_layer(config->parent_layer);
@@ -109,7 +168,7 @@ static int layer_chord_position_listener(const zmk_event_t *event) {
         const struct device *dev = layer_chord_devices[index];
         const struct behavior_layer_chord_config *config = dev->config;
         struct behavior_layer_chord_data *data = dev->data;
-        if (!data->active) {
+        if (!data->active || config->ordered) {
             continue;
         }
         if (position_event->position == config->parent_position) {
@@ -148,6 +207,10 @@ static int layer_chord_layer_listener(const zmk_event_t *event) {
         const struct device *dev = layer_chord_devices[index];
         const struct behavior_layer_chord_config *config = dev->config;
         struct behavior_layer_chord_data *data = dev->data;
+        if (config->ordered) {
+            update_ordered_layers(dev);
+            continue;
+        }
         if (data->parent_pressed && layer_event->layer == config->parent_layer) {
             activate_layer(config->parent_layer);
         }
@@ -166,8 +229,11 @@ ZMK_SUBSCRIPTION(layer_chord_layer, zmk_layer_state_changed);
     static const struct behavior_layer_chord_config layer_chord_config_##inst = {                  \
         .parent_layer = DT_INST_PROP(inst, parent_layer),                                          \
         .child_layer = DT_INST_PROP(inst, child_layer),                                            \
+        .parent_overlay_layer = DT_INST_PROP_OR(inst, parent_overlay_layer, 0),                    \
+        .child_overlay_layer = DT_INST_PROP_OR(inst, child_overlay_layer, 0),                      \
         .parent_position = DT_INST_PROP(inst, parent_position),                                    \
         .child_position = DT_INST_PROP(inst, child_position),                                      \
+        .ordered = DT_INST_NODE_HAS_PROP(inst, parent_overlay_layer),                              \
     };                                                                                             \
     BEHAVIOR_DT_INST_DEFINE(inst, NULL, NULL, &layer_chord_data_##inst,                            \
                             &layer_chord_config_##inst, POST_KERNEL,                               \

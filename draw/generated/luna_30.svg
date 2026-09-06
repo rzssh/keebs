@@ -182,8 +182,8 @@ rect:has(~ a[href="#Nav"]) { stroke: #89b4fa; stroke-width: 2; }
 rect:has(~ a[href="#Sym"]) { stroke: #a6e3a1; stroke-width: 2; }
 rect.num-activator { stroke: #fab387; stroke-width: 2; }
 rect:has(~ a[href="#Num"]) { stroke: #fab387; stroke-width: 2; }
-rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
-rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
+rect.key.mouse-activator, rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
+rect.key.fn-activator, rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
 rect:has(~ a[href="#Game"]) { stroke: #ff4d6d; stroke-width: 2; }
 rect.gameextra-activator { stroke: #c7f464; stroke-width: 2; }
 rect.vestnik2-activator { stroke: #89b4fa; stroke-width: 2; }

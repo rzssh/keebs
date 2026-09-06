@@ -22,6 +22,7 @@
 
 
 
+
 </defs>/* end glyphs */
 <style>/* inherit to force styles through use tags */
 svg path {
@@ -181,8 +182,8 @@ rect:has(~ a[href="#Nav"]) { stroke: #89b4fa; stroke-width: 2; }
 rect:has(~ a[href="#Sym"]) { stroke: #a6e3a1; stroke-width: 2; }
 rect.num-activator { stroke: #fab387; stroke-width: 2; }
 rect:has(~ a[href="#Num"]) { stroke: #fab387; stroke-width: 2; }
-rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
-rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
+rect.key.mouse-activator, rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
+rect.key.fn-activator, rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
 rect:has(~ a[href="#Game"]) { stroke: #ff4d6d; stroke-width: 2; }
 rect.gameextra-activator { stroke: #c7f464; stroke-width: 2; }
 rect.vestnik2-activator { stroke: #89b4fa; stroke-width: 2; }
@@ -346,6 +347,16 @@ text.gameextra-activator { font-size: 12px; }
 <a href="#Num">
 <text x="0" y="24" class="key num-activator hold layer-activator">Num</text>
 </a></g>
+<g class="combo mouse-activator combopos-0">
+<rect rx="6" ry="6" x="236" y="220" width="28" height="26" class="combo mouse-activator"/>
+<a href="#Sym">
+<text x="250" y="233" class="combo mouse-activator tap layer-activator">Sym</text>
+</a></g>
+<g class="combo fn-activator combopos-1">
+<rect rx="6" ry="6" x="408" y="220" width="28" height="26" class="combo fn-activator"/>
+<a href="#Fn">
+<text x="422" y="233" class="combo fn-activator tap layer-activator">Fn</text>
+</a></g>
 </g>
 </g>
 <g transform="translate(30, 339)" class="layer-VestnikDm">
@@ -505,6 +516,16 @@ text.gameextra-activator { font-size: 12px; }
 <rect rx="6" ry="6" x="574" y="117" width="28" height="26" class="combo"/>
 <text x="588" y="130" class="combo tap">Ё</text>
 </g>
+<g class="combo mouse-activator combopos-3">
+<rect rx="6" ry="6" x="236" y="220" width="28" height="26" class="combo mouse-activator"/>
+<a href="#Sym">
+<text x="250" y="233" class="combo mouse-activator tap layer-activator">Sym</text>
+</a></g>
+<g class="combo fn-activator combopos-4">
+<rect rx="6" ry="6" x="408" y="220" width="28" height="26" class="combo fn-activator"/>
+<a href="#Fn">
+<text x="422" y="233" class="combo fn-activator tap layer-activator">Fn</text>
+</a></g>
 </g>
 </g>
 <g transform="translate(30, 678)" class="layer-Nav">
@@ -540,6 +561,9 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(420, 52)" class="key keypos-5">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-0.6em">Scroll</tspan><tspan x="0" dy="1.2em">↑</tspan>
+</text>
 </g>
 <g transform="translate(476, 44)" class="key keypos-6">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -575,10 +599,13 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(252, 108)" class="key keypos-14">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:keyboard-tab" viewBox="0 0 24 24"><path d="M20,18H22V6H20M11.59,7.41L15.17,11H1V13H15.17L11.59,16.58L13,18L19,12L13,6L11.59,7.41Z" /></svg>
+<svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:backspace-outline" viewBox="0 0 24 24"><path d="M19,15.59L17.59,17L14,13.41L10.41,17L9,15.59L12.59,12L9,8.41L10.41,7L14,10.59L17.59,7L19,8.41L15.41,12L19,15.59M22,3A2,2 0 0,1 24,5V19A2,2 0 0,1 22,21H7C6.31,21 5.77,20.64 5.41,20.11L0,12L5.41,3.88C5.77,3.35 6.31,3 7,3H22M22,5H7L2.28,12L7,19H22V5Z" /></svg>
 </g>
 <g transform="translate(420, 108)" class="key keypos-15">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-0.6em">Scroll</tspan><tspan x="0" dy="1.2em">↓</tspan>
+</text>
 </g>
 <g transform="translate(476, 100)" class="key keypos-16">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -636,11 +663,9 @@ text.gameextra-activator { font-size: 12px; }
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:backspace-reverse" viewBox="0 0 24 24"><path d="M2,21H17C17.7,21 18.2,20.6 18.6,20.1L24,12L18.6,3.9C18.2,3.4 17.7,3 17,3H2A2,2 0 0,0 0,5V19A2,2 0 0,0 2,21M5,8.4L6.4,7L10,10.6L13.6,7L15,8.4L11.4,12L15,15.6L13.6,17L10,13.4L6.4,17L5,15.6L8.6,12" /></svg>
 </g>
-<g transform="translate(221, 221) rotate(15.0)" class="key layer-activator keypos-30">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator"/>
-<a href="#Mouse">
-<text x="0" y="0" class="key layer-activator tap layer-activator">Mouse</text>
-</a></g>
+<g transform="translate(221, 221) rotate(15.0)" class="key mouse-activator keypos-30">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key mouse-activator"/>
+</g>
 <g transform="translate(279, 245) rotate(30.0)" class="key held keypos-31">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key held"/>
 </g>
@@ -786,9 +811,8 @@ text.gameextra-activator { font-size: 12px; }
 <g transform="translate(221, 221) rotate(15.0)" class="key held keypos-30">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key held"/>
 </g>
-<g transform="translate(279, 245) rotate(30.0)" class="key trans keypos-31">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
-<text x="0" y="0" class="key trans tap">▽</text>
+<g transform="translate(279, 245) rotate(30.0)" class="key mouse-activator keypos-31">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key mouse-activator"/>
 </g>
 <g transform="translate(393, 245) rotate(-30.0)" class="key keypos-32">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>

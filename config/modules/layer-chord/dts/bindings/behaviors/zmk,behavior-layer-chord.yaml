@@ -2,7 +2,7 @@ description: Momentary layer chord with independently released layers
 
 compatible: "zmk,behavior-layer-chord"
 
-include: zero_param.yaml
+include: one_param.yaml
 
 properties:
   parent-layer:
@@ -11,6 +11,10 @@ properties:
   child-layer:
     type: int
     required: true
+  parent-overlay-layer:
+    type: int
+  child-overlay-layer:
+    type: int
   parent-position:
     type: int
     required: true

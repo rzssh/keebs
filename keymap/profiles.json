@@ -191,34 +191,27 @@
       "position_set": "totem_38",
       "zmk_transform": "config/keyboards/totem/shields/totem/totem.dtsi",
       "zmk": {"keyboard": "totem", "board": "xiao_ble/nrf52840/zmk", "shields": ["totem_left", "totem_right"]},
-      "extended_thumbs": true,
-      "defaults": {
-        "L_THUMB_OPTIONAL": {"use": "esc_mouse"},
-        "R_THUMB_OPTIONAL": {"use": "tab_fn"}
-      },
+      "extended_thumbs": false,
       "overlays": {
         "Graphium": {
-          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
-          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
+          "L_BOTTOM_EXTRA": {"use": "esc_ctrl"},
+          "R_BOTTOM_EXTRA": {"use": "tab_gui"}
         },
         "Bunya": {
-          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
-          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
+          "L_BOTTOM_EXTRA": {"use": "esc_ctrl"},
+          "R_BOTTOM_EXTRA": {"use": "tab_gui"}
         },
         "VestnikDm": {
-          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
-          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
+          "L_BOTTOM_EXTRA": {"use": "esc_ctrl"},
+          "R_BOTTOM_EXTRA": {"use": "tab_gui"}
         },
         "Mantra": {
-          "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
-          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
+          "L_BOTTOM_EXTRA": {"use": "esc_ctrl"},
+          "R_BOTTOM_EXTRA": {"use": "tab_gui"}
         },
         "Nav": {
           "L_BOTTOM_EXTRA": {"os": "delete_word_left"},
-          "R_BOTTOM_EXTRA": {"os": "delete_word_right"},
-          "L_PINKY_BOTTOM": {"os": "undo"},
-          "L_INNER_HOME": {"os": "redo"},
-          "R_INDEX_BOTTOM": "none"
+          "R_BOTTOM_EXTRA": {"os": "delete_word_right"}
         }
       },
       "alpha_capacity": 34
@@ -230,6 +223,11 @@
       "position_set": "cantor_ble_42",
       "zmk_transform": "config/keyboards/cantor_ble/shields/cantor_ble/cantor_ble.dtsi",
       "zmk": {"keyboard": "cantor_ble", "board": "nice_nano/nrf52840/zmk", "shields": ["cantor_ble_left", "cantor_ble_right"]},
+      "extended_thumbs": true,
+      "defaults": {
+        "L_THUMB_OPTIONAL": {"use": "esc_mouse"},
+        "R_THUMB_OPTIONAL": {"use": "tab_fn"}
+      },
       "alpha_capacity": 38
     },
     "klor_konrad_40": {

@@ -321,9 +321,23 @@ child_layer = "Mouse"
 parent_position = "L_THUMB_A"
 child_position = "L_THUMB_B"
 
+[behaviors.mouse_chord_34]
+recipe = "layer_chord"
+parent_layer = "Nav"
+child_layer = "Sym"
+parent_position = "L_THUMB_B"
+child_position = "L_THUMB_A"
+
 [behaviors.fn_chord]
 recipe = "layer_chord"
 parent_layer = "Sym"
+child_layer = "Fn"
+parent_position = "R_THUMB_B"
+child_position = "R_THUMB_A"
+
+[behaviors.fn_chord_34]
+recipe = "layer_chord"
+parent_layer = "Num"
 child_layer = "Fn"
 parent_position = "R_THUMB_B"
 child_position = "R_THUMB_A"
@@ -397,6 +411,23 @@ layer = "Nav"
 layer_position = "L_THUMB_B"
 layers = ["Graphium", "VestnikDm"]
 variants = ["core34"]
+number_layer = "dedicated"
+term_ms = 60
+prior_idle_ms = 0
+modifiers = [
+  { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
+  { name = "alt", behavior = "osm_alt", position = "L_RING_HOME" },
+  { name = "ctrl", behavior = "osm_ctrl", position = "L_MIDDLE_HOME" },
+  { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
+]
+
+[[modifier_chords]]
+name = "nav_34_trilayer"
+layer = "Nav"
+layer_position = "L_THUMB_A"
+layers = ["Graphium", "VestnikDm"]
+variants = ["core34"]
+number_layer = "trilayer"
 term_ms = 60
 prior_idle_ms = 0
 modifiers = [
@@ -443,6 +474,7 @@ layer = "Sym"
 layer_position = "L_THUMB_A"
 layers = ["Graphium", "VestnikDm"]
 variants = ["core34"]
+number_layer = "dedicated"
 term_ms = 60
 prior_idle_ms = 0
 modifiers = [
@@ -450,6 +482,22 @@ modifiers = [
   { name = "alt", behavior = "osm_alt", position = "L_RING_HOME" },
   { name = "ctrl", behavior = "osm_ctrl", position = "L_MIDDLE_HOME" },
   { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
+]
+
+[[modifier_chords]]
+name = "sym_34_trilayer"
+layer = "Sym"
+layer_position = "R_THUMB_B"
+layers = ["Graphium", "VestnikDm"]
+variants = ["core34"]
+number_layer = "trilayer"
+term_ms = 60
+prior_idle_ms = 0
+modifiers = [
+  { name = "shift", behavior = "osm_shift", position = "R_INDEX_HOME" },
+  { name = "ctrl", behavior = "osm_ctrl", position = "R_MIDDLE_HOME" },
+  { name = "alt", behavior = "osm_alt", position = "R_RING_HOME" },
+  { name = "gui", behavior = "osm_gui", position = "R_PINKY_HOME" },
 ]
 
 [behaviors.shift_nav]
@@ -462,6 +510,12 @@ tap = { use = "osm_shift" }
 recipe = "tap_hold"
 timing = "layer_thumb"
 hold = { layer = "Sym", mode = "momentary" }
+tap = { use = "osm_shift" }
+
+[behaviors.shift_num]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Num", mode = "momentary" }
 tap = { use = "osm_shift" }
 
 [behaviors.bspc_sym]
@@ -538,10 +592,25 @@ hold = { layer = "Num", mode = "momentary" }
 tap = "BSPC"
 
 [behaviors.esc_mouse]
-recipe = "tap_hold"
+recipe = "layer_chord"
 timing = "layer_thumb"
-hold = { layer = "Mouse", mode = "momentary" }
+parent_layer = "Nav"
+child_layer = "Sym"
+parent_position = "L_THUMB_B"
+child_position = "L_THUMB_A"
 tap = "ESC"
+
+[behaviors.esc_ctrl]
+recipe = "tap_hold"
+timing = "layer_modifier"
+hold = { key = "LCTRL" }
+tap = "ESC"
+
+[behaviors.tab_gui]
+recipe = "tap_hold"
+timing = "layer_modifier"
+hold = { key = "RGUI" }
+tap = "TAB"
 
 [behaviors.tab_fn]
 recipe = "tap_hold"
@@ -948,11 +1017,37 @@ slow_release = true
 draw = { type = "mouse-activator" }
 
 [[combos]]
+name = "mouse_34"
+positions = ["L_THUMB_A", "L_THUMB_B"]
+layers = ["Graphium", "VestnikDm"]
+variants = ["core34"]
+extended_thumbs = false
+number_layer = "dedicated"
+action = { use = "mouse_chord_34" }
+term_ms = 60
+prior_idle_ms = 0
+slow_release = true
+draw = { type = "mouse-activator" }
+
+[[combos]]
 name = "fn"
 positions = ["R_THUMB_A", "R_THUMB_B"]
 layers = ["Graphium", "Bunya", "VestnikDm", "Mantra"]
 variants = ["core30"]
 action = { use = "fn_chord" }
+term_ms = 60
+prior_idle_ms = 0
+slow_release = true
+draw = { type = "fn-activator" }
+
+[[combos]]
+name = "fn_34"
+positions = ["R_THUMB_A", "R_THUMB_B"]
+layers = ["Graphium", "VestnikDm"]
+variants = ["core34"]
+extended_thumbs = false
+number_layer = "dedicated"
+action = { use = "fn_chord_34" }
 term_ms = 60
 prior_idle_ms = 0
 slow_release = true

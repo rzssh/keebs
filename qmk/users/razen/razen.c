@@ -308,6 +308,14 @@ static void process_tap_dance_release(uint16_t keycode, keyrecord_t *record) {
 }
 
 static bool custom_keycode(uint16_t keycode) {
+#ifdef RAZEN_LAYER_STACK_ENABLE
+    for (uint8_t index = 0; index < razen_layer_stack_count; index++) {
+        if (razen_layer_stacks[index].parent_trigger == keycode ||
+            razen_layer_stacks[index].child_trigger == keycode) {
+            return true;
+        }
+    }
+#endif
 #ifdef RAZEN_SMART_LAYER_ENABLE
     if (keycode == razen_smart_layer_keycode) {
         return true;
@@ -404,6 +412,14 @@ static bool layer_control_position(uint16_t position) {
     for (uint8_t index = 0; index < razen_layer_chord_count; index++) {
         if (razen_layer_chords[index].parent_position == position ||
             razen_layer_chords[index].child_position == position) {
+            return true;
+        }
+    }
+#endif
+#ifdef RAZEN_LAYER_STACK_ENABLE
+    for (uint8_t index = 0; index < razen_layer_stack_count; index++) {
+        if (razen_layer_stacks[index].parent_position == position ||
+            razen_layer_stacks[index].child_position == position) {
             return true;
         }
     }
@@ -584,6 +600,41 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     process_tap_dance_release(keycode, record);
+
+#ifdef RAZEN_LAYER_STACK_ENABLE
+    for (uint8_t index = 0; index < razen_layer_stack_count; index++) {
+        razen_layer_stack_t *stack = &razen_layer_stacks[index];
+        bool parent = stack->parent_trigger == keycode;
+        if (!parent && stack->child_trigger != keycode) {
+            continue;
+        }
+        if (record->event.pressed) {
+            if (parent) {
+                stack->parent_pressed = true;
+                stack->child_latest = false;
+                layer_on(stack->parent_layer);
+            } else {
+                stack->child_pressed = true;
+                stack->child_latest = true;
+                layer_on(stack->child_layer);
+            }
+            clear_history();
+        } else if (parent) {
+            stack->parent_pressed = false;
+            if (stack->child_pressed) {
+                stack->child_latest = true;
+            }
+            layer_off(stack->parent_layer);
+        } else {
+            stack->child_pressed = false;
+            if (stack->parent_pressed) {
+                stack->child_latest = false;
+            }
+            layer_off(stack->child_layer);
+        }
+        return false;
+    }
+#endif
 
 #ifdef RAZEN_LAYER_CHORD_ENABLE
     if (record->event.pressed) {

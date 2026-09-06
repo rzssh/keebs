@@ -1,0 +1,66 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/kscan_mock.h>
+
+/ {
+    behaviors {
+        layer_stack: layer_stack {
+            compatible = "zmk,behavior-layer-chord";
+            #binding-cells = <1>;
+            parent-layer = <1>;
+            child-layer = <2>;
+            parent-overlay-layer = <3>;
+            child-overlay-layer = <4>;
+            parent-position = <0>;
+            child-position = <1>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+        base { bindings = <&mo 1 &mo 2 &kp A>; };
+        sym { bindings = <&trans &layer_stack 1 &kp B>; };
+        num { bindings = <&layer_stack 0 &trans &kp C>; };
+        sym_stack { bindings = <&trans &layer_stack 1 &kp D>; };
+        num_stack { bindings = <&layer_stack 0 &trans &kp E>; };
+    };
+};
+
+&kscan {
+    columns = <3>;
+    events = <
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_RELEASE(0,2,10)
+    >;
+};

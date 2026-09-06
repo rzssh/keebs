@@ -17,6 +17,12 @@ home_row_mods = { core30 = true, core34 = false }
 style = "right_space"
 number_layer = "dedicated"
 
+[[layer_stacks]]
+layers = ["Sym", "Num"]
+positions = ["L_THUMB_A", "R_THUMB_B"]
+variants = ["core34"]
+number_layer = "dedicated"
+
 [[conditional_layers]]
 if_layers = ["Nav", "Sym"]
 then_layer = "Num"
@@ -27,6 +33,12 @@ if_layers = ["Nav", "Sym"]
 then_layer = "Num"
 variants = ["core34"]
 number_layer = "trilayer"
+
+[[conditional_layers]]
+if_layers = ["Nav", "Sym"]
+then_layer = "Mouse"
+variants = ["core34"]
+number_layer = "dedicated"
 
 [operating_systems.linux]
 home = { key = "HOME" }
