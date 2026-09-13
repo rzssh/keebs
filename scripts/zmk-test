@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo="$(cd "$(dirname "$0")/.." && pwd)"
-workspace="${1:-${ZMK_TEST_WORKSPACE:-${ZMK_WORKSPACE_BASE:-${XDG_DATA_HOME:-$HOME/.local/share}/zmk-workspaces}/luna}}"
+workspace="${1:-${ZMK_TEST_WORKSPACE:-${ZMK_WORKSPACE_BASE:-$repo/.cache/zmk-workspaces}/main}}"
 workspace="$(realpath -m "$workspace")"
 expected_zmk="$(python3 - "$repo/config/default.west.yml" <<'PY'
 import sys

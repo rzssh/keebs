@@ -16,7 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
-#include "config_common.h"
+
+#define I2C_DRIVER I2CD1
+#define I2C1_SCL_PIN D0
+#define I2C1_SDA_PIN D1
 
 
 // ┌─────────────────────────────────────────────────┐
@@ -46,10 +49,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // │ e n c o d e r s                                 │
 // └─────────────────────────────────────────────────┘ 
 
-#define ENCODERS_PAD_A       { F5 }
-#define ENCODERS_PAD_B       { F4 }
-#define ENCODERS_PAD_A_RIGHT { F4 }
-#define ENCODERS_PAD_B_RIGHT { F5 }
 #define ENCODER_RESOLUTION 2
 
 
@@ -60,7 +59,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef OLED_ENABLE
 #    define OLED_DISPLAY_128X64
 #    define SPLIT_OLED_ENABLE
-#    define OLED_FONT_H  "./lib/glcdfont.c"
 #endif
 
 
@@ -77,6 +75,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    define SPLIT_TRANSPORT_MIRROR
 #    define DRIVER_LED_TOTAL 42 // Number of LEDs
 #    define RGB_MATRIX_SPLIT { 21, 21 }
+#    define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_BREATHING
+#    define RGB_MATRIX_DEFAULT_ON true
 #    define RGB_MATRIX_MAXIMUM_BRIGHTNESS 180
 #    define RGB_MATRIX_STARTUP_HUE 35
 #    define RGB_MATRIX_STARTUP_VAL RGB_MATRIX_MAXIMUM_BRIGHTNESS

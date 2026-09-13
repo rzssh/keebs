@@ -34,7 +34,8 @@ for path in sorted(repo.glob("config/**/*.y*ml")):
                 raise SystemExit(f"{path}: {project['name']} revision is not a full commit SHA")
 PY
 
-for artifact in draw/generated/*.svg; do
+mapfile -t artifacts < <(git ls-files 'draw/generated/*.svg')
+for artifact in "${artifacts[@]}"; do
     profile="$(basename "$artifact" .svg)"
     output="$temporary/$profile"
     ./scripts/generate draw --profile "$profile" --out "$output" >/dev/null

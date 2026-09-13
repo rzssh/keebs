@@ -107,129 +107,6 @@ link_keyboard_definition() {
     cp -a "$KEYBOARD_SRC/." "$dest/"
 }
 
-patch_keyboard_for_rp2040() {
-    if [[ "$KEYBOARD" != "yetis" || "$QMK_CONVERT_TO" != "rp2040_ce" ]]; then
-        return
-    fi
-
-    python3 - "$QMK_HOME/keyboards/yetis/keyboard.json" <<'PY'
-import json
-import os
-import sys
-from pathlib import Path
-
-path = Path(sys.argv[1])
-data = json.loads(path.read_text())
-data["pin_compatible"] = "elite_c"
-data["bootloader"] = "rp2040"
-data.setdefault("features", {})["rgblight"] = True
-data.setdefault("ws2812", {})["driver"] = "vendor"
-path.write_text(json.dumps(data, indent=4) + "\n")
-PY
-    if [[ -f "$QMK_HOME/keyboards/yetis/rules.mk" ]]; then
-        python3 - "$QMK_HOME/keyboards/yetis/rules.mk" <<'PY'
-import sys
-from pathlib import Path
-
-path = Path(sys.argv[1])
-lines = [line for line in path.read_text().splitlines() if not line.startswith("PIN_COMPATIBLE")]
-path.write_text("\n".join(lines).rstrip() + "\n")
-PY
-    fi
-}
-
-patch_klor_keyboard() {
-    if [[ "$KEYBOARD_ROOT" != "klor" ]]; then
-        return
-    fi
-
-    python3 - "$QMK_HOME/keyboards/klor/rules.mk" "$QMK_HOME/keyboards/klor/config.h" "$QMK_HOME/keyboards/klor/klor.c" "$QMK_HOME/keyboards/klor/halconf.h" <<'PY'
-import sys
-from pathlib import Path
-
-rules_path = Path(sys.argv[1])
-config_path = Path(sys.argv[2])
-klor_c_path = Path(sys.argv[3])
-halconf_path = Path(sys.argv[4])
-
-rules = rules_path.read_text()
-rules = rules.replace("OLED_DRIVER = SSD1306", "OLED_DRIVER = ssd1306")
-rules = rules.replace("HAPTIC_DRIVER = DRV2605L", "HAPTIC_DRIVER = drv2605l")
-rules = rules.replace("RGB_MATRIX_DRIVER = WS2812", "RGB_MATRIX_DRIVER = ws2812")
-if "I2C_DRIVER_REQUIRED = yes" not in rules:
-    rules = rules.rstrip() + "\n\nI2C_DRIVER_REQUIRED = yes\n"
-rules_path.write_text(rules)
-
-config = config_path.read_text()
-config = config.replace('#include "config_common.h"\n', "")
-config = config.replace("#define RGB_DI_PIN D3", "#define WS2812_DI_PIN D3")
-config = config.replace("#define I2C1_SCL_PIN GP3\n", "")
-config = config.replace("#define I2C1_SDA_PIN GP2\n", "")
-config = config.replace("#define I2C_DRIVER I2CD1\n", "")
-config = config.replace("#define ENCODERS_PAD_A       { F5 }\n", "")
-config = config.replace("#define ENCODERS_PAD_B       { F4 }\n", "")
-config = config.replace("#define ENCODERS_PAD_A_RIGHT { F4 }\n", "")
-config = config.replace("#define ENCODERS_PAD_B_RIGHT { F5 }\n", "")
-config = config.replace('#    define OLED_FONT_H  "./lib/glcdfont.c"\n', "")
-if "#define I2C1_SCL_PIN D0" not in config:
-    config = config.replace(
-        "#pragma once\n",
-        "#pragma once\n\n#define I2C_DRIVER I2CD1\n#define I2C1_SCL_PIN D0\n#define I2C1_SDA_PIN D1\n\n",
-        1,
-    )
-if "#    define RGB_MATRIX_DEFAULT_ON true" not in config:
-    config = config.replace(
-        "#    define RGB_MATRIX_SPLIT { 21, 21 }\n",
-        "#    define RGB_MATRIX_SPLIT { 21, 21 }\n#    define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_BREATHING\n#    define RGB_MATRIX_DEFAULT_ON true\n",
-        1,
-    )
-config_path.write_text(config)
-
-klor_c = klor_c_path.read_text()
-old_oled = """oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
-    return OLED_ROTATION_180;
-}
-"""
-new_oled = """#ifdef OLED_ENABLE
-oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
-    return rotation;
-}
-#endif
-"""
-wrapped_old_oled = """#ifdef OLED_ENABLE
-oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
-    return OLED_ROTATION_180;
-}
-#endif
-"""
-double_wrapped_new_oled = """#ifdef OLED_ENABLE
-#ifdef OLED_ENABLE
-oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
-    return rotation;
-}
-#endif
-#endif
-"""
-if double_wrapped_new_oled in klor_c:
-    klor_c = klor_c.replace(double_wrapped_new_oled, new_oled)
-if wrapped_old_oled in klor_c:
-    klor_c = klor_c.replace(wrapped_old_oled, new_oled)
-elif old_oled in klor_c and new_oled not in klor_c:
-    klor_c = klor_c.replace(old_oled, new_oled)
-klor_c_path.write_text(klor_c)
-
-halconf_path.write_text("""// Copyright 2022 QMK
-// SPDX-License-Identifier: GPL-2.0-or-later
-
-#pragma once
-
-#define HAL_USE_I2C TRUE
-
-#include_next <halconf.h>
-""")
-PY
-}
-
 patch_cygnus_keyboard() {
     if [[ "$KEYBOARD" != "crkbd/rev1" || "$OUTPUT_KEYBOARD" != "cygnus" ]]; then
         return
@@ -356,11 +233,16 @@ PY
 }
 
 generate_keymap() {
-    if [[ -z "$KEYMAP_PROFILE" ]]; then
-        echo "No generator configured for $KEYBOARD:$KEYMAP" >&2
-        exit 1
-    fi
     "$REPO_ROOT/scripts/generate" qmk --profile "$KEYMAP_PROFILE" --os "$KEYMAP_OS"
+}
+
+prepare_qmk() {
+    clone_or_update_qmk
+    patch_qmk_python_compat
+    link_keyboard_definition
+    patch_cygnus_keyboard
+    generate_keymap
+    link_keymap
 }
 
 container_runtime() {
@@ -442,14 +324,7 @@ PY
 }
 
 build_keymap() {
-    clone_or_update_qmk
-    patch_qmk_python_compat
-    link_keyboard_definition
-    patch_keyboard_for_rp2040
-    patch_klor_keyboard
-    patch_cygnus_keyboard
-    generate_keymap
-    link_keymap
+    prepare_qmk
 
     mkdir -p "$ARTIFACT_DIR"
     local stamp
@@ -478,20 +353,13 @@ build_keymap() {
 }
 
 flash_keymap() {
-    clone_or_update_qmk
-    patch_qmk_python_compat
-    link_keyboard_definition
-    patch_keyboard_for_rp2040
-    patch_klor_keyboard
-    patch_cygnus_keyboard
-    generate_keymap
-    link_keymap
+    prepare_qmk
     run_qmk_make "$KEYBOARD:$KEYMAP:flash" flash
 }
 
 action="${1:-build}"
 case "$action" in
-    setup) clone_or_update_qmk; patch_qmk_python_compat; ensure_qmk_cli; link_keyboard_definition; patch_keyboard_for_rp2040; patch_klor_keyboard; patch_cygnus_keyboard; generate_keymap; link_keymap ;;
+    setup) prepare_qmk; ensure_qmk_cli ;;
     build) build_keymap ;;
     flash) flash_keymap ;;
     clean)

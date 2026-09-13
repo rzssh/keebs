@@ -6,7 +6,7 @@ workspace="${1:?workspace required}"
 
 for patch in "$repo"/config/patches/*.patch; do
     project="$(basename "$patch" .patch)"
-    target="$workspace/$project"
+    target="$(cd "$workspace" && west list -f '{abspath}' "$project" 2>/dev/null)" || continue
     [[ -d "$target/.git" ]] || {
         echo "Missing patched project: $target" >&2
         exit 1

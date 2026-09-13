@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_DIR="$REPO_ROOT/config"
-WORKSPACE_BASE="${ZMK_WORKSPACE_BASE:-${XDG_DATA_HOME:-$HOME/.local/share}/zmk-workspaces}"
+WORKSPACE_BASE="${ZMK_WORKSPACE_BASE:-$REPO_ROOT/.cache/zmk-workspaces}"
 ZEPHYR_SDK_VERSION=0.17.0
 
 find_sdk() {
@@ -47,7 +47,6 @@ find_keyboard_dir() {
     fi
 }
 
-# Resolve west manifest: keyboard-specific if exists, otherwise default
 find_manifest() {
     if [[ -f "$KB_DIR/$KEYBOARD.west.yml" ]]; then
         echo "$KEYBOARD.west.yml"
@@ -56,15 +55,6 @@ find_manifest() {
     else
         echo "No west manifest found for '$KEYBOARD'" >&2
         exit 1
-    fi
-}
-
-# Resolve conf: keyboard-specific if exists, otherwise default
-find_conf() {
-    if [[ -f "$KB_DIR/$KEYBOARD.conf" ]]; then
-        echo "$KB_DIR/$KEYBOARD.conf"
-    elif [[ -f "$CONFIG_DIR/default.conf" ]]; then
-        echo "$CONFIG_DIR/default.conf"
     fi
 }
 
@@ -91,7 +81,6 @@ print(d.get('board', 'nice_nano/nrf52840/zmk'))
     esac
 }
 
-# Read board/shield from keyboard.yml or use conventions
 get_board_shield() {
     local yml="$KB_DIR/keyboard.yml"
     if [[ -f "$yml" ]]; then
@@ -185,8 +174,13 @@ usage() {
 KEYBOARD="$1"
 ACTION="${2:-both}"
 OUTPUT_KEYBOARD="${ZMK_OUTPUT_KEYBOARD:-$KEYBOARD}"
-WORKSPACE="$WORKSPACE_BASE/$KEYBOARD"
 KB_DIR="$(find_keyboard_dir "$KEYBOARD")"
+case "$KEYBOARD" in
+    adept|charybdis_nano|flake|glove80|piantor_pro) DEFAULT_WORKSPACE_GROUP="$KEYBOARD" ;;
+    *) DEFAULT_WORKSPACE_GROUP=main ;;
+esac
+WORKSPACE_GROUP="${ZMK_WORKSPACE_GROUP:-$DEFAULT_WORKSPACE_GROUP}"
+WORKSPACE="$WORKSPACE_BASE/$WORKSPACE_GROUP"
 
 KEYMAP_PROFILE="${KEYMAP_PROFILE:-}"
 KEYMAP_OS="${KEYMAP_OS:-linux}"
@@ -217,7 +211,6 @@ sync_workspace_config() {
 
     [[ -f "$CONFIG_DIR/default.west.yml" ]] && ln -sf "$CONFIG_DIR/default.west.yml" "$WORKSPACE/config/"
 
-    # Keyboard-specific files
     for f in "$KB_DIR"/*; do
         [[ -e "$f" && "$(basename "$f")" != "shields" && "$(basename "$f")" != "$KEYBOARD.conf" ]] && ln -sf "$f" "$WORKSPACE/config/"
     done
@@ -267,41 +260,45 @@ print(d.get('config_prefix', '$KEYBOARD'))
         ln -sf "$WORKSPACE/config/$KEYBOARD.conf" "$WORKSPACE/config/$config_prefix.conf"
     fi
 
-    # Custom shield definitions (must be at config/boards/shields/ for ZMK)
     if [[ -d "$KB_DIR/shields" ]]; then
         mkdir -p "$WORKSPACE/config/boards"
         ln -sf "$KB_DIR/shields" "$WORKSPACE/config/boards/shields"
     fi
 }
 
-setup_workspace() {
-    echo "Setting up west workspace for $KEYBOARD at $WORKSPACE ..."
-    sync_workspace_config
-
-    local manifest
-    manifest="$(find_manifest)"
-
-    cd "$WORKSPACE"
-    [[ -d .west ]] && rm -rf .west
-    west init -l config/ --mf "$manifest"
-    west update
+apply_patches() {
     "$REPO_ROOT/scripts/apply-zmk-patches" "$WORKSPACE"
-
-    python3 -m venv "$WORKSPACE/.venv"
-    "$WORKSPACE/.venv/bin/pip" install -q -r "$WORKSPACE/zephyr/scripts/requirements.txt"
-    "$WORKSPACE/.venv/bin/pip" install -q -U protobuf
-    "$WORKSPACE/.venv/bin/pip" install -q --ignore-installed west
-
-    # Apply patches
     if [[ -d "$KB_DIR/shields" ]]; then
         for patch in "$KB_DIR"/shields/*/*.patch; do
             [[ -f "$patch" ]] || continue
-            echo "Applying patch: $patch"
-            cd "$WORKSPACE/zephyr" && git apply "$patch" 2>/dev/null && echo "  Applied." || echo "  Already applied or failed."
-            cd "$WORKSPACE"
+            if git -C "$WORKSPACE/zephyr" apply --reverse --check "$patch" 2>/dev/null; then
+                continue
+            fi
+            git -C "$WORKSPACE/zephyr" apply --check "$patch"
+            git -C "$WORKSPACE/zephyr" apply "$patch"
         done
     fi
+}
 
+setup_workspace() {
+    echo "Setting up $WORKSPACE_GROUP west workspace at $WORKSPACE ..."
+    sync_workspace_config
+    cd "$WORKSPACE"
+    if [[ ! -d .west ]]; then
+        west init -l config/ --mf "$(find_manifest)"
+    fi
+    while IFS= read -r project_path; do
+        mkdir -p "$(dirname "$project_path")"
+    done < <(west list -f '{abspath}')
+    west update --narrow
+    apply_patches
+    if [[ ! -x "$WORKSPACE/.venv/bin/west" ]] || [[ "$(head -n 1 "$WORKSPACE/.venv/bin/west")" != "#!$WORKSPACE/.venv/bin/python3" ]]; then
+        rm -rf "$WORKSPACE/.venv"
+        python3 -m venv "$WORKSPACE/.venv"
+        "$WORKSPACE/.venv/bin/pip" install -q -r "$WORKSPACE/zephyr/scripts/requirements.txt"
+        "$WORKSPACE/.venv/bin/pip" install -q -U protobuf
+        "$WORKSPACE/.venv/bin/pip" install -q --ignore-installed west
+    fi
     echo "Done. Workspace ready at $WORKSPACE"
 }
 
@@ -322,12 +319,12 @@ if [[ "$ACTION" == "reset" && ! -f "$reset_conf" ]]; then
     export CMAKE_PREFIX_PATH="$WORKSPACE/zephyr/share/zephyr-package/cmake"
     [[ -d "$WORKSPACE/.venv" ]] && source "$WORKSPACE/.venv/bin/activate"
     cd "$WORKSPACE"
-    cmake -E remove_directory "build/settings_reset"
-    west build -d "build/settings_reset" -s zmk/app -b "$board" -- -DSHIELD=settings_reset
-    out="$REPO_ROOT/build/$KEYBOARD"
+    cmake -E remove_directory "build/$OUTPUT_KEYBOARD/settings_reset"
+    west build -d "build/$OUTPUT_KEYBOARD/settings_reset" -s zmk/app -b "$board" -- -DSHIELD=settings_reset
+    out="$REPO_ROOT/build/$OUTPUT_KEYBOARD"
     mkdir -p "$out"
-    cp "build/settings_reset/zephyr/zmk.uf2" "$out/settings_reset.uf2"
-    echo "→ build/$KEYBOARD/settings_reset.uf2"
+    cp "build/$OUTPUT_KEYBOARD/settings_reset/zephyr/zmk.uf2" "$out/settings_reset.uf2"
+    echo "→ build/$OUTPUT_KEYBOARD/settings_reset.uf2"
     echo "Flash this to BOTH halves to clear bonds."
     exit 0
 fi
@@ -355,7 +352,7 @@ if ((${#missing_projects[@]})); then
     exit 1
 fi
 
-"$REPO_ROOT/scripts/apply-zmk-patches" "$WORKSPACE"
+apply_patches
 
 revision_mismatches=()
 while IFS='|' read -r project revision project_path; do
@@ -372,8 +369,8 @@ while IFS='|' read -r project revision project_path; do
 done < <(west list -f '{name}|{revision}|{abspath}')
 if ((${#revision_mismatches[@]})); then
     echo "Updating stale workspace projects: ${revision_mismatches[*]}"
-    west update
-    "$REPO_ROOT/scripts/apply-zmk-patches" "$WORKSPACE"
+    west update --narrow
+    apply_patches
 fi
 
 build_entry() {
@@ -388,10 +385,12 @@ build_entry() {
     fi
 
     if [[ "${CLEAN:-}" == "1" || ( "$ACTION" == "reset" && -n "${EXTRA_CONF_PATH:-}" ) ]]; then
-        rm -rf "build/$label"
+        rm -rf "build/$OUTPUT_KEYBOARD/$label"
     fi
 
-    local cmake_args=("-DZMK_CONFIG=$WORKSPACE/config" "-DKEYMAP_FILE=$DEFAULT_KEYMAP_PATH" "-DZMK_EXTRA_MODULES=$CONFIG_DIR/modules/layer-chord")
+    local keymap_file="$DEFAULT_KEYMAP_PATH"
+    [[ -f "$KB_DIR/$label.keymap" ]] && keymap_file="$(realpath "$KB_DIR/$label.keymap")"
+    local cmake_args=("-DZMK_CONFIG=$WORKSPACE/config" "-DKEYMAP_FILE=$keymap_file" "-DZMK_EXTRA_MODULES=$CONFIG_DIR/modules/layer-chord")
     local snippet_args=()
     if [[ -n "$shield" ]]; then
         cmake_args+=("-DSHIELD=$shield")
@@ -410,11 +409,11 @@ build_entry() {
         read -ra _extra_cmake <<< "$entry_cmake_args"
         cmake_args+=("${_extra_cmake[@]}")
     fi
-    west build -d "build/$label" -s zmk/app -b "$board" "${snippet_args[@]}" -- "${cmake_args[@]}"
+    west build -d "build/$OUTPUT_KEYBOARD/$label" -s zmk/app -b "$board" "${snippet_args[@]}" -- "${cmake_args[@]}"
 
     local out="$REPO_ROOT/build/$OUTPUT_KEYBOARD"
     mkdir -p "$out"
-    cp "build/$label/zephyr/zmk.uf2" "$out/${label}.uf2"
+    cp "build/$OUTPUT_KEYBOARD/$label/zephyr/zmk.uf2" "$out/${label}.uf2"
     echo "→ build/$OUTPUT_KEYBOARD/${label}.uf2"
 }
 
@@ -452,16 +451,16 @@ case "$ACTION" in
         done
         ;;
     reset)
-        cmake -E remove_directory "build/settings_reset"
-        west build -d "build/settings_reset" -s zmk/app -b "$board" -- -DSHIELD=settings_reset
-        out="$REPO_ROOT/build/$KEYBOARD"
+        cmake -E remove_directory "build/$OUTPUT_KEYBOARD/settings_reset"
+        west build -d "build/$OUTPUT_KEYBOARD/settings_reset" -s zmk/app -b "$board" -- -DSHIELD=settings_reset
+        out="$REPO_ROOT/build/$OUTPUT_KEYBOARD"
         mkdir -p "$out"
-        cp "build/settings_reset/zephyr/zmk.uf2" "$out/settings_reset.uf2"
-        echo "→ build/$KEYBOARD/settings_reset.uf2"
+        cp "build/$OUTPUT_KEYBOARD/settings_reset/zephyr/zmk.uf2" "$out/settings_reset.uf2"
+        echo "→ build/$OUTPUT_KEYBOARD/settings_reset.uf2"
         echo "Flash this to BOTH halves to clear bonds."
         ;;
     clean)
-        rm -rf build/ "$REPO_ROOT/build/$KEYBOARD"
+        rm -rf "build/$OUTPUT_KEYBOARD" "$REPO_ROOT/build/$OUTPUT_KEYBOARD"
         echo "Cleaned."
         ;;
     *) usage ;;

@@ -137,9 +137,14 @@ def draw(repo: Path, registry: dict[str, Any], requested: str) -> None:
 
 
 def clean_generated(repo: Path) -> None:
-    for path in (repo / ".cache" / "keymap", repo / "build", repo / "draw" / "generated"):
+    for path in (repo / ".cache" / "keymap", repo / "build"):
         if path.exists():
             shutil.rmtree(path)
+            print(f"removed {path.relative_to(repo)}")
+    tracked = set(subprocess.check_output(["git", "ls-files", "draw/generated/*.svg"], cwd=repo, text=True).splitlines())
+    for path in (repo / "draw" / "generated").glob("*.svg"):
+        if str(path.relative_to(repo)) not in tracked:
+            path.unlink()
             print(f"removed {path.relative_to(repo)}")
 
 

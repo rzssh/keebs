@@ -1,4 +1,5 @@
 board: xiao_ble/nrf52840/zmk
+default_builds: [adept]
 builds:
   adept:
     shield: adept

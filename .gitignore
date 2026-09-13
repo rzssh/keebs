@@ -9,6 +9,8 @@ build/
 _tmp*.out
 cpu.prof
 .direnv/
+.env
+.env.local
 WIRED_ZMK_NOTES.md
 __pycache__/
 *.py[cod]
@@ -18,4 +20,3 @@ draw/*
 draw/generated/*
 !draw/generated/cradio_34.svg
 !draw/generated/luna_30.svg
-!draw/generated/totem_38.svg

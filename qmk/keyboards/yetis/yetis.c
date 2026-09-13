@@ -6,7 +6,6 @@
 #include "quantum.h"
 
 #ifdef OLED_ENABLE
-/* corresponds to the layer number in keymaps/default/keymap.c */
 #define LAYER_GAME 4
 oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
     if (!is_keyboard_master()) {
