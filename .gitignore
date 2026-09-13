@@ -4,6 +4,10 @@
 *.uf2
 build/
 .cache/
+.tmp/
+.mana-analysis/
+_tmp*.out
+cpu.prof
 .direnv/
 WIRED_ZMK_NOTES.md
 __pycache__/

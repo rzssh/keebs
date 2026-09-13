@@ -1,1 +1,3 @@
 s/.*hid_listener_keycode_//p
+/Tried to unregister modifier/p
+/ACTIVE STICKY KEY CLEARED TOO EARLY/p

@@ -169,14 +169,12 @@ rect.mod { fill: #181825; }
 text.label { stroke: none; }
 .layer-Graphium text, .layer-Graphium .glyph, .layer-Graphium rect.held { fill: #cdd6f4; }
 .layer-VestnikDm text, .layer-VestnikDm .glyph, .layer-VestnikDm rect.held { fill: #cba6f7; }
-.layer-VestnikDm .key.shifted, .layer-Mantra .key.shifted { fill: #ff6b6b; }
+.layer-VestnikDm .key.shifted { fill: #ff6b6b; }
 .layer-Nav text, .layer-Nav .glyph, .layer-Nav rect.held { fill: #89b4fa; }
 .layer-Sym text, .layer-Sym .glyph, .layer-Sym rect.held { fill: #a6e3a1; }
 .layer-Num text, .layer-Num .glyph, .layer-Num rect.held { fill: #fab387; }
 .layer-Fn text, .layer-Fn .glyph, .layer-Fn rect.held { fill: #f9e2af; }
 .layer-Mouse text, .layer-Mouse .glyph, .layer-Mouse rect.held { fill: #94e2d5; }
-.layer-Game text, .layer-Game .glyph, .layer-Game rect.held { fill: #ff4d6d; }
-.layer-Game .key.shifted { fill: #c7f464; }
 text.held { fill: #1e1e2e; }
 text.trans { fill: #6c7086; }
 rect:has(~ a[href="#Nav"]) { stroke: #89b4fa; stroke-width: 2; }
@@ -185,19 +183,11 @@ rect.num-activator { stroke: #fab387; stroke-width: 2; }
 rect:has(~ a[href="#Num"]) { stroke: #fab387; stroke-width: 2; }
 rect.key.mouse-activator, rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
 rect.key.fn-activator, rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
-rect:has(~ a[href="#Game"]) { stroke: #ff4d6d; stroke-width: 2; }
-rect.gameextra-activator { stroke: #c7f464; stroke-width: 2; }
-rect.vestnik2-activator { stroke: #89b4fa; stroke-width: 2; }
-rect.vestnik2-inner { fill: none; stroke: #ff6b6b !important; stroke-width: 2; }
 rect.combo.mouse-activator { fill: #94e2d5; stroke: #94e2d5; }
 rect.combo.fn-activator { fill: #f9e2af; stroke: #f9e2af; }
 text.combo.mouse-activator, svg.combo.mouse-activator, text.combo.fn-activator, svg.combo.fn-activator { fill: #1e1e2e; }
 a[href="#Mouse"] text.combo.layer-activator { fill: #94e2d5; font-size: 9px; }
 a[href="#Fn"] text.combo.layer-activator { fill: #f9e2af; }
-text.vestnik2-activator.tap { display: none; }
-text.vestnik2-activator { font-size: 12px; }
-text.gameextra-activator.tap { display: none; }
-text.gameextra-activator { font-size: 12px; }
 </style>
 <g transform="translate(30, 0)" class="layer-Graphium">
 <text x="0" y="28" class="label" id="Graphium">Graphium:</text>
@@ -339,11 +329,10 @@ text.gameextra-activator { font-size: 12px; }
 <g transform="translate(241, 236)" class="key keypos-32">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 </g>
-<g transform="translate(303, 245) rotate(15.0)" class="key keypos-33">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:arrow-up-bold" viewBox="0 0 24 24"><path d="M15,20H9V12H4.16L12,4.16L19.84,12H15V20Z" /></svg>
+<g transform="translate(303, 245) rotate(15.0)" class="key layer-activator keypos-33">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator"/>
 <a href="#Sym">
-<text x="0" y="24" class="key hold layer-activator">Sym</text>
+<text x="0" y="0" class="key layer-activator tap layer-activator">Sym</text>
 </a></g>
 <g transform="translate(360, 270) rotate(30.0)" class="key keypos-34">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -355,11 +344,10 @@ text.gameextra-activator { font-size: 12px; }
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:keyboard-space" viewBox="0 0 24 24"><path d="M3 15H5V19H19V15H21V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15Z" /></svg>
 </g>
-<g transform="translate(501, 245) rotate(-15.0)" class="key num-activator keypos-36">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key num-activator"/>
-<svg x="-7" y="-7" height="14" width="14.0" class="key num-activator tap glyph mdi:keyboard-return" viewBox="0 0 24 24"><path d="M19,7V11H5.83L9.41,7.41L8,6L2,12L8,18L9.41,16.58L5.83,13H21V7H19Z" /></svg>
+<g transform="translate(501, 245) rotate(-15.0)" class="key layer-activator keypos-36">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator"/>
 <a href="#Num">
-<text x="0" y="24" class="key num-activator hold layer-activator">Num</text>
+<text x="0" y="0" class="key layer-activator tap layer-activator">Num</text>
 </a></g>
 <g transform="translate(563, 236)" class="key keypos-37">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -381,11 +369,11 @@ text.gameextra-activator { font-size: 12px; }
 <g transform="translate(0, 56)">
 <g transform="translate(73, 113) rotate(-10.0)" class="key keypos-0">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">Ц</text>
+<text x="0" y="0" class="key tap">Ш</text>
 </g>
 <g transform="translate(136, 62) rotate(-4.0)" class="key keypos-1">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">Г</text>
+<text x="0" y="0" class="key tap">З</text>
 </g>
 <g transform="translate(200, 28)" class="key keypos-2">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -393,7 +381,7 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(256, 56)" class="key keypos-3">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">Б</text>
+<text x="0" y="0" class="key tap">М</text>
 </g>
 <g transform="translate(312, 65)" class="key keypos-4">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -437,11 +425,11 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(312, 121)" class="key keypos-14">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">М</text>
+<text x="0" y="0" class="key tap">Б</text>
 </g>
 <g transform="translate(492, 121)" class="key keypos-15">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">Ь</text>
+<text x="0" y="0" class="key tap">Г</text>
 </g>
 <g transform="translate(548, 112)" class="key keypos-16">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -466,11 +454,11 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(92, 223) rotate(-10.0)" class="key keypos-21">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">Ш</text>
+<text x="0" y="0" class="key tap">Щ</text>
 </g>
 <g transform="translate(144, 173) rotate(-4.0)" class="key keypos-22">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">З</text>
+<text x="0" y="0" class="key tap">Ц</text>
 </g>
 <g transform="translate(200, 140)" class="key keypos-23">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -490,7 +478,7 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(548, 168)" class="key keypos-27">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">Й</text>
+<text x="0" y="0" class="key tap">Й/Ь</text>
 </g>
 <g transform="translate(604, 140)" class="key keypos-28">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -512,11 +500,10 @@ text.gameextra-activator { font-size: 12px; }
 <g transform="translate(241, 236)" class="key keypos-32">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 </g>
-<g transform="translate(303, 245) rotate(15.0)" class="key keypos-33">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:arrow-up-bold" viewBox="0 0 24 24"><path d="M15,20H9V12H4.16L12,4.16L19.84,12H15V20Z" /></svg>
+<g transform="translate(303, 245) rotate(15.0)" class="key layer-activator keypos-33">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator"/>
 <a href="#Sym">
-<text x="0" y="24" class="key hold layer-activator">Sym</text>
+<text x="0" y="0" class="key layer-activator tap layer-activator">Sym</text>
 </a></g>
 <g transform="translate(360, 270) rotate(30.0)" class="key keypos-34">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -528,33 +515,48 @@ text.gameextra-activator { font-size: 12px; }
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:keyboard-space" viewBox="0 0 24 24"><path d="M3 15H5V19H19V15H21V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15Z" /></svg>
 </g>
-<g transform="translate(501, 245) rotate(-15.0)" class="key num-activator keypos-36">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key num-activator"/>
-<svg x="-7" y="-7" height="14" width="14.0" class="key num-activator tap glyph mdi:keyboard-return" viewBox="0 0 24 24"><path d="M19,7V11H5.83L9.41,7.41L8,6L2,12L8,18L9.41,16.58L5.83,13H21V7H19Z" /></svg>
+<g transform="translate(501, 245) rotate(-15.0)" class="key layer-activator keypos-36">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator"/>
 <a href="#Num">
-<text x="0" y="24" class="key num-activator hold layer-activator">Num</text>
+<text x="0" y="0" class="key layer-activator tap layer-activator">Num</text>
 </a></g>
 <g transform="translate(563, 236)" class="key keypos-37">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 </g>
 <g class="combo combopos-0">
-<rect rx="6" ry="6" x="73" y="182" width="28" height="26" class="combo"/>
-<text x="87" y="195" class="combo tap">Щ</text>
+<rect rx="6" ry="6" x="562" y="141" width="28" height="26" class="combo"/>
+<text x="576" y="154" class="combo tap">.</text>
+<text x="576" y="143" class="combo shifted">?</text>
 </g>
 <g class="combo combopos-1">
+<rect rx="6" ry="6" x="618" y="144" width="28" height="26" class="combo"/>
+<text x="632" y="157" class="combo tap">,</text>
+<text x="632" y="146" class="combo shifted">!</text>
+</g>
+<g class="combo combopos-2">
+<rect rx="6" ry="6" x="672" y="185" width="28" height="26" class="combo"/>
+<text x="686" y="198" class="combo tap">-</text>
+</g>
+<g class="combo combopos-3">
+<path d="M658,260 h-48 a6.0,6.0 0 0 1 -6.0,-6.0 v-96" class="combo"/>
+<path d="M658,260 h48 a6.0,6.0 0 0 0 6.0,-6.0 v-13" class="combo"/>
+<rect rx="6" ry="6" x="644" y="247" width="28" height="26" class="combo"/>
+<text x="658" y="260" class="combo tap">&#x27;</text>
+</g>
+<g class="combo combopos-4">
 <rect rx="6" ry="6" x="478" y="136" width="28" height="26" class="combo"/>
 <text x="492" y="149" class="combo tap">Ъ</text>
 </g>
-<g class="combo combopos-2">
-<rect rx="6" ry="6" x="648" y="132" width="28" height="26" class="combo"/>
-<text x="662" y="145" class="combo tap">Ё</text>
+<g class="combo combopos-5">
+<rect rx="6" ry="6" x="652" y="77" width="28" height="26" class="combo"/>
+<text x="666" y="90" class="combo tap">Ё</text>
 </g>
-<g class="combo mouse-activator combopos-3">
+<g class="combo mouse-activator combopos-6">
 <rect rx="6" ry="6" x="318" y="245" width="28" height="26" class="combo mouse-activator"/>
 <a href="#Sym">
 <text x="332" y="258" class="combo mouse-activator tap layer-activator">Sym</text>
 </a></g>
-<g class="combo fn-activator combopos-4">
+<g class="combo fn-activator combopos-7">
 <rect rx="6" ry="6" x="459" y="244" width="28" height="26" class="combo fn-activator"/>
 <a href="#Fn">
 <text x="473" y="257" class="combo fn-activator tap layer-activator">Fn</text>
@@ -832,7 +834,7 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(256, 168)" class="key keypos-24">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">,</text>
+<text x="0" y="0" class="key tap">&quot;</text>
 </g>
 <g transform="translate(312, 177)" class="key keypos-25">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -1091,15 +1093,15 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(140, 117) rotate(-4.0)" class="key keypos-11">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F4</text>
+<text x="0" y="0" class="key tap">F1</text>
 </g>
 <g transform="translate(200, 84)" class="key keypos-12">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F5</text>
+<text x="0" y="0" class="key tap">F2</text>
 </g>
 <g transform="translate(256, 112)" class="key keypos-13">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F6</text>
+<text x="0" y="0" class="key tap">F3</text>
 </g>
 <g transform="translate(312, 121)" class="key keypos-14">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -1133,15 +1135,15 @@ text.gameextra-activator { font-size: 12px; }
 </g>
 <g transform="translate(144, 173) rotate(-4.0)" class="key keypos-22">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F1</text>
+<text x="0" y="0" class="key tap">F4</text>
 </g>
 <g transform="translate(200, 140)" class="key keypos-23">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F2</text>
+<text x="0" y="0" class="key tap">F5</text>
 </g>
 <g transform="translate(256, 168)" class="key keypos-24">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F3</text>
+<text x="0" y="0" class="key tap">F6</text>
 </g>
 <g transform="translate(312, 177)" class="key keypos-25">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>

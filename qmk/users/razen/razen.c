@@ -12,9 +12,6 @@ static uint32_t last_keypress_timer;
 static uint32_t current_keypress_idle = UINT32_MAX;
 static uint32_t repeat_timer;
 static uint8_t repeat_mods;
-#ifdef RAZEN_SMART_LAYER_ENABLE
-static bool smart_layer_active;
-#endif
 
 static bool shift_active(void) {
     return (get_mods() | get_oneshot_mods() | get_weak_mods()) & MOD_MASK_SHIFT;
@@ -150,10 +147,6 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
         uint16_t repeated = KC_NO;
         for (uint8_t output = 0; output < rule->emit_len; output++) {
             uint16_t emitted = rule->emit[output];
-            if (emitted == razen_adaptive_repeat_marker) {
-                append_history(emitted, 0);
-                continue;
-            }
             tap_code16(emitted);
             if (emitted == KC_BSPC) {
                 pop_history();
@@ -174,38 +167,6 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
         clear_history();
     }
     return true;
-}
-
-static void repeat_adaptive(void) {
-    uint16_t repeated = get_last_keycode();
-    uint8_t mods = repeat_mods;
-    uint8_t active_mods = get_mods() | get_oneshot_mods() | get_weak_mods();
-    bool substituted = false;
-    bool modifiers_match = !razen_adaptive_repeat_strict_modifiers || !active_mods;
-    if (modifiers_match && history_len && history_timer && timer_elapsed32(history_timer) <= razen_adaptive_repeat_timeout) {
-        for (uint8_t index = 0; index < razen_adaptive_repeat_rule_count; index++) {
-            if (razen_adaptive_repeat_rules[index].after != history[history_len - 1]) {
-                continue;
-            }
-            repeated = razen_adaptive_repeat_rules[index].emit;
-            mods = 0;
-            tap_code16(repeated);
-            remember_repeat(repeated, 0);
-            substituted = true;
-            break;
-        }
-    }
-    if (!substituted && repeated != KC_NO) {
-        set_last_mods(repeat_mods);
-        keyevent_t event = MAKE_KEYEVENT(0, 0, true);
-        repeat_key_invoke(&event);
-        event.pressed = false;
-        repeat_key_invoke(&event);
-    }
-    if (substituted) {
-        append_history(repeated, mods);
-    }
-    append_history(razen_adaptive_repeat_marker, 0);
 }
 
 static void repeat_magic(void) {
@@ -316,11 +277,6 @@ static bool custom_keycode(uint16_t keycode) {
         }
     }
 #endif
-#ifdef RAZEN_SMART_LAYER_ENABLE
-    if (keycode == razen_smart_layer_keycode) {
-        return true;
-    }
-#endif
 #ifdef RAZEN_LAYER_CHORD_ENABLE
     for (uint8_t index = 0; index < razen_layer_chord_count; index++) {
         if (razen_layer_chords[index].trigger == keycode) {
@@ -352,18 +308,6 @@ static bool custom_keycode(uint16_t keycode) {
     }
     return false;
 }
-
-#ifdef RAZEN_SMART_LAYER_ENABLE
-static bool smart_layer_position(keyrecord_t *record) {
-    uint16_t position = keymap_key_to_keycode(L_COMBO_REF, record->event.key);
-    for (uint8_t index = 0; index < razen_smart_layer_position_count; index++) {
-        if (razen_smart_layer_positions[index] == position) {
-            return true;
-        }
-    }
-    return false;
-}
-#endif
 
 #ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
 static void press_layer_mod(razen_layer_mod_chord_t *chord, uint8_t index) {
@@ -582,15 +526,6 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
 #endif
-#ifdef RAZEN_SMART_LAYER_ENABLE
-    if (smart_layer_active && !(layer_state & (1UL << razen_smart_layer))) {
-        smart_layer_active = false;
-    }
-    if (record->event.pressed && smart_layer_active && keycode != razen_smart_layer_keycode && !smart_layer_position(record)) {
-        layer_off(razen_smart_layer);
-        smart_layer_active = false;
-    }
-#endif
     if (record->event.pressed) {
         current_keypress_idle = last_keypress_timer ? timer_elapsed32(last_keypress_timer) : UINT32_MAX;
         last_keypress_timer = timer_read32();
@@ -682,27 +617,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 #endif
 
-#ifdef RAZEN_SMART_LAYER_ENABLE
-    if (keycode == razen_smart_layer_keycode) {
-        if (record->event.pressed) {
-            layer_on(razen_smart_layer);
-            smart_layer_active = true;
-            clear_history();
-        }
-        return false;
-    }
-#endif
-
     if (keycode == razen_magic_keycode && record->tap.count) {
         if (record->event.pressed) {
             repeat_magic();
-        }
-        return false;
-    }
-
-    if (keycode == razen_adaptive_repeat_keycode) {
-        if (record->event.pressed) {
-            repeat_adaptive();
         }
         return false;
     }
@@ -769,8 +686,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool remember_last_key_user(uint16_t keycode, keyrecord_t *record, uint8_t *remembered_mods) {
     (void)record;
-    bool remember = keycode != razen_magic_keycode && keycode != razen_adaptive_repeat_keycode &&
-                    !IS_QK_TAP_DANCE(keycode) && !custom_keycode(keycode);
+    bool remember = keycode != razen_magic_keycode && !IS_QK_TAP_DANCE(keycode) && !custom_keycode(keycode);
     if (remember) {
         repeat_mods = *remembered_mods;
         repeat_timer = timer_read32();

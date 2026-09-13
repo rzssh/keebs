@@ -197,15 +197,7 @@
           "L_BOTTOM_EXTRA": {"use": "esc_ctrl"},
           "R_BOTTOM_EXTRA": {"use": "tab_gui"}
         },
-        "Bunya": {
-          "L_BOTTOM_EXTRA": {"use": "esc_ctrl"},
-          "R_BOTTOM_EXTRA": {"use": "tab_gui"}
-        },
         "VestnikDm": {
-          "L_BOTTOM_EXTRA": {"use": "esc_ctrl"},
-          "R_BOTTOM_EXTRA": {"use": "tab_gui"}
-        },
-        "Mantra": {
           "L_BOTTOM_EXTRA": {"use": "esc_ctrl"},
           "R_BOTTOM_EXTRA": {"use": "tab_gui"}
         },
@@ -227,6 +219,31 @@
       "defaults": {
         "L_THUMB_OPTIONAL": {"use": "esc_mouse"},
         "R_THUMB_OPTIONAL": {"use": "tab_fn"}
+      },
+      "overlays": {
+        "Nav": {
+          "L_THUMB_OPTIONAL": {"layer": "Mouse", "mode": "momentary"},
+          "L_THUMB_B": {"layer": "Nav", "mode": "momentary"},
+          "R_THUMB_A": "SPACE"
+        },
+        "Sym": {
+          "L_THUMB_OPTIONAL": {"layer": "Mouse", "mode": "momentary"},
+          "L_THUMB_A": {"layer": "Sym", "mode": "momentary"}
+        },
+        "Num": {
+          "L_THUMB_B": {"use": "bspc_plain_nav"},
+          "R_THUMB_A": "none",
+          "R_THUMB_B": {"layer": "Num", "mode": "momentary"},
+          "R_THUMB_OPTIONAL": {"layer": "Fn", "mode": "momentary"}
+        },
+        "Mouse": {
+          "L_THUMB_OPTIONAL": "none",
+          "R_THUMB_OPTIONAL": {"mouse": "MCLK"}
+        },
+        "Fn": {
+          "L_THUMB_OPTIONAL": "none",
+          "R_THUMB_OPTIONAL": "none"
+        }
       },
       "alpha_capacity": 38
     },
@@ -338,9 +355,9 @@
         "L_THUMB_OPTIONAL": {"layer": "Num", "mode": "momentary"}
       },
       "overlays": {
-        "Graphium": {"L_THUMB_A": {"layer": "Nav", "mode": "momentary"}},
+        "Graphium": {"L_THUMB_A": {"layer": "Sym", "mode": "momentary"}},
         "VestnikDm": {
-          "L_THUMB_A": {"layer": "Nav", "mode": "momentary"},
+          "L_THUMB_A": {"layer": "Sym", "mode": "momentary"},
           "L_TOP_EXTRA": "Щ",
           "R_TOP_EXTRA": "Ъ",
           "R_TOP_OUTER": "Ё",
@@ -363,7 +380,7 @@
       "zmk_draw_keyboard": "glove80",
       "position_set": "glove80_80",
       "zmk": {"keyboard": "glove80", "board": "glove80", "shields": ["glove80_lh", "glove80_rh"]},
-      "layers": ["Graphium", "Bunya", "VestnikDm", "Mantra", "Nav", "Sym", "Num", "Fn", "Vestnik2", "Mouse", "Magic"],
+      "layers": ["Graphium", "VestnikDm", "Nav", "Sym", "Num", "Fn", "Mouse", "Magic"],
       "defaults": {"GLOVE_MAGIC_LEFT": {"use": "glove_magic"}, "GLOVE_MAGIC_RIGHT": {"use": "glove_magic"}},
       "alpha_capacity": 38
     },

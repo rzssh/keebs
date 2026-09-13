@@ -46,11 +46,6 @@ typedef struct {
 } razen_adaptive_rule_t;
 
 typedef struct {
-    uint16_t after;
-    uint16_t emit;
-} razen_adaptive_repeat_rule_t;
-
-typedef struct {
     uint32_t layers;
     uint16_t term_ms;
     uint16_t idle_ms;
@@ -134,22 +129,10 @@ extern const razen_sequence_t razen_sequences[];
 extern const uint8_t razen_sequence_count;
 extern const razen_adaptive_rule_t razen_adaptive_rules[];
 extern const uint8_t razen_adaptive_rule_count;
-extern const uint16_t razen_adaptive_repeat_keycode;
-extern const uint16_t razen_adaptive_repeat_marker;
-extern const uint16_t razen_adaptive_repeat_timeout;
-extern const bool razen_adaptive_repeat_strict_modifiers;
-extern const razen_adaptive_repeat_rule_t razen_adaptive_repeat_rules[];
-extern const uint8_t razen_adaptive_repeat_rule_count;
 extern const razen_combo_t razen_combos[];
 extern const uint8_t razen_combo_count;
 extern const uint16_t razen_magic_keycode;
 extern const uint16_t razen_magic_hold_keycode;
-#ifdef RAZEN_SMART_LAYER_ENABLE
-extern const uint16_t razen_smart_layer_keycode;
-extern const uint8_t razen_smart_layer;
-extern const uint16_t razen_smart_layer_positions[];
-extern const uint8_t razen_smart_layer_position_count;
-#endif
 extern razen_tap_dance_t razen_tap_dance_data[];
 extern tap_dance_action_t tap_dance_actions[];
 extern const uint16_t razen_home_row_keys[];

@@ -38,14 +38,12 @@ draw_config:
     text.label { stroke: none; }
     .layer-Graphium text, .layer-Graphium .glyph, .layer-Graphium rect.held { fill: #cdd6f4; }
     .layer-VestnikDm text, .layer-VestnikDm .glyph, .layer-VestnikDm rect.held { fill: #cba6f7; }
-    .layer-VestnikDm .key.shifted, .layer-Mantra .key.shifted { fill: #ff6b6b; }
+    .layer-VestnikDm .key.shifted { fill: #ff6b6b; }
     .layer-Nav text, .layer-Nav .glyph, .layer-Nav rect.held { fill: #89b4fa; }
     .layer-Sym text, .layer-Sym .glyph, .layer-Sym rect.held { fill: #a6e3a1; }
     .layer-Num text, .layer-Num .glyph, .layer-Num rect.held { fill: #fab387; }
     .layer-Fn text, .layer-Fn .glyph, .layer-Fn rect.held { fill: #f9e2af; }
     .layer-Mouse text, .layer-Mouse .glyph, .layer-Mouse rect.held { fill: #94e2d5; }
-    .layer-Game text, .layer-Game .glyph, .layer-Game rect.held { fill: #ff4d6d; }
-    .layer-Game .key.shifted { fill: #c7f464; }
     text.held { fill: #1e1e2e; }
     text.trans { fill: #6c7086; }
     rect:has(~ a[href="#Nav"]) { stroke: #89b4fa; stroke-width: 2; }
@@ -54,16 +52,8 @@ draw_config:
     rect:has(~ a[href="#Num"]) { stroke: #fab387; stroke-width: 2; }
     rect.key.mouse-activator, rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
     rect.key.fn-activator, rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
-    rect:has(~ a[href="#Game"]) { stroke: #ff4d6d; stroke-width: 2; }
-    rect.gameextra-activator { stroke: #c7f464; stroke-width: 2; }
-    rect.vestnik2-activator { stroke: #89b4fa; stroke-width: 2; }
-    rect.vestnik2-inner { fill: none; stroke: #ff6b6b !important; stroke-width: 2; }
     rect.combo.mouse-activator { fill: #94e2d5; stroke: #94e2d5; }
     rect.combo.fn-activator { fill: #f9e2af; stroke: #f9e2af; }
     text.combo.mouse-activator, svg.combo.mouse-activator, text.combo.fn-activator, svg.combo.fn-activator { fill: #1e1e2e; }
     a[href="#Mouse"] text.combo.layer-activator { fill: #94e2d5; font-size: 9px; }
     a[href="#Fn"] text.combo.layer-activator { fill: #f9e2af; }
-    text.vestnik2-activator.tap { display: none; }
-    text.vestnik2-activator { font-size: 12px; }
-    text.gameextra-activator.tap { display: none; }
-    text.gameextra-activator { font-size: 12px; }

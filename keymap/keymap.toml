@@ -1,27 +1,20 @@
 version = 1
-layers = ["Graphium", "Bunya", "VestnikDm", "Mantra", "Nav", "Sym", "Num", "Fn", "Vestnik2", "Mouse", "Game", "GameExtra", "Magic"]
-disabled_layers = ["Bunya", "Mantra", "Vestnik2"]
-alpha_layers = ["Graphium", "Bunya", "VestnikDm", "Mantra", "Game"]
+layers = ["Graphium", "VestnikDm", "Nav", "Sym", "Num", "Fn", "Mouse", "Magic"]
+alpha_layers = ["Graphium", "VestnikDm"]
 default_layer = "Graphium"
 default_os = "linux"
 layer_source = "layers.toml"
 behavior_source = "behaviors.toml"
 profile_source = "profiles.json"
 draw_combo_reference_layer = false
-draw_hidden_layers = ["Vestnik2", "GameExtra"]
 
 [features]
 home_row_mods = { core30 = true, core34 = false }
-
-[thumb_layout]
-style = "right_space"
-number_layer = "dedicated"
 
 [[layer_stacks]]
 layers = ["Sym", "Num"]
 positions = ["L_THUMB_A", "R_THUMB_B"]
 variants = ["core34"]
-number_layer = "dedicated"
 
 [[conditional_layers]]
 if_layers = ["Nav", "Sym"]
@@ -30,15 +23,8 @@ variants = ["core30"]
 
 [[conditional_layers]]
 if_layers = ["Nav", "Sym"]
-then_layer = "Num"
-variants = ["core34"]
-number_layer = "trilayer"
-
-[[conditional_layers]]
-if_layers = ["Nav", "Sym"]
 then_layer = "Mouse"
 variants = ["core34"]
-number_layer = "dedicated"
 
 [operating_systems.linux]
 home = { key = "HOME" }

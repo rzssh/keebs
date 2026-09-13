@@ -1,0 +1,13 @@
+diff --git a/app/src/behaviors/behavior_hold_tap.c b/app/src/behaviors/behavior_hold_tap.c
+index 3df3bc86..c9ed81c1 100644
+--- a/app/src/behaviors/behavior_hold_tap.c
++++ b/app/src/behaviors/behavior_hold_tap.c
+@@ -658,2 +658,3 @@ static int on_hold_tap_binding_released(struct zmk_behavior_binding *binding,
+     decide_hold_tap(hold_tap, HT_KEY_UP);
++    bool release_lingering_hold = hold_tap->status == STATUS_TAP;
+     decide_retro_tap(hold_tap);
+@@ -662,2 +663,3 @@ static int on_hold_tap_binding_released(struct zmk_behavior_binding *binding,
+-    if (hold_tap->config->hold_while_undecided && hold_tap->config->hold_while_undecided_linger) {
++    if (release_lingering_hold && hold_tap->config->hold_while_undecided &&
++        hold_tap->config->hold_while_undecided_linger) {
+         release_hold_binding(hold_tap);

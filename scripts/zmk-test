@@ -37,7 +37,8 @@ fi
 
 "$repo/scripts/apply-zmk-patches" "$workspace"
 
-mkdir -p "$repo/.cache/zmk-tests"
+build_dir="$repo/.cache/zmk-tests/$(printf '%s\0%s' "$repo" "$workspace" | sha256sum | cut -c1-12)"
+mkdir -p "$build_dir"
 cd "$workspace"
 PATH="$workspace/.venv/bin:$PATH" \
 ZEPHYR_BASE="$workspace/zephyr" \
@@ -45,6 +46,6 @@ CMAKE_PREFIX_PATH="$workspace/zephyr/share/zephyr-package/cmake" \
 ZEPHYR_SDK_INSTALL_DIR="$sdk" \
 ZEPHYR_TOOLCHAIN_VARIANT=zephyr \
 ZMK_SRC_DIR="$workspace/zmk/app" \
-ZMK_BUILD_DIR="$repo/.cache/zmk-tests" \
+ZMK_BUILD_DIR="$build_dir" \
 ZMK_EXTRA_MODULES="$repo/config/modules/layer-chord" \
     "$workspace/zmk/app/run-test.sh" "$repo/config/modules/layer-chord/tests"
