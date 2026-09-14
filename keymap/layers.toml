@@ -81,7 +81,7 @@ rows = [
 [layers.Fn.core30]
 rows = [
   [{ use = "bootloader" }, "F7", "F8", "F9", "F12", { use = "output_toggle" }, { use = "lang_en" }, { use = "lang_ru" }, { use = "lang_ua" }, { use = "bootloader" }],
-  ["F10", "F1", "F2", "F3", "F11", { use = "bt_clear" }, { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
+  ["F10", "F1", "F2", "F3", "F11", { use = "bt_clear" }, "LSHFT", "LCTRL", "LALT", "LGUI"],
   ["F4", "F5", "F6", { use = "bt_0" }, { use = "bt_1" }, { use = "bt_2" }],
   ["none", "none", "none", "none"],
 ]
@@ -89,7 +89,7 @@ rows = [
 [layers.Fn.core34]
 rows = [
   [{ use = "bootloader" }, "F7", "F8", "F9", "F12", { use = "output_toggle" }, { use = "lang_en" }, { use = "lang_ru" }, { use = "lang_ua" }, { use = "bootloader" }],
-  ["PSCRN", "F1", "F2", "F3", "F11", "none", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
+  ["PSCRN", "F1", "F2", "F3", "F11", "none", "LSHFT", "LCTRL", "LALT", "LGUI"],
   ["PAUSE_BREAK", "F4", "F5", "F6", "F10", { use = "bt_clear" }, { use = "bt_0" }, { use = "bt_1" }, { use = "bt_2" }, { use = "bt_3" }],
   ["none", "none", "none", "none"],
 ]
@@ -97,7 +97,7 @@ rows = [
 [layers.Mouse.core30]
 rows = [
   ["none", "none", "none", "none", "none", { mouse = "SCRL_UP" }, { mouse = "SCRL_LEFT" }, { mouse = "MOVE_UP" }, { mouse = "SCRL_RIGHT" }, "PG_UP"],
-  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", { mouse = "SCRL_DOWN" }, { mouse = "MOVE_LEFT" }, { mouse = "MOVE_DOWN" }, { mouse = "MOVE_RIGHT" }, "PG_DN"],
+  ["LGUI", "LALT", "LCTRL", "LSHFT", "none", { mouse = "SCRL_DOWN" }, { mouse = "MOVE_LEFT" }, { mouse = "MOVE_DOWN" }, { mouse = "MOVE_RIGHT" }, "PG_DN"],
   ["none", "none", "none", { mouse = "MCLK" }, { mouse = "MB4" }, { mouse = "MB5" }],
   ["none", "none", { mouse = "LCLK" }, { mouse = "RCLK" }],
 ]
@@ -105,7 +105,7 @@ rows = [
 [layers.Mouse.core34]
 rows = [
   ["none", "none", "none", "none", "none", { mouse = "SCRL_UP" }, { mouse = "SCRL_LEFT" }, { mouse = "MOVE_UP" }, { mouse = "SCRL_RIGHT" }, "PG_UP"],
-  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", { mouse = "SCRL_DOWN" }, { mouse = "MOVE_LEFT" }, { mouse = "MOVE_DOWN" }, { mouse = "MOVE_RIGHT" }, "PG_DN"],
+  ["LGUI", "LALT", "LCTRL", "LSHFT", "none", { mouse = "SCRL_DOWN" }, { mouse = "MOVE_LEFT" }, { mouse = "MOVE_DOWN" }, { mouse = "MOVE_RIGHT" }, "PG_DN"],
   [{ use = "undo_redo" }, { os = "cut" }, { os = "copy" }, { os = "paste" }, { os = "select_all" }, "none", { mouse = "MCLK" }, "none", { mouse = "MB4" }, { mouse = "MB5" }],
   ["none", "none", { mouse = "LCLK" }, { mouse = "RCLK" }],
 ]
