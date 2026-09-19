@@ -17,6 +17,30 @@ static bool shift_active(void) {
     return (get_mods() | get_oneshot_mods() | get_weak_mods()) & MOD_MASK_SHIFT;
 }
 
+bool caps_word_press_user(uint16_t keycode) {
+    for (uint8_t index = 0; index < razen_morph_count; index++) {
+        if (razen_morphs[index].trigger == keycode) {
+            keycode = razen_morphs[index].tap;
+            break;
+        }
+    }
+
+    switch (keycode) {
+        case KC_A ... KC_Z:
+            add_weak_mods(MOD_BIT(KC_LSFT));
+            return true;
+        case KC_1 ... KC_0:
+        case KC_BSPC:
+        case KC_DEL:
+        case KC_UNDS:
+        case KC_MINS:
+        case KC_QUOT:
+            return true;
+        default:
+            return false;
+    }
+}
+
 static void tap_without_shift(uint16_t keycode) {
     uint8_t mods = get_mods();
     uint8_t oneshot = get_oneshot_mods();
@@ -33,6 +57,8 @@ static void tap_without_shift(uint16_t keycode) {
 static void tap_morph(uint16_t tap, uint16_t shifted) {
     if (shift_active()) {
         tap_without_shift(shifted);
+    } else if (tap == CW_TOGG) {
+        caps_word_on();
     } else {
         tap_code16(tap);
     }
@@ -127,7 +153,11 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
     if (basic == KC_NO) {
         return true;
     }
+    bool caps_word = is_caps_word_on();
     uint8_t mods = get_mods() | get_oneshot_mods() | get_weak_mods();
+    if (caps_word) {
+        mods |= MOD_BIT(KC_LSFT);
+    }
     if (basic == KC_BSPC) {
         if (mods) {
             clear_history();
@@ -140,10 +170,14 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
     uint8_t layer = get_highest_layer(layer_state | default_layer_state);
     for (uint8_t index = 0; index < razen_adaptive_rule_count; index++) {
         const razen_adaptive_rule_t *rule = &razen_adaptive_rules[index];
-        if (rule->layer != layer || rule->input != basic || !history_timer || timer_elapsed32(history_timer) > rule->timeout_ms || (rule->strict_modifiers && mods) || !history_matches(rule)) {
+        if (rule->layer != layer || rule->input != basic || !history_timer || timer_elapsed32(history_timer) > rule->timeout_ms ||
+            (rule->strict_modifiers && (mods & ~(rule->allow_shift ? MOD_MASK_SHIFT : 0))) || !history_matches(rule)) {
             continue;
         }
         suppressed_keycode = keycode;
+        if (caps_word) {
+            process_caps_word(basic, record);
+        }
         uint16_t repeated = KC_NO;
         for (uint8_t output = 0; output < rule->emit_len; output++) {
             uint16_t emitted = rule->emit[output];
@@ -151,12 +185,12 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
             if (emitted == KC_BSPC) {
                 pop_history();
             } else {
-                append_history(emitted, 0);
+                append_history(emitted, mods & MOD_MASK_SHIFT);
                 repeated = emitted;
             }
         }
         if (repeated != KC_NO) {
-            remember_repeat(repeated, 0);
+            remember_repeat(repeated, mods);
         }
         return false;
     }
@@ -537,13 +571,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     process_tap_dance_release(keycode, record);
 
 #ifdef RAZEN_LAYER_STACK_ENABLE
+    if (record->event.pressed) {
+        for (uint8_t index = 0; index < razen_layer_stack_count; index++) {
+            razen_layer_stack_t *stack = &razen_layer_stacks[index];
+            if (stack->parent_pressed && stack->parent_trigger != keycode) {
+                stack->interrupted[0] = true;
+            }
+            if (stack->child_pressed && stack->child_trigger != keycode) {
+                stack->interrupted[1] = true;
+            }
+        }
+    }
     for (uint8_t index = 0; index < razen_layer_stack_count; index++) {
         razen_layer_stack_t *stack = &razen_layer_stacks[index];
         bool parent = stack->parent_trigger == keycode;
         if (!parent && stack->child_trigger != keycode) {
             continue;
         }
+        uint8_t side = parent ? 0 : 1;
         if (record->event.pressed) {
+            stack->interrupted[side] = parent ? stack->child_pressed : stack->parent_pressed;
+            stack->timers[side] = timer_read();
             if (parent) {
                 stack->parent_pressed = true;
                 stack->child_latest = false;
@@ -554,18 +602,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 layer_on(stack->child_layer);
             }
             clear_history();
-        } else if (parent) {
-            stack->parent_pressed = false;
-            if (stack->child_pressed) {
-                stack->child_latest = true;
-            }
-            layer_off(stack->parent_layer);
         } else {
-            stack->child_pressed = false;
-            if (stack->parent_pressed) {
-                stack->child_latest = false;
+            bool tapped = stack->tap_keycodes[side] != KC_NO && !stack->interrupted[side] &&
+                          timer_elapsed(stack->timers[side]) < stack->tapping_terms[side];
+            if (parent) {
+                stack->parent_pressed = false;
+                if (stack->child_pressed) {
+                    stack->child_latest = true;
+                }
+                layer_off(stack->parent_layer);
+            } else {
+                stack->child_pressed = false;
+                if (stack->parent_pressed) {
+                    stack->child_latest = false;
+                }
+                layer_off(stack->child_layer);
             }
-            layer_off(stack->child_layer);
+            if (tapped) {
+                tap_code16(stack->tap_keycodes[side]);
+            }
         }
         return false;
     }

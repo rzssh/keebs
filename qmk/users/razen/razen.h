@@ -43,6 +43,7 @@ typedef struct {
     uint8_t emit_len;
     uint16_t timeout_ms;
     bool strict_modifiers;
+    bool allow_shift;
 } razen_adaptive_rule_t;
 
 typedef struct {
@@ -80,6 +81,10 @@ typedef struct {
     uint16_t child_trigger;
     uint16_t parent_position;
     uint16_t child_position;
+    uint16_t tap_keycodes[2];
+    uint16_t tapping_terms[2];
+    uint16_t timers[2];
+    bool interrupted[2];
     bool parent_pressed;
     bool child_pressed;
     bool child_latest;

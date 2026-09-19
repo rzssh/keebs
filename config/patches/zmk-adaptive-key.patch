@@ -32,7 +32,7 @@
  static int adaptive_key_keycode_state_changed_listener(const zmk_event_t *eh) {
      struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
      if (ev == NULL || (!ev->state && !last_keycode_is_dead)) {
-@@ -303,6 +328,16 @@
+@@ -303,6 +328,22 @@
          }
      }
  
@@ -43,6 +43,12 @@
 +        } else {
 +            rewind_history(ev->timestamp);
 +        }
++        return ZMK_EV_EVENT_BUBBLE;
++    }
++
++    if (key.page == ZMK_HID_USAGE_PAGE(LEFT_CONTROL) &&
++        key.id >= ZMK_HID_USAGE_ID(LEFT_CONTROL) &&
++        key.id <= ZMK_HID_USAGE_ID(RIGHT_GUI)) {
 +        return ZMK_EV_EVENT_BUBBLE;
 +    }
 +

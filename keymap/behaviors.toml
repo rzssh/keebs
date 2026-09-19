@@ -110,6 +110,21 @@ recipe = "shift_morph"
 tap = "SQT"
 shifted = "DQT"
 
+[behaviors.colon_semi]
+recipe = "shift_morph"
+tap = "COLON"
+shifted = "SEMI"
+
+[behaviors.under_dot]
+recipe = "shift_morph"
+tap = "UNDER"
+shifted = "DOT"
+
+[behaviors.qmark_comma]
+recipe = "shift_morph"
+tap = "QMARK"
+shifted = "COMMA"
+
 [behaviors.minus_slash]
 recipe = "shift_morph"
 tap = "MINUS"
@@ -149,6 +164,26 @@ shifted = "EXCL"
 recipe = "shift_morph"
 tap = "GRAVE"
 shifted = "TILDE"
+
+[behaviors.percent_at]
+recipe = "shift_morph"
+tap = "PRCNT"
+shifted = "AT"
+
+[behaviors.caret_dollar]
+recipe = "shift_morph"
+tap = "DLLR"
+shifted = "CARET"
+
+[behaviors.amp_pipe]
+recipe = "shift_morph"
+tap = "AMPS"
+shifted = "PIPE"
+
+[behaviors.qmark_excl]
+recipe = "shift_morph"
+tap = "QMARK"
+shifted = "EXCL"
 
 [behaviors.equal_plain]
 recipe = "shift_morph"
@@ -266,6 +301,30 @@ steps = [
   { key = "TAB", mods = ["LCTRL"] },
 ]
 
+[behaviors.colon_equal]
+recipe = "sequence"
+label = ":="
+steps = [
+  { key = "COLON" },
+  { key = "EQUAL" },
+]
+
+[behaviors.fat_arrow]
+recipe = "sequence"
+label = "=>"
+steps = [
+  { key = "EQUAL" },
+  { key = "GT" },
+]
+
+[behaviors.thin_arrow]
+recipe = "sequence"
+label = "->"
+steps = [
+  { key = "MINUS" },
+  { key = "GT" },
+]
+
 [behaviors.thumb_magic]
 recipe = "repeat_magic"
 timing = "magic"
@@ -273,6 +332,16 @@ hold = "LSHIFT"
 fallback = "sticky_shift"
 shifted = "caps_word"
 repeat_timeout_ms = 800
+
+[behaviors.caps_word]
+recipe = "platform"
+action = "caps_word"
+targets = ["zmk", "qmk"]
+
+[behaviors.caps_word_lock]
+recipe = "shift_morph"
+tap = { use = "caps_word" }
+shifted = "CAPS"
 
 [behaviors.mouse_chord]
 recipe = "layer_chord"
@@ -333,9 +402,9 @@ timing = "layer_modifier"
 name = "nav"
 layer = "Nav"
 layer_position = "L_THUMB_A"
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core30"]
-term_ms = 60
+term_ms = 40
 prior_idle_ms = 0
 modifiers = [
   { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
@@ -348,9 +417,10 @@ modifiers = [
 name = "nav_34"
 layer = "Nav"
 layer_position = "L_THUMB_B"
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core34"]
-term_ms = 60
+setups = ["right_space_split"]
+term_ms = 40
 prior_idle_ms = 0
 modifiers = [
   { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
@@ -363,9 +433,10 @@ modifiers = [
 name = "num_34"
 layer = "Num"
 layer_position = "R_THUMB_B"
-layers = ["Graphium", "VestnikDm", "Nav", "Sym"]
+layers = ["Graphium", "Vestnik", "Nav", "Sym"]
 variants = ["core34"]
-term_ms = 60
+setups = ["right_space_split"]
+term_ms = 40
 prior_idle_ms = 0
 modifiers = [
   { name = "shift", behavior = "osm_shift", position = "R_INDEX_HOME" },
@@ -378,9 +449,9 @@ modifiers = [
 name = "sym"
 layer = "Sym"
 layer_position = "R_THUMB_B"
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core30"]
-term_ms = 60
+term_ms = 40
 prior_idle_ms = 0
 modifiers = [
   { name = "shift", behavior = "osm_shift", position = "R_INDEX_HOME" },
@@ -393,9 +464,10 @@ modifiers = [
 name = "sym_34"
 layer = "Sym"
 layer_position = "L_THUMB_A"
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core34"]
-term_ms = 60
+setups = ["right_space_split"]
+term_ms = 40
 prior_idle_ms = 0
 modifiers = [
   { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
@@ -404,11 +476,79 @@ modifiers = [
   { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
 ]
 
+[[modifier_chords]]
+name = "nav_34_combined"
+layer = "Nav"
+layer_position = "L_THUMB_A"
+layers = ["Graphium", "Vestnik"]
+variants = ["core34"]
+setups = ["left_space_combined"]
+term_ms = 40
+prior_idle_ms = 0
+modifiers = [
+  { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
+  { name = "alt", behavior = "osm_alt", position = "L_RING_HOME" },
+  { name = "ctrl", behavior = "osm_ctrl", position = "L_MIDDLE_HOME" },
+  { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
+]
+
+[[modifier_chords]]
+name = "sym_34_combined"
+layer = "Sym"
+layer_position = "R_THUMB_B"
+layers = ["Graphium", "Vestnik"]
+variants = ["core34"]
+setups = ["left_space_combined"]
+term_ms = 40
+prior_idle_ms = 0
+modifiers = [
+  { name = "shift", behavior = "osm_shift", position = "R_INDEX_HOME" },
+  { name = "ctrl", behavior = "osm_ctrl", position = "R_MIDDLE_HOME" },
+  { name = "alt", behavior = "osm_alt", position = "R_RING_HOME" },
+  { name = "gui", behavior = "osm_gui", position = "R_PINKY_HOME" },
+]
+
 [behaviors.bspc_plain_nav]
 recipe = "tap_hold"
 timing = "bspc_thumb"
 hold = { layer = "Nav", mode = "momentary" }
 tap = "BSPC"
+
+[behaviors.shift_nav]
+recipe = "tap_hold"
+timing = "bspc_thumb"
+hold = { layer = "Nav", mode = "momentary" }
+tap = { use = "osm_shift" }
+
+[behaviors.repeat_nav]
+recipe = "tap_hold"
+timing = "bspc_thumb"
+hold = { layer = "Nav", mode = "momentary" }
+tap = { use = "thumb_magic" }
+
+[behaviors.bspc_shift]
+recipe = "tap_hold"
+timing = "magic"
+hold = { key = "LSHIFT" }
+tap = "BSPC"
+
+[behaviors.esc_sym]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Sym", mode = "momentary" }
+tap = "ESC"
+
+[behaviors.enter_num]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Num", mode = "momentary" }
+tap = "RET"
+
+[behaviors.enter_sym]
+recipe = "tap_hold"
+timing = "layer_thumb"
+hold = { layer = "Sym", mode = "momentary" }
+tap = "RET"
 
 [behaviors.esc_mouse]
 recipe = "layer_chord"
@@ -454,14 +594,14 @@ steps = [
 [behaviors.lang_ru]
 recipe = "macro"
 steps = [
-  { layer = "VestnikDm", mode = "move" },
+  { layer = "Vestnik", mode = "move" },
   { key = "N2", mods = ["LCTRL", "LSHIFT", "LGUI"] },
 ]
 
 [behaviors.lang_ua]
 recipe = "macro"
 steps = [
-  { layer = "VestnikDm", mode = "move" },
+  { layer = "Vestnik", mode = "move" },
   { key = "N3", mods = ["LCTRL", "LSHIFT", "LGUI"] },
 ]
 
@@ -600,11 +740,13 @@ prior_idle_ms = 0
 [[combos]]
 name = "select_all_core30"
 positions = ["L_INDEX_BOTTOM", "L_INNER_BOTTOM"]
-layers = ["Graphium", "VestnikDm"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "editing_combos"
 action = { os = "select_all" }
 term_ms = 25
 prior_idle_ms = 120
+draw = { layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "core30_z"
@@ -618,11 +760,24 @@ prior_idle_ms = 0
 [[combos]]
 name = "undo_redo_core30"
 positions = ["L_PINKY_HOME", "L_RING_BOTTOM"]
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core30"]
+feature = "editing_combos"
 action = { use = "undo_redo" }
 term_ms = 35
 prior_idle_ms = 120
+draw = { layers = ["Graphium", "Vestnik"] }
+
+[[combos]]
+name = "undo_redo_core34"
+positions = ["L_PINKY_BOTTOM", "L_RING_BOTTOM"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core34"]
+feature = "editing_combos"
+action = { use = "undo_redo" }
+term_ms = 35
+prior_idle_ms = 120
+draw = { layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "core30_minus"
@@ -656,7 +811,7 @@ slow_release = true
 [[combos]]
 name = "vestnik_shcha_core30"
 positions = ["L_PINKY_TOP", "L_PINKY_HOME"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = "Щ"
 term_ms = 25
@@ -665,7 +820,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "vestnik_tse_core30"
 positions = ["L_RING_TOP", "L_RING_HOME"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = "Ц"
 term_ms = 25
@@ -674,7 +829,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "vestnik_kha_core30"
 positions = ["L_RING_HOME", "L_RING_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = "Х"
 term_ms = 25
@@ -683,7 +838,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "cyrillic_ef_core30"
 positions = ["R_INDEX_TOP", "R_INDEX_HOME"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = "Ф"
 term_ms = 25
@@ -692,7 +847,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "cyrillic_hard_sign_core30"
 positions = ["R_INDEX_HOME", "R_INDEX_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = "Ъ"
 term_ms = 25
@@ -701,7 +856,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "cyrillic_e_core30"
 positions = ["R_RING_TOP", "R_RING_HOME"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = "Э"
 term_ms = 25
@@ -710,7 +865,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "cyrillic_yo_core30"
 positions = ["R_RING_HOME", "R_RING_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = "Ё"
 term_ms = 25
@@ -719,7 +874,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "vestnik_dot_core30"
 positions = ["R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = { use = "ru_dot_qmark" }
 term_ms = 18
@@ -729,7 +884,7 @@ slow_release = true
 [[combos]]
 name = "vestnik_comma_core30"
 positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = { use = "ru_comma_excl" }
 term_ms = 18
@@ -739,7 +894,7 @@ slow_release = true
 [[combos]]
 name = "cyrillic_minus_core30"
 positions = ["R_PINKY_HOME", "R_RING_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core30"]
 action = "MINUS"
 term_ms = 18
@@ -748,7 +903,7 @@ prior_idle_ms = 0
 [[combos]]
 name = "vestnik_dot_core34"
 positions = ["R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core34"]
 action = { use = "ru_dot_qmark" }
 term_ms = 18
@@ -758,7 +913,7 @@ slow_release = true
 [[combos]]
 name = "vestnik_comma_core34"
 positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core34"]
 action = { use = "ru_comma_excl" }
 term_ms = 18
@@ -768,7 +923,7 @@ slow_release = true
 [[combos]]
 name = "vestnik_minus_core34"
 positions = ["R_RING_BOTTOM", "R_PINKY_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core34"]
 action = "MINUS"
 term_ms = 18
@@ -778,7 +933,7 @@ slow_release = true
 [[combos]]
 name = "vestnik_apostrophe_core34"
 positions = ["R_MIDDLE_BOTTOM", "R_PINKY_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core34"]
 action = "UA_APOSTROPHE"
 term_ms = 18
@@ -789,7 +944,7 @@ draw = { align = "bottom", offset = 0.15 }
 [[combos]]
 name = "cyrillic_hard_sign_core34"
 positions = ["R_INNER_HOME", "R_INNER_BOTTOM"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core34"]
 action = "Ъ"
 term_ms = 25
@@ -798,16 +953,126 @@ prior_idle_ms = 0
 [[combos]]
 name = "cyrillic_yo_core34"
 positions = ["R_RING_TOP", "R_RING_HOME"]
-layers = ["VestnikDm"]
+layers = ["Vestnik"]
 variants = ["core34"]
 action = "Ё"
 term_ms = 25
 prior_idle_ms = 0
 
 [[combos]]
+name = "symnum_colon_equal"
+positions = ["R_INDEX_TOP", "R_MIDDLE_TOP"]
+layers = ["Sym"]
+variants = ["core34"]
+setups = ["left_space_combined"]
+action = { use = "colon_equal" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "symnum_fat_arrow"
+positions = ["R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM"]
+layers = ["Sym"]
+variants = ["core34"]
+setups = ["left_space_combined"]
+action = { use = "fat_arrow" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "symnum_thin_arrow"
+positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
+layers = ["Sym"]
+variants = ["core34"]
+setups = ["left_space_combined"]
+action = { use = "thin_arrow" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "graphium_lbkt"
+positions = ["L_RING_TOP", "L_RING_HOME"]
+layers = ["Graphium"]
+variants = ["core30", "core34"]
+feature = "bracket_combos"
+action = "LBKT"
+term_ms = 35
+prior_idle_ms = 0
+
+[[combos]]
+name = "graphium_rbkt"
+positions = ["R_RING_TOP", "R_RING_HOME"]
+layers = ["Graphium"]
+variants = ["core30", "core34"]
+feature = "bracket_combos"
+action = "RBKT"
+term_ms = 35
+prior_idle_ms = 0
+
+[[combos]]
+name = "graphium_lpar"
+positions = ["L_MIDDLE_TOP", "L_MIDDLE_HOME"]
+layers = ["Graphium"]
+variants = ["core30", "core34"]
+feature = "bracket_combos"
+action = "LPAR"
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "graphium_rpar"
+positions = ["R_MIDDLE_TOP", "R_MIDDLE_HOME"]
+layers = ["Graphium"]
+variants = ["core30", "core34"]
+feature = "bracket_combos"
+action = "RPAR"
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "graphium_lbrc"
+positions = ["L_INDEX_TOP", "L_INDEX_HOME"]
+layers = ["Graphium"]
+variants = ["core30", "core34"]
+feature = "bracket_combos"
+action = "LBRC"
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "graphium_rbrc"
+positions = ["R_INDEX_TOP", "R_INDEX_HOME"]
+layers = ["Graphium"]
+variants = ["core30", "core34"]
+feature = "bracket_combos"
+action = "RBRC"
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "graphium_lt"
+positions = ["L_INDEX_HOME", "L_INDEX_BOTTOM"]
+layers = ["Graphium"]
+variants = ["core30", "core34"]
+feature = "bracket_combos"
+action = "LT"
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "graphium_gt"
+positions = ["R_INDEX_HOME", "R_INDEX_BOTTOM"]
+layers = ["Graphium"]
+variants = ["core30", "core34"]
+feature = "bracket_combos"
+action = "GT"
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
 name = "mouse"
 positions = ["L_THUMB_A", "L_THUMB_B"]
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core30"]
 action = { use = "mouse_chord" }
 term_ms = 60
@@ -818,8 +1083,9 @@ draw = { type = "mouse-activator" }
 [[combos]]
 name = "mouse_34"
 positions = ["L_THUMB_A", "L_THUMB_B"]
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core34"]
+setups = ["right_space_split"]
 extended_thumbs = false
 action = { use = "mouse_chord_34" }
 term_ms = 60
@@ -830,7 +1096,7 @@ draw = { type = "mouse-activator" }
 [[combos]]
 name = "fn"
 positions = ["R_THUMB_A", "R_THUMB_B"]
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core30"]
 action = { use = "fn_chord" }
 term_ms = 60
@@ -841,8 +1107,9 @@ draw = { type = "fn-activator" }
 [[combos]]
 name = "fn_34"
 positions = ["R_THUMB_A", "R_THUMB_B"]
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core34"]
+setups = ["right_space_split"]
 extended_thumbs = false
 action = { use = "fn_chord_34" }
 term_ms = 60
@@ -851,9 +1118,35 @@ slow_release = true
 draw = { type = "fn-activator" }
 
 [[combos]]
+name = "mouse_combined_34"
+positions = ["L_THUMB_A", "L_THUMB_B"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core34"]
+setups = ["left_space_combined"]
+extended_thumbs = false
+action = { use = "mouse_chord" }
+term_ms = 12
+prior_idle_ms = 0
+slow_release = true
+draw = { type = "mouse-activator" }
+
+[[combos]]
+name = "fn_combined_34"
+positions = ["R_THUMB_A", "R_THUMB_B"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core34"]
+setups = ["left_space_combined"]
+extended_thumbs = false
+action = { use = "fn_chord" }
+term_ms = 12
+prior_idle_ms = 0
+slow_release = true
+draw = { type = "fn-activator" }
+
+[[combos]]
 name = "num"
 positions = ["L_THUMB_A", "R_THUMB_B"]
-layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik"]
 variants = ["core30"]
 action = { use = "num_chord" }
 term_ms = 25
@@ -865,80 +1158,90 @@ draw = false
 [[combos]]
 name = "backspace"
 positions = ["R_MIDDLE_TOP", "R_RING_TOP"]
-layers = ["Graphium", "VestnikDm", "Sym", "Num"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "key_combos"
 action = { use = "bspc_word" }
 term_ms = 25
 prior_idle_ms = 120
-draw = { action = "BSPC", layers = ["Graphium", "VestnikDm"] }
+draw = { action = "BSPC", layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "delete"
 positions = ["R_RING_TOP", "R_PINKY_TOP"]
-layers = ["Graphium", "VestnikDm", "Sym", "Num"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "key_combos"
 action = { use = "del_word" }
 term_ms = 25
 prior_idle_ms = 120
-draw = { action = "DEL", layers = ["Graphium", "VestnikDm"] }
+draw = { action = "DEL", layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "escape"
 positions = ["L_RING_TOP", "L_MIDDLE_TOP"]
-layers = ["Graphium", "VestnikDm", "Sym", "Num"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "key_combos"
 action = "ESC"
 term_ms = 25
 prior_idle_ms = 120
-draw = { layers = ["Graphium", "VestnikDm"] }
+draw = { layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "tab"
 positions = ["L_RING_HOME", "L_MIDDLE_HOME"]
-layers = ["Graphium", "VestnikDm", "Sym", "Num"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "key_combos"
 action = "TAB"
 term_ms = 25
 prior_idle_ms = 120
-draw = { layers = ["Graphium", "VestnikDm"] }
+draw = { layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "enter"
 positions = ["R_MIDDLE_HOME", "R_RING_HOME"]
-layers = ["Graphium", "VestnikDm"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "key_combos"
 action = "RET"
 term_ms = 25
 prior_idle_ms = 120
-draw = { layers = ["Graphium", "VestnikDm"] }
+draw = { layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "cut"
 positions = ["L_RING_BOTTOM", "L_INDEX_BOTTOM"]
-layers = ["Graphium", "VestnikDm"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "editing_combos"
 action = { os = "cut" }
 term_ms = 25
 prior_idle_ms = 120
-draw = { align = "bottom", offset = -0.15 }
+draw = { layers = ["Graphium", "Vestnik"], align = "bottom", offset = -0.15 }
 
 [[combos]]
 name = "copy"
 positions = ["L_RING_BOTTOM", "L_MIDDLE_BOTTOM"]
-layers = ["Graphium", "VestnikDm"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "editing_combos"
 action = { os = "copy" }
 term_ms = 25
 prior_idle_ms = 120
+draw = { layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "paste"
 positions = ["L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM"]
-layers = ["Graphium", "VestnikDm"]
-variants = ["core30"]
+layers = ["Graphium", "Vestnik"]
+variants = ["core30", "core34"]
+feature = "editing_combos"
 action = { os = "paste" }
 term_ms = 25
 prior_idle_ms = 120
+draw = { layers = ["Graphium", "Vestnik"] }
 
 [[combos]]
 name = "layer_alt_ctrl"

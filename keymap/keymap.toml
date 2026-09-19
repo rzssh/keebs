@@ -1,20 +1,33 @@
 version = 1
-layers = ["Graphium", "VestnikDm", "Nav", "Sym", "Num", "Fn", "Mouse", "Magic"]
-alpha_layers = ["Graphium", "VestnikDm"]
+layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num", "Fn", "Mouse", "Magic"]
+alpha_layers = ["Graphium", "Vestnik"]
 default_layer = "Graphium"
 default_os = "linux"
 layer_source = "layers.toml"
 behavior_source = "behaviors.toml"
 profile_source = "profiles.json"
 draw_combo_reference_layer = false
+core34_setup = "right_space_split"
+opposite_homing_tap = "backspace"
 
 [features]
 home_row_mods = { core30 = true, core34 = false }
+graphite_right_hand = { core30 = false, core34 = true }
+key_combos = { core30 = true, core34 = false }
+key_combos_transient = { core30 = true, core34 = true }
+bracket_combos = { core30 = true, core34 = false }
+bracket_combos_transient = { core30 = true, core34 = true }
+editing_combos = { core30 = true, core34 = false }
+editing_combos_transient = { core30 = false, core34 = false }
+nav_editing_keys = { core30 = false, core34 = true }
+nav_meta_keys = { core30 = false, core34 = true }
+layer_thumb_taps = { core30 = false, core34 = false }
 
 [[layer_stacks]]
 layers = ["Sym", "Num"]
 positions = ["L_THUMB_A", "R_THUMB_B"]
 variants = ["core34"]
+setups = ["right_space_split"]
 
 [[conditional_layers]]
 if_layers = ["Nav", "Sym"]
@@ -25,6 +38,7 @@ variants = ["core30"]
 if_layers = ["Nav", "Sym"]
 then_layer = "Mouse"
 variants = ["core34"]
+setups = ["right_space_split"]
 
 [operating_systems.linux]
 home = { key = "HOME" }
