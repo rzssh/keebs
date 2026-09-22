@@ -19,4 +19,5 @@ draw/*
 !draw/generated/
 draw/generated/*
 !draw/generated/cradio_34.svg
+!draw/generated/cradio_34_summary.svg
 !draw/generated/luna_30.svg

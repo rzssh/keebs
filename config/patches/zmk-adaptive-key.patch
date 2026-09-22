@@ -1,6 +1,29 @@
 --- a/src/behaviors/behavior_adaptive_key.c
 +++ b/src/behaviors/behavior_adaptive_key.c
-@@ -283,6 +283,31 @@
+@@ -190,11 +190,18 @@
+     bool match = false;
+     const struct behavior_adaptive_key_config *config = dev->config;
++    uint8_t mods = zmk_hid_get_explicit_mods();
++    bool camel_case_boundary =
++        (mods & (MOD_LSFT | MOD_RSFT)) && last_keycode.page == ZMK_HID_USAGE_PAGE(A) &&
++        last_keycode.id >= ZMK_HID_USAGE_ID(A) && last_keycode.id <= ZMK_HID_USAGE_ID(Z) &&
++        !(last_keycode.modifiers & (MOD_LSFT | MOD_RSFT));
+     LOG_DBG("Comparing adaptive key triggers to last key press: usage_page 0x%02X keycode 0x%02X "
+             "implicit_mods 0x%02X",
+             last_keycode.page, last_keycode.id, last_keycode.modifiers);
+-    for (int i = 0; i < config->triggers_len; i++) {
+-        if (trigger_is_true(&config->triggers[i], data, event.timestamp, config->skip_magic)) {
+-            match = true;
+-            break;
++    if (!camel_case_boundary) {
++        for (int i = 0; i < config->triggers_len; i++) {
++            if (trigger_is_true(&config->triggers[i], data, event.timestamp, config->skip_magic)) {
++                match = true;
++                break;
++            }
+         }
+     }
+@@ -283,6 +290,31 @@
      return false;
  }
  
@@ -32,7 +55,7 @@
  static int adaptive_key_keycode_state_changed_listener(const zmk_event_t *eh) {
      struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
      if (ev == NULL || (!ev->state && !last_keycode_is_dead)) {
-@@ -303,6 +328,22 @@
+@@ -303,6 +335,22 @@
          }
      }
  

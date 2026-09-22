@@ -1,0 +1,622 @@
+<svg width="732" height="734" viewBox="0 0 732 734" class="keymap layer-summary" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>/* start glyphs */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</defs>/* end glyphs */
+<style>/* inherit to force styles through use tags */
+svg path {
+    fill: inherit;
+}
+
+/* font and background color specifications */
+svg.keymap {
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+    font-size: 14px;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    fill: #24292e;
+}
+
+/* default key styling */
+rect.key {
+    fill: #f6f8fa;
+}
+
+rect.key, rect.combo {
+    stroke: #c9cccf;
+    stroke-width: 1;
+}
+
+/* default key side styling, only used is draw_key_sides is set */
+rect.side {
+    filter: brightness(90%);
+}
+
+/* color accent for combo boxes */
+rect.combo, rect.combo-separate {
+    fill: #cdf;
+}
+
+/* color accent for held keys */
+rect.held, rect.combo.held {
+    fill: #fdd;
+}
+
+/* color accent for ghost (optional) keys */
+rect.ghost, rect.combo.ghost {
+    stroke-dasharray: 4, 4;
+    stroke-width: 2;
+}
+
+text {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+/* styling for layer labels */
+text.label {
+    font-weight: bold;
+    text-anchor: start;
+    stroke: white;
+    stroke-width: 4;
+    paint-order: stroke;
+}
+
+/* styling for optional footer */
+text.footer {
+    text-anchor: end;
+    dominant-baseline: auto;
+    stroke: white;
+    stroke-width: 4;
+    paint-order: stroke;
+}
+
+/* styling for combo tap, and key non-tap label text */
+text.combo, text.hold, text.shifted, text.left, text.right, text.tl, text.tr, text.bl, text.br {
+    font-size: 11px;
+}
+
+text.hold, text.bl, text.br {
+    text-anchor: middle;
+    dominant-baseline: auto;
+}
+
+text.shifted, text.tl, text.tr {
+    text-anchor: middle;
+    dominant-baseline: hanging;
+}
+
+text.left, text.tl, text.bl {
+    text-anchor: start;
+}
+
+text.right, text.tr, text.br {
+    text-anchor: end;
+}
+
+text.layer-activator {
+    text-decoration: underline;
+}
+
+/* styling for hold/shifted label text in combo box */
+text.combo.hold, text.combo.shifted, text.combo.left, text.combo.right {
+    font-size: 8px;
+}
+
+/* lighter symbol for transparent keys */
+text.trans {
+    fill: #7b7e81;
+}
+
+/* styling for combo dendrons */
+path.combo {
+    stroke-width: 1;
+    stroke: gray;
+    fill: none;
+}
+
+/* Start Tabler Icons Cleanup */
+/* cannot use height/width with glyphs */
+.icon-tabler > path {
+    fill: inherit;
+    stroke: inherit;
+    stroke-width: 2;
+}
+/* hide tabler's default box */
+.icon-tabler > path[stroke="none"][fill="none"] {
+    visibility: hidden;
+}
+/* End Tabler Icons Cleanup */
+
+svg.keymap { fill: #d1d6db; }
+rect.key { fill: #3f4750; }
+rect.key, rect.combo { stroke: #60666c; }
+rect.combo, rect.combo-separate { fill: #1f3d7a; }
+rect.held, rect.combo.held { fill: #854747; }
+text.label, text.footer { stroke: black; }
+text.trans { fill: #7e8184; }
+path.combo { stroke: #7f7f7f; }
+
+svg.keymap { background-color: #1e1e2e; }
+text.layer-activator { display: none; text-decoration: none; }
+svg.layer-summary text.layer-activator { display: inline; }
+rect.key { fill: #313244; }
+rect.key, rect.combo { stroke: #45475a; }
+rect.combo, rect.combo-separate { fill: #181825; }
+path.combo { stroke: #6c7086; stroke-width: 2; stroke-dasharray: 2 3; opacity: 0.7; fill: none; }
+rect.key.meta-escape-trigger, rect.combo.meta-escape { stroke: #aa4499; }
+text.combo.meta-escape, svg.combo.meta-escape { fill: #aa4499; }
+rect.key.meta-tab-trigger, rect.combo.meta-tab { stroke: #88ccee; }
+text.combo.meta-tab, svg.combo.meta-tab { fill: #88ccee; }
+rect.key.meta-enter-trigger, rect.combo.meta-enter { stroke: #44aa99; }
+text.combo.meta-enter, svg.combo.meta-enter { fill: #44aa99; }
+rect.key.meta-backspace-trigger, rect.combo.meta-backspace { stroke: #ddcc77; }
+text.combo.meta-backspace, svg.combo.meta-backspace { fill: #ddcc77; }
+rect.key.meta-delete-trigger, rect.combo.meta-delete { stroke: #cc6677; }
+text.combo.meta-delete, svg.combo.meta-delete { fill: #cc6677; }
+rect.key[class*="meta-"][class*="-trigger"] { stroke-width: 2.5; }
+rect.combo.meta-delete-inset { fill: none; stroke: #cc6677; stroke-width: 2; rx: 4px; ry: 4px; }
+rect.combo.meta-combo { fill: #181825; }
+svg.combo.meta-combo.tap { width: 17px; height: 17px; transform: translate(-20px, 0); }
+text.combo.meta-combo.hold { font-size: 11px; text-anchor: start; dominant-baseline: central; transform: translate(-7px, -10px); }
+rect.mod { fill: #181825; }
+text.label { stroke: none; }
+.layer-Graphium text, .layer-Graphium .glyph, .layer-Graphium rect.held { fill: #cdd6f4; }
+.layer-Vestnik text, .layer-Vestnik .glyph, .layer-Vestnik rect.held { fill: #cba6f7; }
+.layer-Vestnik .key.shifted { fill: #ff6b6b; }
+.layer-Nav text, .layer-Nav .glyph, .layer-Nav rect.held { fill: #89b4fa; }
+.layer-Sym text, .layer-Sym .glyph, .layer-Sym rect.held, .layer-SymNum text, .layer-SymNum .glyph, .layer-SymNum rect.held { fill: #a6e3a1; }
+.layer-SymNum text.symnum-number.tap { fill: #fab387; }
+.layer-Num text, .layer-Num .glyph, .layer-Num rect.held { fill: #fab387; }
+.layer-Fn text, .layer-Fn .glyph, .layer-Fn rect.held { fill: #f9e2af; }
+.layer-Mouse text, .layer-Mouse .glyph, .layer-Mouse rect.held { fill: #94e2d5; }
+text.held { fill: #1e1e2e; }
+text.trans { fill: #6c7086; }
+rect.nav-activator, rect:has(~ a[href="#Nav"]) { stroke: #89b4fa; stroke-width: 2; }
+rect.sym-activator, rect.symnum-activator, rect:has(~ a[href="#Sym"]), rect:has(~ a[href="#SymNum"]) { stroke: #a6e3a1; stroke-width: 2; }
+rect.num-activator, rect:has(~ a[href="#Num"]) { stroke: #fab387; stroke-width: 2; }
+rect.key.mouse-activator, rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
+rect.key.fn-activator, rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
+rect.combo.mouse-activator { fill: #94e2d5; stroke: #94e2d5; }
+rect.combo.fn-activator { fill: #f9e2af; stroke: #f9e2af; }
+text.combo.mouse-activator, svg.combo.mouse-activator, text.combo.fn-activator, svg.combo.fn-activator { fill: #1e1e2e; }
+a[href="#Mouse"] text.combo.layer-activator { fill: #94e2d5; font-size: 9px; }
+a[href="#Fn"] text.combo.layer-activator { fill: #f9e2af; }
+</style>
+<g transform="translate(30, 0)" class="layer-Graphium">
+<text x="0" y="28" class="label" id="Graphium">Graphium:</text>
+<g transform="translate(0, 56)">
+<g transform="translate(28, 81)" class="key keypos-0">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">B</text>
+</g>
+<g transform="translate(84, 46)" class="key meta-escape-trigger keypos-1">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-escape-trigger"/>
+<text x="0" y="0" class="key meta-escape-trigger tap">L</text>
+</g>
+<g transform="translate(140, 28)" class="key meta-escape-trigger keypos-2">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-escape-trigger"/>
+<text x="0" y="0" class="key meta-escape-trigger tap">D</text>
+</g>
+<g transform="translate(196, 44)" class="key meta-escape-trigger keypos-3">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-escape-trigger"/>
+<text x="0" y="0" class="key meta-escape-trigger tap">W</text>
+</g>
+<g transform="translate(252, 52)" class="key keypos-4">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Z</text>
+</g>
+<g transform="translate(420, 52)" class="key keypos-5">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">&#x27;</text>
+<text x="0" y="-24" class="key shifted">&quot;</text>
+</g>
+<g transform="translate(476, 44)" class="key meta-backspace-trigger keypos-6">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-backspace-trigger"/>
+<text x="0" y="0" class="key meta-backspace-trigger tap">F</text>
+</g>
+<g transform="translate(532, 28)" class="key meta-backspace-trigger keypos-7">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-backspace-trigger"/>
+<text x="0" y="0" class="key meta-backspace-trigger tap">O</text>
+</g>
+<g transform="translate(588, 46)" class="key meta-backspace-trigger keypos-8">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-backspace-trigger"/>
+<text x="0" y="0" class="key meta-backspace-trigger tap">U</text>
+</g>
+<g transform="translate(644, 81)" class="key meta-delete-trigger keypos-9">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-delete-trigger"/>
+<text x="0" y="0" class="key meta-delete-trigger tap">J</text>
+</g>
+<g transform="translate(28, 137)" class="key keypos-10">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">N</text>
+</g>
+<g transform="translate(84, 102)" class="key meta-tab-trigger keypos-11">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-tab-trigger"/>
+<text x="0" y="0" class="key meta-tab-trigger tap">R</text>
+</g>
+<g transform="translate(140, 84)" class="key meta-tab-trigger keypos-12">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-tab-trigger"/>
+<text x="0" y="0" class="key meta-tab-trigger tap">T</text>
+</g>
+<g transform="translate(196, 100)" class="key meta-tab-trigger keypos-13">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-tab-trigger"/>
+<text x="0" y="0" class="key meta-tab-trigger tap">S</text>
+</g>
+<g transform="translate(252, 108)" class="key keypos-14">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">G</text>
+</g>
+<g transform="translate(420, 108)" class="key keypos-15">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Y</text>
+</g>
+<g transform="translate(476, 100)" class="key meta-enter-trigger keypos-16">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-enter-trigger"/>
+<text x="0" y="0" class="key meta-enter-trigger tap">H</text>
+</g>
+<g transform="translate(532, 84)" class="key meta-enter-trigger keypos-17">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-enter-trigger"/>
+<text x="0" y="0" class="key meta-enter-trigger tap">A</text>
+</g>
+<g transform="translate(588, 102)" class="key meta-enter-trigger keypos-18">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-enter-trigger"/>
+<text x="0" y="0" class="key meta-enter-trigger tap">E</text>
+</g>
+<g transform="translate(644, 137)" class="key keypos-19">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">I</text>
+</g>
+<g transform="translate(28, 193)" class="key keypos-20">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Q</text>
+</g>
+<g transform="translate(84, 158)" class="key keypos-21">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">X</text>
+</g>
+<g transform="translate(140, 140)" class="key keypos-22">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">M</text>
+</g>
+<g transform="translate(196, 156)" class="key keypos-23">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">C</text>
+</g>
+<g transform="translate(252, 164)" class="key keypos-24">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">V</text>
+</g>
+<g transform="translate(420, 164)" class="key keypos-25">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">K</text>
+</g>
+<g transform="translate(476, 156)" class="key keypos-26">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">P</text>
+</g>
+<g transform="translate(532, 140)" class="key keypos-27">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">.</text>
+<text x="0" y="-24" class="key shifted">?</text>
+</g>
+<g transform="translate(588, 158)" class="key keypos-28">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">,</text>
+<text x="0" y="-24" class="key shifted">!</text>
+</g>
+<g transform="translate(644, 193)" class="key keypos-29">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">-</text>
+<text x="0" y="-24" class="key shifted">/</text>
+</g>
+<g transform="translate(221, 221) rotate(15.0)" class="key layer-activator nav-activator keypos-30">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator nav-activator"/>
+<text x="0" y="0" class="key layer-activator nav-activator tap">NAV</text>
+</g>
+<g transform="translate(279, 245) rotate(30.0)" class="key keypos-31">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:keyboard-space" viewBox="0 0 24 24"><path d="M3 15H5V19H19V15H21V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15Z" /></svg>
+</g>
+<g transform="translate(393, 245) rotate(-30.0)" class="key keypos-32">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:arrow-up-bold" viewBox="0 0 24 24"><path d="M15,20H9V12H4.16L12,4.16L19.84,12H15V20Z" /></svg>
+</g>
+<g transform="translate(451, 221) rotate(-15.0)" class="key layer-activator sym-activator keypos-33">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator sym-activator"/>
+<text x="0" y="0" class="key layer-activator sym-activator tap">SYM</text>
+</g>
+<g class="combo combopos-0">
+<rect rx="6" ry="6" x="42" y="163" width="28" height="26" class="combo"/>
+<text x="56" y="176" class="combo tap">`</text>
+</g>
+<g class="combo combopos-1">
+<rect rx="6" ry="6" x="98" y="136" width="28" height="26" class="combo"/>
+<text x="112" y="149" class="combo tap">;</text>
+</g>
+<g class="combo combopos-2">
+<rect rx="6" ry="6" x="154" y="135" width="28" height="26" class="combo"/>
+<text x="168" y="148" class="combo tap">:</text>
+</g>
+<g class="combo combopos-3">
+<rect rx="6" ry="6" x="490" y="135" width="28" height="26" class="combo"/>
+<text x="504" y="148" class="combo tap">=</text>
+</g>
+<g class="combo combopos-4">
+<rect rx="6" ry="6" x="546" y="136" width="28" height="26" class="combo"/>
+<text x="560" y="149" class="combo tap">_</text>
+</g>
+<g class="combo combopos-5">
+<rect rx="6" ry="6" x="602" y="163" width="28" height="26" class="combo"/>
+<text x="616" y="176" class="combo tap">/</text>
+</g>
+<g class="combo mouse-activator combopos-6">
+<rect rx="6" ry="6" x="236" y="220" width="28" height="26" class="combo mouse-activator"/>
+<text x="250" y="233" class="combo mouse-activator tap">MOU</text>
+</g>
+<g class="combo fn-activator combopos-7">
+<rect rx="6" ry="6" x="408" y="220" width="28" height="26" class="combo fn-activator"/>
+<text x="422" y="233" class="combo fn-activator tap">FUN</text>
+</g>
+<g class="combo meta-backspace meta-combo combopos-8">
+<rect rx="6" ry="6" x="299" y="130" width="74" height="27" class="combo meta-backspace meta-combo"/>
+<svg x="329" y="137" height="14" width="14.0" class="combo meta-backspace meta-combo tap glyph mdi:backspace" viewBox="0 0 24 24"><path d="M22,3H7C6.31,3 5.77,3.35 5.41,3.88L0,12L5.41,20.11C5.77,20.64 6.31,21 7,21H22A2,2 0 0,0 24,19V5A2,2 0 0,0 22,3M19,15.59L17.59,17L14,13.41L10.41,17L9,15.59L12.59,12L9,8.41L10.41,7L14,10.59L17.59,7L19,8.41L15.41,12" /></svg>
+<text x="336" y="155" class="combo meta-backspace meta-combo hold">Bspc</text>
+</g>
+<g class="combo meta-delete-inset combopos-9">
+<rect rx="6" ry="6" x="510" y="6" width="44" height="44" class="combo meta-delete-inset"/>
+</g>
+<g class="combo meta-delete-inset combopos-10">
+<rect rx="6" ry="6" x="566" y="24" width="44" height="44" class="combo meta-delete-inset"/>
+</g>
+<g class="combo meta-delete meta-combo combopos-11">
+<rect rx="6" ry="6" x="299" y="165" width="74" height="27" class="combo meta-delete meta-combo"/>
+<svg x="329" y="172" height="14" width="14.0" class="combo meta-delete meta-combo tap glyph mdi:backspace-reverse" viewBox="0 0 24 24"><path d="M2,21H17C17.7,21 18.2,20.6 18.6,20.1L24,12L18.6,3.9C18.2,3.4 17.7,3 17,3H2A2,2 0 0,0 0,5V19A2,2 0 0,0 2,21M5,8.4L6.4,7L10,10.6L13.6,7L15,8.4L11.4,12L15,15.6L13.6,17L10,13.4L6.4,17L5,15.6L8.6,12" /></svg>
+<text x="336" y="190" class="combo meta-delete meta-combo hold">Del</text>
+</g>
+<g class="combo meta-escape meta-combo combopos-12">
+<rect rx="6" ry="6" x="299" y="26" width="74" height="27" class="combo meta-escape meta-combo"/>
+<svg x="329" y="33" height="14" width="14.0" class="combo meta-escape meta-combo tap glyph mdi:keyboard-esc" viewBox="0 0 24 24"><path d="M1 7H7V9H3V11H7V13H3V15H7V17H1V7M11 7H15V9H11V11H13C14.11 11 15 11.9 15 13V15C15 16.11 14.11 17 13 17H9V15H13V13H11C9.9 13 9 12.11 9 11V9C9 7.9 9.9 7 11 7M19 7H21C22.11 7 23 7.9 23 9V10H21V9H19V15H21V14H23V15C23 16.11 22.11 17 21 17H19C17.9 17 17 16.11 17 15V9C17 7.9 17.9 7 19 7Z" /></svg>
+<text x="336" y="51" class="combo meta-escape meta-combo hold">Esc</text>
+</g>
+<g class="combo meta-tab meta-combo combopos-13">
+<rect rx="6" ry="6" x="299" y="61" width="74" height="27" class="combo meta-tab meta-combo"/>
+<svg x="329" y="67" height="14" width="14.0" class="combo meta-tab meta-combo tap glyph mdi:keyboard-tab" viewBox="0 0 24 24"><path d="M20,18H22V6H20M11.59,7.41L15.17,11H1V13H15.17L11.59,16.58L13,18L19,12L13,6L11.59,7.41Z" /></svg>
+<text x="336" y="85" class="combo meta-tab meta-combo hold">Tab</text>
+</g>
+<g class="combo meta-enter meta-combo combopos-14">
+<rect rx="6" ry="6" x="299" y="96" width="74" height="27" class="combo meta-enter meta-combo"/>
+<svg x="329" y="102" height="14" width="14.0" class="combo meta-enter meta-combo tap glyph mdi:keyboard-return" viewBox="0 0 24 24"><path d="M19,7V11H5.83L9.41,7.41L8,6L2,12L8,18L9.41,16.58L5.83,13H21V7H19Z" /></svg>
+<text x="336" y="120" class="combo meta-enter meta-combo hold">Enter</text>
+</g>
+</g>
+</g>
+<g transform="translate(30, 339)" class="layer-Vestnik">
+<text x="0" y="28" class="label" id="Vestnik">Vestnik:</text>
+<g transform="translate(0, 56)">
+<g transform="translate(28, 81)" class="key keypos-0">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Ш</text>
+</g>
+<g transform="translate(84, 46)" class="key meta-escape-trigger keypos-1">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-escape-trigger"/>
+<text x="0" y="0" class="key meta-escape-trigger tap">З</text>
+</g>
+<g transform="translate(140, 28)" class="key meta-escape-trigger keypos-2">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-escape-trigger"/>
+<text x="0" y="0" class="key meta-escape-trigger tap">Р</text>
+</g>
+<g transform="translate(196, 44)" class="key meta-escape-trigger keypos-3">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-escape-trigger"/>
+<text x="0" y="0" class="key meta-escape-trigger tap">М</text>
+</g>
+<g transform="translate(252, 52)" class="key keypos-4">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Х</text>
+</g>
+<g transform="translate(420, 52)" class="key keypos-5">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Ф</text>
+</g>
+<g transform="translate(476, 44)" class="key meta-backspace-trigger keypos-6">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-backspace-trigger"/>
+<text x="0" y="0" class="key meta-backspace-trigger tap">П</text>
+</g>
+<g transform="translate(532, 28)" class="key meta-backspace-trigger keypos-7">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-backspace-trigger"/>
+<text x="0" y="0" class="key meta-backspace-trigger tap">О</text>
+</g>
+<g transform="translate(588, 46)" class="key meta-backspace-trigger keypos-8">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-backspace-trigger"/>
+<text x="0" y="0" class="key meta-backspace-trigger tap">У</text>
+</g>
+<g transform="translate(644, 81)" class="key meta-delete-trigger keypos-9">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-delete-trigger"/>
+<text x="0" y="0" class="key meta-delete-trigger tap">Ю</text>
+</g>
+<g transform="translate(28, 137)" class="key keypos-10">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">С</text>
+</g>
+<g transform="translate(84, 102)" class="key meta-tab-trigger keypos-11">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-tab-trigger"/>
+<text x="0" y="0" class="key meta-tab-trigger tap">Т</text>
+</g>
+<g transform="translate(140, 84)" class="key meta-tab-trigger keypos-12">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-tab-trigger"/>
+<text x="0" y="0" class="key meta-tab-trigger tap">Н</text>
+</g>
+<g transform="translate(196, 100)" class="key meta-tab-trigger keypos-13">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-tab-trigger"/>
+<text x="0" y="0" class="key meta-tab-trigger tap">К</text>
+</g>
+<g transform="translate(252, 108)" class="key keypos-14">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Б</text>
+</g>
+<g transform="translate(420, 108)" class="key keypos-15">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Г</text>
+</g>
+<g transform="translate(476, 100)" class="key meta-enter-trigger keypos-16">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-enter-trigger"/>
+<text x="0" y="0" class="key meta-enter-trigger tap">В</text>
+</g>
+<g transform="translate(532, 84)" class="key meta-enter-trigger keypos-17">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-enter-trigger"/>
+<text x="0" y="0" class="key meta-enter-trigger tap">А</text>
+</g>
+<g transform="translate(588, 102)" class="key meta-enter-trigger keypos-18">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key meta-enter-trigger"/>
+<text x="0" y="0" class="key meta-enter-trigger tap">Е</text>
+</g>
+<g transform="translate(644, 137)" class="key keypos-19">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">И</text>
+</g>
+<g transform="translate(28, 193)" class="key keypos-20">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Щ</text>
+</g>
+<g transform="translate(84, 158)" class="key keypos-21">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Ц</text>
+</g>
+<g transform="translate(140, 140)" class="key keypos-22">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Л</text>
+</g>
+<g transform="translate(196, 156)" class="key keypos-23">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Д</text>
+</g>
+<g transform="translate(252, 164)" class="key keypos-24">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Ч</text>
+</g>
+<g transform="translate(420, 164)" class="key keypos-25">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Ж</text>
+</g>
+<g transform="translate(476, 156)" class="key keypos-26">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Й/Ь</text>
+</g>
+<g transform="translate(532, 140)" class="key keypos-27">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Ы</text>
+</g>
+<g transform="translate(588, 158)" class="key keypos-28">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Я</text>
+</g>
+<g transform="translate(644, 193)" class="key keypos-29">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">Э</text>
+</g>
+<g transform="translate(221, 221) rotate(15.0)" class="key layer-activator nav-activator keypos-30">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator nav-activator"/>
+<text x="0" y="0" class="key layer-activator nav-activator tap">NAV</text>
+</g>
+<g transform="translate(279, 245) rotate(30.0)" class="key keypos-31">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:keyboard-space" viewBox="0 0 24 24"><path d="M3 15H5V19H19V15H21V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15Z" /></svg>
+</g>
+<g transform="translate(393, 245) rotate(-30.0)" class="key keypos-32">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<svg x="-7" y="-7" height="14" width="14.0" class="key tap glyph mdi:arrow-up-bold" viewBox="0 0 24 24"><path d="M15,20H9V12H4.16L12,4.16L19.84,12H15V20Z" /></svg>
+</g>
+<g transform="translate(451, 221) rotate(-15.0)" class="key layer-activator sym-activator keypos-33">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key layer-activator sym-activator"/>
+<text x="0" y="0" class="key layer-activator sym-activator tap">SYM</text>
+</g>
+<g class="combo combopos-0">
+<rect rx="6" ry="6" x="490" y="135" width="28" height="26" class="combo"/>
+<text x="504" y="148" class="combo tap">.</text>
+<text x="504" y="137" class="combo shifted">?</text>
+</g>
+<g class="combo combopos-1">
+<rect rx="6" ry="6" x="546" y="136" width="28" height="26" class="combo"/>
+<text x="560" y="149" class="combo tap">,</text>
+<text x="560" y="138" class="combo shifted">!</text>
+</g>
+<g class="combo combopos-2">
+<rect rx="6" ry="6" x="602" y="163" width="28" height="26" class="combo"/>
+<text x="616" y="176" class="combo tap">-</text>
+</g>
+<g class="combo combopos-3">
+<path d="M588,231 h-50 a6.0,6.0 0 0 1 -6.0,-6.0 v-66" class="combo"/>
+<path d="M588,231 h50 a6.0,6.0 0 0 0 6.0,-6.0 v-13" class="combo"/>
+<rect rx="6" ry="6" x="574" y="218" width="28" height="26" class="combo"/>
+<text x="588" y="231" class="combo tap">&#x27;</text>
+</g>
+<g class="combo combopos-4">
+<rect rx="6" ry="6" x="406" y="123" width="28" height="26" class="combo"/>
+<text x="420" y="136" class="combo tap">Ъ</text>
+</g>
+<g class="combo combopos-5">
+<rect rx="6" ry="6" x="574" y="61" width="28" height="26" class="combo"/>
+<text x="588" y="74" class="combo tap">Ё</text>
+</g>
+<g class="combo mouse-activator combopos-6">
+<rect rx="6" ry="6" x="236" y="220" width="28" height="26" class="combo mouse-activator"/>
+<text x="250" y="233" class="combo mouse-activator tap">MOU</text>
+</g>
+<g class="combo fn-activator combopos-7">
+<rect rx="6" ry="6" x="408" y="220" width="28" height="26" class="combo fn-activator"/>
+<text x="422" y="233" class="combo fn-activator tap">FUN</text>
+</g>
+<g class="combo meta-backspace meta-combo combopos-8">
+<rect rx="6" ry="6" x="299" y="130" width="74" height="27" class="combo meta-backspace meta-combo"/>
+<svg x="329" y="137" height="14" width="14.0" class="combo meta-backspace meta-combo tap glyph mdi:backspace" viewBox="0 0 24 24"><path d="M22,3H7C6.31,3 5.77,3.35 5.41,3.88L0,12L5.41,20.11C5.77,20.64 6.31,21 7,21H22A2,2 0 0,0 24,19V5A2,2 0 0,0 22,3M19,15.59L17.59,17L14,13.41L10.41,17L9,15.59L12.59,12L9,8.41L10.41,7L14,10.59L17.59,7L19,8.41L15.41,12" /></svg>
+<text x="336" y="155" class="combo meta-backspace meta-combo hold">Bspc</text>
+</g>
+<g class="combo meta-delete-inset combopos-9">
+<rect rx="6" ry="6" x="510" y="6" width="44" height="44" class="combo meta-delete-inset"/>
+</g>
+<g class="combo meta-delete-inset combopos-10">
+<rect rx="6" ry="6" x="566" y="24" width="44" height="44" class="combo meta-delete-inset"/>
+</g>
+<g class="combo meta-delete meta-combo combopos-11">
+<rect rx="6" ry="6" x="299" y="165" width="74" height="27" class="combo meta-delete meta-combo"/>
+<svg x="329" y="172" height="14" width="14.0" class="combo meta-delete meta-combo tap glyph mdi:backspace-reverse" viewBox="0 0 24 24"><path d="M2,21H17C17.7,21 18.2,20.6 18.6,20.1L24,12L18.6,3.9C18.2,3.4 17.7,3 17,3H2A2,2 0 0,0 0,5V19A2,2 0 0,0 2,21M5,8.4L6.4,7L10,10.6L13.6,7L15,8.4L11.4,12L15,15.6L13.6,17L10,13.4L6.4,17L5,15.6L8.6,12" /></svg>
+<text x="336" y="190" class="combo meta-delete meta-combo hold">Del</text>
+</g>
+<g class="combo meta-escape meta-combo combopos-12">
+<rect rx="6" ry="6" x="299" y="26" width="74" height="27" class="combo meta-escape meta-combo"/>
+<svg x="329" y="33" height="14" width="14.0" class="combo meta-escape meta-combo tap glyph mdi:keyboard-esc" viewBox="0 0 24 24"><path d="M1 7H7V9H3V11H7V13H3V15H7V17H1V7M11 7H15V9H11V11H13C14.11 11 15 11.9 15 13V15C15 16.11 14.11 17 13 17H9V15H13V13H11C9.9 13 9 12.11 9 11V9C9 7.9 9.9 7 11 7M19 7H21C22.11 7 23 7.9 23 9V10H21V9H19V15H21V14H23V15C23 16.11 22.11 17 21 17H19C17.9 17 17 16.11 17 15V9C17 7.9 17.9 7 19 7Z" /></svg>
+<text x="336" y="51" class="combo meta-escape meta-combo hold">Esc</text>
+</g>
+<g class="combo meta-tab meta-combo combopos-13">
+<rect rx="6" ry="6" x="299" y="61" width="74" height="27" class="combo meta-tab meta-combo"/>
+<svg x="329" y="67" height="14" width="14.0" class="combo meta-tab meta-combo tap glyph mdi:keyboard-tab" viewBox="0 0 24 24"><path d="M20,18H22V6H20M11.59,7.41L15.17,11H1V13H15.17L11.59,16.58L13,18L19,12L13,6L11.59,7.41Z" /></svg>
+<text x="336" y="85" class="combo meta-tab meta-combo hold">Tab</text>
+</g>
+<g class="combo meta-enter meta-combo combopos-14">
+<rect rx="6" ry="6" x="299" y="96" width="74" height="27" class="combo meta-enter meta-combo"/>
+<svg x="329" y="102" height="14" width="14.0" class="combo meta-enter meta-combo tap glyph mdi:keyboard-return" viewBox="0 0 24 24"><path d="M19,7V11H5.83L9.41,7.41L8,6L2,12L8,18L9.41,16.58L5.83,13H21V7H19Z" /></svg>
+<text x="336" y="120" class="combo meta-enter meta-combo hold">Enter</text>
+</g>
+</g>
+</g>
+</svg>

@@ -20,6 +20,7 @@ typedef struct {
     uint16_t trigger;
     uint16_t tap;
     uint16_t shifted;
+    uint16_t active_output;
 } razen_morph_t;
 
 typedef struct {
@@ -126,7 +127,7 @@ typedef struct {
     uint16_t timers[4];
 } razen_layer_mod_chord_t;
 
-extern const razen_morph_t razen_morphs[];
+extern razen_morph_t razen_morphs[];
 extern const uint8_t razen_morph_count;
 extern const razen_macro_t razen_macros[];
 extern const uint8_t razen_macro_count;

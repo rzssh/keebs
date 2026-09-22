@@ -5,9 +5,9 @@ My current 34-key setup can be seen below.
 
 ![My current keyboards](assets/current-keyboards.jpg)
 
-![Current 34-key layout](draw/generated/cradio_34.svg)
+![Graphium and Vestnik layouts](draw/generated/cradio_34_summary.svg)
 
-[View the 30-key layout](draw/generated/luna_30.svg)
+[Click for full 34-key keymap](draw/generated/cradio_34.svg)
 
 ## Keymap
 
@@ -21,16 +21,15 @@ Both layouts use [adaptive swaps](https://dario.ca/posts/2026-05-18-keyboard-lay
 
 ### Thumbs and layers
 
-The 34-key profile has two thumb setups:
+The 34-key profile has three thumb setups:
 
 - `right_space_split`: Sym, Backspace/Nav, Space, Num.
+- `left_space_split`: Nav, Space, a configurable opposite thumb, Sym; holding Nav and Sym opens Num.
 - `left_space_combined`: Nav, Space, a configurable opposite thumb, SymNum.
 
-The homing thumb opposite Space can be Backspace, Shift, or Repeat without changing the rest of the setup. I currently use `right_space_split` with Backspace/Nav.
+The homing thumb opposite Space can be Backspace, Shift, or Repeat without changing the rest of the setup. I currently use `left_space_split` with Shift.
 
 Both left thumbs open Mouse; both right thumbs open Fn. Layers follow the thumbs still held, so adding or releasing one falls directly into the resulting layer without resetting the chord.
-
-Flags independently control home-row mods, right-hand punctuation, meta/editing/bracket combos, whether those combos work across layers, Nav editing and meta keys, and secondary taps on layer thumbs.
 
 ### Layer-mod chords
 

@@ -151,7 +151,9 @@
       "zmk_draw_keyboard": "cradio",
       "position_set": "core_34",
       "zmk": {"keyboard": "cradio", "board": "nice_nano/nrf52840/zmk", "shields": ["cradio_left", "cradio_right"]},
-      "alpha_capacity": 34
+      "alpha_capacity": 34,
+      "draw_summary_layers": ["Graphium", "Vestnik"],
+      "draw_summary_labels": {"Nav": "NAV", "Sym": "SYM", "Mouse": "MOU", "Fn": "FUN"}
     },
     "charybdis_35": {
       "physical_keys": 35,

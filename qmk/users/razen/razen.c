@@ -140,6 +140,11 @@ static bool history_matches(const razen_adaptive_rule_t *rule) {
     return razen_suffix_matches(history, history_len, rule->after, rule->after_len);
 }
 
+static bool follows_lowercase_with_shift(uint8_t mods) {
+    return (mods & MOD_MASK_SHIFT) && history_len && history[history_len - 1] >= KC_A &&
+           history[history_len - 1] <= KC_Z && !(history_mods[history_len - 1] & MOD_MASK_SHIFT);
+}
+
 static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
     if (!record->event.pressed) {
         if (suppressed_keycode == keycode) {
@@ -168,9 +173,11 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
     }
 
     uint8_t layer = get_highest_layer(layer_state | default_layer_state);
+    bool camel_case_boundary = follows_lowercase_with_shift(mods);
     for (uint8_t index = 0; index < razen_adaptive_rule_count; index++) {
         const razen_adaptive_rule_t *rule = &razen_adaptive_rules[index];
-        if (rule->layer != layer || rule->input != basic || !history_timer || timer_elapsed32(history_timer) > rule->timeout_ms ||
+        if (camel_case_boundary || rule->layer != layer || rule->input != basic || !history_timer ||
+            timer_elapsed32(history_timer) > rule->timeout_ms ||
             (rule->strict_modifiers && (mods & ~(rule->allow_shift ? MOD_MASK_SHIFT : 0))) || !history_matches(rule)) {
             continue;
         }
@@ -210,7 +217,7 @@ static void repeat_magic(void) {
     }
     uint16_t repeated = get_last_keycode();
     if (repeated == KC_NO || !repeat_timer || timer_elapsed32(repeat_timer) > RAZEN_MAGIC_REPEAT_TIMEOUT ||
-        (!(repeated >= KC_A && repeated <= KC_Z) && !repeat_mods)) {
+        (!(repeated >= KC_A && repeated <= KC_Z) && !repeat_mods && !RAZEN_MAGIC_PLAIN_REPEATABLE(repeated))) {
         add_oneshot_mods(MOD_BIT(razen_magic_hold_keycode));
         return;
     }
@@ -691,18 +698,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    if (!record->event.pressed) {
-        return process_adaptive(keycode, record);
-    }
-
     for (uint8_t index = 0; index < razen_morph_count; index++) {
-        if (razen_morphs[index].trigger != keycode) {
+        razen_morph_t *morph = &razen_morphs[index];
+        if (morph->trigger != keycode) {
             continue;
+        }
+        if (!record->event.pressed) {
+            if (morph->active_output != KC_NO) {
+                unregister_code16(morph->active_output);
+                morph->active_output = KC_NO;
+                return false;
+            }
+            return true;
+        }
+        if (is_caps_word_on() && (morph->tap == KC_DOT || morph->tap == KC_COMM)) {
+            caps_word_off();
         }
         uint8_t mods = get_mods() | get_oneshot_mods() | get_weak_mods();
         bool shifted = mods & MOD_MASK_SHIFT;
-        uint16_t output = shifted ? razen_morphs[index].shifted : razen_morphs[index].tap;
-        tap_morph(razen_morphs[index].tap, razen_morphs[index].shifted);
+        uint16_t output = shifted ? morph->shifted : morph->tap;
         remember_repeat(output, shifted ? mods & ~MOD_MASK_SHIFT : mods);
         if (output == KC_BSPC) {
             pop_history();
@@ -711,7 +725,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
             clear_history();
         }
+        if (shifted) {
+            return true;
+        }
+        if (output == CW_TOGG) {
+            caps_word_on();
+        } else {
+            register_code16(output);
+            morph->active_output = output;
+        }
         return false;
+    }
+
+    if (!record->event.pressed) {
+        return process_adaptive(keycode, record);
     }
 
     for (uint8_t index = 0; index < razen_macro_count; index++) {
