@@ -2577,6 +2577,7 @@ def render_draw(model: dict[str, Any], ir: dict[str, Any]) -> str:
             for index in opposite:
                 layers[source][index] = {"type": f"{ident(conditional['then_layer']).lower()}-activator"}
     data: dict[str, Any] = {"layers": layers}
+    combo_insets = []
     combos = []
     center_positions = [ir["slots"].index("L_INDEX_TOP"), ir["slots"].index("R_INDEX_TOP")]
     for combo in ir["combos"]:
@@ -2598,7 +2599,7 @@ def render_draw(model: dict[str, Any], ir: dict[str, Any]) -> str:
                     trigger = dict(trigger) if isinstance(trigger, dict) else {"t": trigger}
                     trigger_types = str(trigger.get("type", "")).split()
                     if any(value.startswith("meta-") and value.endswith("-trigger") for value in trigger_types):
-                        combos.append({
+                        combo_insets.append({
                             "p": [index, index],
                             "k": {"type": f"{drawing['type']}-inset"},
                             "l": [layer],
@@ -2630,7 +2631,7 @@ def render_draw(model: dict[str, Any], ir: dict[str, Any]) -> str:
             rendered["o"] = drawing["offset"]
         combos.append(rendered)
     if combos:
-        data["combos"] = combos
+        data["combos"] = [*combo_insets, *combos]
     return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
 
 

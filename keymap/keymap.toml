@@ -7,7 +7,7 @@ layer_source = "layers.toml"
 behavior_source = "behaviors.toml"
 profile_source = "profiles.json"
 draw_combo_reference_layer = false
-combo_transient_layers = ["Sym", "Num"]
+combo_transient_layers = ["Nav", "Sym"]
 core34_setup = "left_space_split"
 opposite_homing_tap = "shift"
 
@@ -16,7 +16,7 @@ home_row_mods = { core30 = true, core34 = false }
 graphite_right_hand = { core30 = false, core34 = true }
 key_combos = true
 key_combos_transient = true
-bracket_combos = { core30 = true, core34 = false }
+bracket_combos = { core30 = true, core34 = true }
 bracket_combos_transient = { core30 = true, core34 = false }
 editing_combos = { core30 = true, core34 = false }
 editing_combos_transient = false

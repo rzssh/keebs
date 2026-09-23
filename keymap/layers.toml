@@ -133,9 +133,9 @@ Num = ["trans", "none", { layer = "Fn", mode = "momentary" }, "trans"]
 
 [setups.left_space_split.layers.Sym]
 rows = [
-  [{ use = "grave_tilde" }, { use = "star_caret" }, { use = "hash_dollar" }, { use = "amp_percent" }, "PIPE", { use = "dot_plain" }, "LPAR", "RPAR", "LBKT", "RBKT"],
+  [{ use = "grave_tilde" }, { use = "hash_caret" }, { use = "star_dollar" }, { use = "amp_percent" }, "PIPE", "DQT", "LPAR", "RPAR", { use = "lbkt_plain" }, { use = "rbkt_plain" }],
   [{ use = "semi_plain" }, "UNDER", "COLON", { use = "equal_plain" }, "PLUS", "AT", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  ["QMARK", "EXCL", { use = "slash_plain" }, { use = "minus_plain" }, { use = "bslh_plain" }, "COMMA", "LBRC", "RBRC", "LT", "GT"],
+  ["QMARK", "EXCL", { use = "slash_plain" }, { use = "minus_plain" }, { use = "bslh_plain" }, "SQT", "LBRC", "RBRC", "LT", "GT"],
   ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"],
 ]
 

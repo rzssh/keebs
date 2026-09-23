@@ -170,6 +170,16 @@ recipe = "shift_morph"
 tap = "STAR"
 shifted = "CARET"
 
+[behaviors.hash_caret]
+recipe = "shift_morph"
+tap = "HASH"
+shifted = "CARET"
+
+[behaviors.star_dollar]
+recipe = "shift_morph"
+tap = "STAR"
+shifted = "DLLR"
+
 [behaviors.hash_dollar]
 recipe = "shift_morph"
 tap = "HASH"
@@ -275,6 +285,16 @@ recipe = "shift_morph"
 tap = "DOT"
 shifted = "DOT"
 
+[behaviors.lbkt_plain]
+recipe = "shift_morph"
+tap = "LBKT"
+shifted = "LBKT"
+
+[behaviors.rbkt_plain]
+recipe = "shift_morph"
+tap = "RBKT"
+shifted = "RBKT"
+
 [behaviors.paren]
 recipe = "shift_morph"
 tap = "LPAR"
@@ -361,14 +381,6 @@ steps = [
   { key = "TAB", mods = ["LCTRL"] },
 ]
 
-[behaviors.colon_equal]
-recipe = "sequence"
-label = ":="
-steps = [
-  { key = "COLON" },
-  { key = "EQUAL" },
-]
-
 [behaviors.fat_arrow]
 recipe = "sequence"
 label = "=>"
@@ -383,22 +395,6 @@ label = "->"
 steps = [
   { key = "MINUS" },
   { key = "GT" },
-]
-
-[behaviors.question_dot]
-recipe = "sequence"
-label = "?."
-steps = [
-  { key = "QMARK" },
-  { key = "DOT" },
-]
-
-[behaviors.dot_slash]
-recipe = "sequence"
-label = "./"
-steps = [
-  { key = "DOT" },
-  { key = "FSLH" },
 ]
 
 [behaviors.thumb_magic]
@@ -770,6 +766,7 @@ swaps = [
   ["P", "Y", "X"],
 ]
 rules = [
+  { input = "O", after = ["J", "U"], emit = ["BSPC", "O", "U"], allow_shift = true },
   { input = "S", after = ["Y", "O", "U"], emit = ["SQT"] },
   { input = "O", after = ["I", "U"], emit = ["BSPC", "O", "U"] },
   { input = "T", after = ["N", "R"], emit = ["BSPC", "T", "R"] },
@@ -1074,7 +1071,7 @@ prior_idle_ms = 0
 
 [[combos]]
 name = "sym_fat_arrow"
-positions = ["R_INDEX_TOP", "R_MIDDLE_TOP"]
+positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
 layers = ["Sym"]
 variants = ["core34"]
 setups = ["left_space_split"]
@@ -1084,41 +1081,11 @@ prior_idle_ms = 0
 
 [[combos]]
 name = "sym_thin_arrow"
-positions = ["R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM"]
-layers = ["Sym"]
-variants = ["core34"]
-setups = ["left_space_split"]
-action = { use = "thin_arrow" }
-term_ms = 30
-prior_idle_ms = 0
-
-[[combos]]
-name = "sym_colon_equal"
 positions = ["R_MIDDLE_TOP", "R_RING_TOP"]
 layers = ["Sym"]
 variants = ["core34"]
 setups = ["left_space_split"]
-action = { use = "colon_equal" }
-term_ms = 30
-prior_idle_ms = 0
-
-[[combos]]
-name = "sym_question_dot"
-positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
-layers = ["Sym"]
-variants = ["core34"]
-setups = ["left_space_split"]
-action = { use = "question_dot" }
-term_ms = 30
-prior_idle_ms = 0
-
-[[combos]]
-name = "sym_dot_slash"
-positions = ["L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM"]
-layers = ["Sym"]
-variants = ["core34"]
-setups = ["left_space_split"]
-action = { use = "dot_slash" }
+action = { use = "thin_arrow" }
 term_ms = 30
 prior_idle_ms = 0
 
@@ -1385,7 +1352,7 @@ layers = ["Graphium", "Vestnik"]
 variants = ["core30", "core34"]
 feature = "key_combos"
 action = { use = "bspc_word" }
-term_ms = 20
+term_ms = 40
 prior_idle_ms = 0
 slow_release = true
 draw = { action = "BSPC", layers = ["Graphium", "Vestnik"], type = "meta-backspace", center = 3, name = "Bspc" }
@@ -1397,7 +1364,7 @@ layers = ["Graphium", "Vestnik"]
 variants = ["core30", "core34"]
 feature = "key_combos"
 action = { use = "del_word" }
-term_ms = 20
+term_ms = 40
 prior_idle_ms = 0
 draw = { action = "DEL", layers = ["Graphium", "Vestnik"], type = "meta-delete", center = 4, name = "Del" }
 
@@ -1408,7 +1375,7 @@ layers = ["Graphium", "Vestnik"]
 variants = ["core30", "core34"]
 feature = "key_combos"
 action = "ESC"
-term_ms = 20
+term_ms = 40
 prior_idle_ms = 0
 draw = { layers = ["Graphium", "Vestnik"], type = "meta-escape", center = 0, name = "Esc" }
 
@@ -1419,7 +1386,7 @@ layers = ["Graphium", "Vestnik"]
 variants = ["core30", "core34"]
 feature = "key_combos"
 action = "TAB"
-term_ms = 20
+term_ms = 40
 prior_idle_ms = 0
 draw = { layers = ["Graphium", "Vestnik"], type = "meta-tab", center = 1, name = "Tab" }
 
@@ -1430,7 +1397,7 @@ layers = ["Graphium", "Vestnik"]
 variants = ["core30", "core34"]
 feature = "key_combos"
 action = "RET"
-term_ms = 20
+term_ms = 40
 prior_idle_ms = 0
 draw = { layers = ["Graphium", "Vestnik"], type = "meta-enter", center = 2, name = "Enter" }
 
