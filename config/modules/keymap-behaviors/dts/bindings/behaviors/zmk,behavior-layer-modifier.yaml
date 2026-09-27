@@ -1,6 +1,6 @@
-description: Momentary layer and modifier chord with independent releases
+description: Modifier activated from a layer with independent releases
 
-compatible: "zmk,behavior-layer-mod-chord"
+compatible: "zmk,behavior-layer-modifier"
 
 include: zero_param.yaml
 

@@ -24,8 +24,8 @@ rows = [
 
 [layers.Vestnik.core34]
 rows = [
-  ["Ш", "З", "Р", "М", "Х", "Ф", "П", { tap = "О", adaptive = "vestnik_core34" }, "У", "Ю"],
-  [{ tap = "С", hold = "LGUI", hand = "left" }, { tap = "Т", hold = "LALT", hand = "left" }, { tap = "Н", hold = "LCTRL", hand = "left" }, { tap = "К", hold = "LSHFT", hand = "left" }, "Б", "Г", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "А", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
+  ["Ш", "З", "Р", "М", "Х", "Ф", "П", "О", "У", "Ю"],
+  [{ tap = "С", hold = "LGUI", hand = "left" }, { tap = "Т", hold = "LALT", hand = "left" }, { tap = "Н", hold = "LCTRL", hand = "left", adaptive = "vestnik_core34" }, { tap = "К", hold = "LSHFT", hand = "left" }, "Б", "Г", { tap = "В", hold = "RSHFT", hand = "right" }, { tap = "А", hold = "RCTRL", hand = "right" }, { tap = "Е", hold = "RALT", hand = "right" }, { tap = "И", hold = "RGUI", hand = "right" }],
   ["Щ", "Ц", "Л", "Д", "Ч", "Ж", { use = "vestnik_short_sign" }, "Ы", "Я", "Э"],
   [{ layer = "Sym", mode = "momentary" }, { use = "bspc_plain_nav" }, "SPACE", { layer = "Num", mode = "momentary" }],
 ]
@@ -40,10 +40,10 @@ rows = [
 
 [layers.Nav.core34]
 rows = [
-  [{ feature = "nav_meta_keys", enabled = "ESC" }, { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, { use = "tab_previous" }, { use = "tab_next" }, { mouse = "SCRL_UP" }, { os = "home" }, "UP", { os = "end" }, "PG_UP"],
-  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, { feature = "nav_meta_keys", enabled = { os = "delete_word_left" } }, { mouse = "SCRL_DOWN" }, "LEFT", "DOWN", "RIGHT", "PG_DN"],
-  [{ feature = "nav_editing_keys", enabled = { use = "undo_redo" } }, { feature = "nav_editing_keys", enabled = { os = "cut" } }, { feature = "nav_editing_keys", enabled = { os = "copy" } }, { feature = "nav_editing_keys", enabled = { os = "paste" } }, { feature = "nav_editing_keys", enabled = { os = "select_all" } }, { use = "caps_word_lock", draw = "CAPS" }, { feature = "nav_meta_keys", enabled = "RET" }, { feature = "nav_meta_keys", enabled = "TAB" }, { feature = "nav_meta_keys", enabled = "BSPC" }, { feature = "nav_meta_keys", enabled = "DEL" }],
-  [{ layer = "Sym", mode = "momentary" }, "trans", { feature = "nav_meta_keys", enabled = "RET" }, { layer = "Num", mode = "momentary" }],
+  ["none", { key = "O", mods = ["LGUI"] }, { key = "U", mods = ["LGUI"] }, { use = "tab_previous" }, { use = "tab_next" }, { mouse = "SCRL_UP" }, { os = "home" }, "UP", { os = "end" }, "PG_UP"],
+  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "none", { mouse = "SCRL_DOWN" }, "LEFT", "DOWN", "RIGHT", "PG_DN"],
+  [{ use = "undo_redo" }, { os = "cut" }, { os = "copy" }, { os = "paste" }, { os = "select_all" }, { use = "caps_word_lock", draw = "CAPS" }, "none", "none", "none", "none"],
+  [{ layer = "Sym", mode = "momentary" }, "trans", "none", { layer = "Num", mode = "momentary" }],
 ]
 
 [layers.Sym.core30]
@@ -74,23 +74,23 @@ rows = [
 rows = [
   ["FSLH", "N7", "N8", "N9", "STAR", "DOT", "LPAR", "RPAR", "LBKT", "RBKT"],
   ["N0", "N1", "N2", "N3", "PLUS", "EQUAL", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  ["COLON", "N4", "N5", "N6", "SEMI", "COMMA", "LBRC", "RBRC", "LT", "GT"],
+  ["COLON", "N4", "N5", "N6", "MINUS", "COMMA", "LBRC", "RBRC", "LT", "GT"],
   [{ layer = "Sym", mode = "momentary" }, "trans", { layer = "Fn", mode = "momentary" }, "trans"],
 ]
 
 [layers.Fn.core30]
 rows = [
   [{ use = "bootloader" }, "F7", "F8", "F9", "F12", { use = "output_toggle" }, { use = "lang_en" }, { use = "lang_ru" }, { use = "lang_ua" }, { use = "bootloader" }],
-  ["F10", "F1", "F2", "F3", "F11", { use = "bt_clear" }, "LSHFT", "LCTRL", "LALT", "LGUI"],
-  ["F4", "F5", "F6", { use = "bt_0" }, { use = "bt_1" }, { use = "bt_2" }],
+  ["F10", "F4", "F5", "F6", "F11", { use = "bt_clear" }, "LSHFT", "LCTRL", "LALT", "LGUI"],
+  ["F1", "F2", "F3", { use = "bt_0" }, { use = "bt_1" }, { use = "bt_2" }],
   ["none", "none", "none", "none"],
 ]
 
 [layers.Fn.core34]
 rows = [
   [{ use = "bootloader" }, "F7", "F8", "F9", "F12", { use = "output_toggle" }, { use = "lang_en" }, { use = "lang_ru" }, { use = "lang_ua" }, { use = "bootloader" }],
-  ["PSCRN", "F1", "F2", "F3", "F11", "none", "LSHFT", "LCTRL", "LALT", "LGUI"],
-  ["PAUSE_BREAK", "F4", "F5", "F6", "F10", { use = "bt_clear" }, { use = "bt_0" }, { use = "bt_1" }, { use = "bt_2" }, { use = "bt_3" }],
+  ["PSCRN", "F4", "F5", "F6", "F11", "none", "LSHFT", "LCTRL", "LALT", "LGUI"],
+  ["PAUSE_BREAK", "F1", "F2", "F3", "F10", { use = "bt_clear" }, { use = "bt_0" }, { use = "bt_1" }, { use = "bt_2" }, { use = "bt_3" }],
   ["none", "none", "none", "none"],
 ]
 
@@ -110,60 +110,68 @@ rows = [
   ["none", "none", { mouse = "LCLK" }, { mouse = "RCLK" }],
 ]
 
-[setups.right_space_split]
-thumb_tap_feature = "layer_thumb_taps"
-
-[setups.right_space_split.thumbs]
+[setups.right_space_symbols.thumbs]
 alpha = [{ layer = "Sym", mode = "momentary" }, { use = "bspc_plain_nav" }, "SPACE", { layer = "Num", mode = "momentary" }]
 Nav = [{ layer = "Sym", mode = "momentary" }, "trans", "SPACE", { layer = "Num", mode = "momentary" }]
 Sym = ["trans", { layer = "Nav", mode = "momentary" }, "SPACE", { layer = "Num", mode = "momentary" }]
 Num = [{ layer = "Sym", mode = "momentary" }, "trans", { layer = "Fn", mode = "momentary" }, "trans"]
 
-[setups.right_space_split.thumb_taps]
-alpha = [{ use = "esc_sym" }, { use = "bspc_plain_nav" }, "SPACE", { use = "enter_num" }]
-Nav = [{ use = "esc_sym" }, "trans", "SPACE", { use = "enter_num" }]
-Sym = ["trans", { layer = "Nav", mode = "momentary" }, "SPACE", { use = "enter_num" }]
-Num = [{ use = "esc_sym" }, "trans", { layer = "Fn", mode = "momentary" }, "trans"]
-
-[setups.left_space_split.thumbs]
-alpha = [{ layer = "Nav", mode = "momentary" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "momentary" }]
-Nav = ["trans", { layer = "Mouse", mode = "momentary" }, "none", "trans"]
-Sym = ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"]
-Num = ["trans", "none", { layer = "Fn", mode = "momentary" }, "trans"]
-
-[setups.left_space_split.layers.Sym]
-rows = [
-  [{ use = "grave_tilde" }, { use = "hash_caret" }, { use = "star_dollar" }, { use = "amp_percent" }, "PIPE", "DQT", "LPAR", "RPAR", { use = "lbkt_plain" }, { use = "rbkt_plain" }],
-  [{ use = "semi_plain" }, "UNDER", "COLON", { use = "equal_plain" }, "PLUS", "AT", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  ["QMARK", "EXCL", { use = "slash_plain" }, { use = "minus_plain" }, { use = "bslh_plain" }, "SQT", "LBRC", "RBRC", "LT", "GT"],
-  ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"],
-]
-
-[setups.left_space_combined]
+[setups.right_space_symnum]
 disabled_layers = ["Num"]
 draw_aliases = { Sym = "SymNum" }
 
-[setups.left_space_combined.thumbs]
-alpha = [{ layer = "Nav", mode = "momentary" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "momentary" }]
-Nav = ["trans", { layer = "Mouse", mode = "momentary" }, { feature = "nav_meta_keys", enabled = "RET" }, "none"]
-Sym = ["N0", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"]
-Num = ["none", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"]
+[setups.right_space_symnum.thumbs]
+alpha = [{ layer = "Sym", mode = "sticky" }, { use = "thumb_magic" }, "SPACE", { layer = "Nav", mode = "momentary" }]
+Nav = ["trans", "none", { layer = "Fn", mode = "momentary" }, "trans"]
+Sym = ["trans", { layer = "Mouse", mode = "momentary" }, "SPACE", "trans"]
 
-[setups.left_space_combined.layers.Sym]
+[setups.right_space_symnum.layers.Sym]
 rows = [
-  ["AT", "N9", "N8", "N7", "HASH", "EXCL", "COLON", { use = "equal_plain" }, "PLUS", "QMARK"],
-  [{ use = "slash_plain" }, "N3", "N2", "N1", "AMPS", "DQT", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  [{ use = "bslh_plain" }, "N6", "N5", "N4", "PIPE", { use = "grave_tilde" }, { use = "minus_plain" }, "UNDER", "STAR", { use = "semi_plain" }],
-  ["N0", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"],
+  [{ use = "grave_tilde" }, "N1", "N2", "N3", "N4", "N7", "N8", "N9", "N0", { use = "dollar_caret" }],
+  [{ use = "semi_hash" }, { use = "under_star" }, { use = "combo_colon_amp" }, { use = "equal_pipe" }, "N5", "N6", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
+  [{ use = "paired_angle" }, { use = "paired_square" }, { use = "paired_brace" }, { use = "paired_paren" }, { use = "plus_percent" }, "AT", "DQT", "QMARK", "EXCL", { use = "combo_slash_bslh" }],
+  ["trans", { layer = "Mouse", mode = "momentary" }, "SPACE", "trans"],
 ]
 
-[setups.left_space_combined.layers.Num]
+[setups.left_space_symbols.thumbs]
+alpha = [{ use = "under_nav" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "sticky" }]
+Nav = ["trans", { layer = "Mouse", mode = "momentary" }, "none", "trans"]
+Sym = ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"]
+Num = ["trans", "none", { layer = "Fn", mode = "momentary", draw = "none" }, "trans"]
+
+[setups.left_space_symbols.layers.Sym]
 rows = [
-  ["none", "N7", "N8", "N9", "none", "none", "none", "none", "none", "none"],
-  ["N0", "N1", "N2", "N3", "none", "none", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
-  ["none", "N4", "N5", "N6", "none", "none", "none", "none", "none", "none"],
-  ["none", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"],
+  [{ use = "grave_tilde", draw = "GRAVE" }, "HASH", "STAR", "AMPS", "PIPE", "DQT", { use = "paired_paren", draw = "LPAR" }, { use = "paired_brace", draw = "LBRC" }, { use = "paired_square", draw = "LBKT" }, { use = "paired_angle", draw = "LT" }],
+  [{ use = "semi_plain" }, "UNDER", "COLON", { use = "equal_plain" }, { use = "plus_percent" }, "AT", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
+  ["EXCL", "QMARK", { use = "dot_plain" }, { use = "combo_slash_bslh" }, { use = "minus_plain" }, "RPAR", "GT", "CARET", "DLLR", { use = "sqt_plain" }],
+  ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"],
 ]
+
+[setups.left_space_symbols.layers.Num]
+rows = [
+  ["N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9", "N0"],
+  [{ use = "osm_gui" }, { use = "osm_alt" }, { use = "osm_ctrl" }, { use = "osm_shift" }, "EQUAL", "PLUS", "N4", "N5", "N6", "MINUS"],
+  ["LPAR", "RPAR", "COMMA", "DOT", "PRCNT", "STAR", "N1", "N2", "N3", "FSLH"],
+  ["trans", "none", { layer = "Fn", mode = "momentary" }, "trans"],
+]
+
+[setups.left_space_symnum]
+disabled_layers = ["Num"]
+draw_aliases = { Sym = "SymNum" }
+
+[setups.left_space_symnum.thumbs]
+alpha = [{ layer = "Nav", mode = "momentary" }, "SPACE", { use = "thumb_magic" }, { layer = "Sym", mode = "sticky" }]
+Nav = ["trans", { layer = "Mouse", mode = "momentary" }, "none", "trans"]
+Sym = ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"]
+
+[setups.left_space_symnum.layers.Sym]
+rows = [
+  [{ use = "grave_tilde" }, "N1", "N2", "N3", "N4", "N7", "N8", "N9", "N0", { use = "dollar_caret" }],
+  [{ use = "semi_hash" }, { use = "under_star" }, { use = "combo_colon_amp" }, { use = "equal_pipe" }, "N5", "N6", { use = "osm_shift" }, { use = "osm_ctrl" }, { use = "osm_alt" }, { use = "osm_gui" }],
+  [{ use = "paired_angle" }, { use = "paired_square" }, { use = "paired_brace" }, { use = "paired_paren" }, { use = "plus_percent" }, "AT", "DQT", "QMARK", "EXCL", { use = "combo_slash_bslh" }],
+  ["trans", "SPACE", { layer = "Fn", mode = "momentary" }, "trans"],
+]
+
 
 [layers.Magic.glove80_80]
 bindings = [

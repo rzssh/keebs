@@ -36,11 +36,18 @@ PY
 
 mapfile -t artifacts < <(git ls-files 'draw/generated/*.svg')
 for artifact in "${artifacts[@]}"; do
-    profile="$(basename "$artifact" .svg)"
-    output="$temporary/$profile"
+    name="$(basename "$artifact" .svg)"
+    if [[ "$name" == *_summary ]]; then
+        profile="${name%_summary}"
+        generated="keymap_summary.svg"
+    else
+        profile="$name"
+        generated="keymap.svg"
+    fi
+    output="$temporary/$name"
     ./scripts/generate draw --profile "$profile" --out "$output" >/dev/null
-    if ! cmp -s "$artifact" "$output/keymap.svg"; then
-        echo "$artifact is stale; run: just draw ${profile%_*}" >&2
+    if ! cmp -s "$artifact" "$output/$generated"; then
+        echo "$artifact is stale; run: just draw $profile" >&2
         exit 1
     fi
 done

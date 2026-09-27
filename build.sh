@@ -390,7 +390,7 @@ build_entry() {
 
     local keymap_file="$DEFAULT_KEYMAP_PATH"
     [[ -f "$KB_DIR/$label.keymap" ]] && keymap_file="$(realpath "$KB_DIR/$label.keymap")"
-    local cmake_args=("-DZMK_CONFIG=$WORKSPACE/config" "-DKEYMAP_FILE=$keymap_file" "-DZMK_EXTRA_MODULES=$CONFIG_DIR/modules/layer-chord")
+    local cmake_args=("-DZMK_CONFIG=$WORKSPACE/config" "-DKEYMAP_FILE=$keymap_file" "-DZMK_EXTRA_MODULES=$CONFIG_DIR/modules/keymap-behaviors")
     local snippet_args=()
     if [[ -n "$shield" ]]; then
         cmake_args+=("-DSHIELD=$shield")

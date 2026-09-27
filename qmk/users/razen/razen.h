@@ -14,6 +14,7 @@ enum razen_tap_kind {
 enum razen_hold_kind {
     RAZEN_HOLD_KEY,
     RAZEN_HOLD_LAYER,
+    RAZEN_HOLD_SEQUENCE,
 };
 
 typedef struct {
@@ -45,6 +46,8 @@ typedef struct {
     uint16_t timeout_ms;
     bool strict_modifiers;
     bool allow_shift;
+    uint16_t swap_left;
+    uint16_t swap_right;
 } razen_adaptive_rule_t;
 
 typedef struct {
@@ -103,7 +106,7 @@ typedef struct {
     bool interrupted;
     bool parent_pressed;
     bool child_pressed;
-} razen_layer_chord_t;
+} razen_layer_transition_t;
 
 typedef struct {
     uint16_t trigger;
@@ -125,7 +128,7 @@ typedef struct {
     uint32_t layer_timer;
     uint32_t modifier_timers[4];
     uint16_t timers[4];
-} razen_layer_mod_chord_t;
+} razen_layer_modifier_t;
 
 extern razen_morph_t razen_morphs[];
 extern const uint8_t razen_morph_count;
@@ -155,13 +158,13 @@ extern const uint8_t razen_oneshot_layer_count;
 extern razen_layer_stack_t razen_layer_stacks[];
 extern const uint8_t razen_layer_stack_count;
 #endif
-#ifdef RAZEN_LAYER_CHORD_ENABLE
-extern razen_layer_chord_t razen_layer_chords[];
-extern const uint8_t razen_layer_chord_count;
+#ifdef RAZEN_LAYER_TRANSITION_ENABLE
+extern razen_layer_transition_t razen_layer_transitions[];
+extern const uint8_t razen_layer_transition_count;
 #endif
-#ifdef RAZEN_LAYER_MOD_CHORD_ENABLE
-extern razen_layer_mod_chord_t razen_layer_mod_chords[];
-extern const uint8_t razen_layer_mod_chord_count;
+#ifdef RAZEN_LAYER_MODIFIER_ENABLE
+extern razen_layer_modifier_t razen_layer_modifiers[];
+extern const uint8_t razen_layer_modifier_count;
 #endif
 
 void razen_tap_dance_finished(tap_dance_state_t *state, void *user_data);

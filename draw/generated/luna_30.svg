@@ -340,87 +340,87 @@ a[href="#Fn"] text.combo.layer-activator { fill: #f9e2af; }
 <a href="#Sym">
 <text x="0" y="0" class="key layer-activator sym-activator tap layer-activator">Sym</text>
 </a></g>
-<g class="combo combopos-0">
+<g class="combo meta-delete-inset combopos-0">
+<rect rx="6" ry="6" x="498" y="6" width="44" height="44" class="combo meta-delete-inset"/>
+</g>
+<g class="combo meta-delete-inset combopos-1">
+<rect rx="6" ry="6" x="558" y="6" width="44" height="44" class="combo meta-delete-inset"/>
+</g>
+<g class="combo combopos-2">
 <rect rx="6" ry="6" x="76" y="99" width="28" height="26" class="combo"/>
 <text x="90" y="112" class="combo tap">Q</text>
 </g>
-<g class="combo combopos-1">
+<g class="combo combopos-3">
 <rect rx="6" ry="6" x="226" y="113" width="28" height="26" class="combo"/>
 <svg x="233" y="119" height="14" width="14.0" class="combo tap glyph mdi:select-all" viewBox="0 0 24 24"><path d="M9,9H15V15H9M7,17H17V7H7M15,5H17V3H15M15,21H17V19H15M19,17H21V15H19M19,9H21V7H19M19,21A2,2 0 0,0 21,19H19M19,13H21V11H19M11,21H13V19H11M9,3H7V5H9M3,17H5V15H3M5,21V19H3A2,2 0 0,0 5,21M19,3V5H21A2,2 0 0,0 19,3M13,3H11V5H13M3,9H5V7H3M7,21H9V19H7M3,13H5V11H3M3,5H5V3A2,2 0 0,0 3,5Z" /></svg>
 </g>
-<g class="combo combopos-2">
+<g class="combo combopos-4">
 <rect rx="6" ry="6" x="196" y="43" width="28" height="26" class="combo"/>
 <text x="210" y="56" class="combo tap">Z</text>
 </g>
-<g class="combo combopos-3">
+<g class="combo combopos-5">
 <rect rx="6" ry="6" x="46" y="113" width="28" height="26" class="combo"/>
 <svg x="53" y="119" height="14" width="14.0" class="combo tap glyph mdi:undo" viewBox="0 0 24 24"><path d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" /></svg>
 <svg x="55" y="115" height="10" width="10.0" class="combo shifted glyph mdi:redo" viewBox="0 0 24 24"><path d="M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z" /></svg>
 </g>
-<g class="combo combopos-4">
+<g class="combo combopos-6">
 <rect rx="6" ry="6" x="536" y="127" width="28" height="26" class="combo"/>
 <text x="550" y="140" class="combo tap">-</text>
 </g>
-<g class="combo combopos-5">
+<g class="combo combopos-7">
 <rect rx="6" ry="6" x="476" y="127" width="28" height="26" class="combo"/>
 <text x="490" y="140" class="combo tap">/</text>
 </g>
-<g class="combo combopos-6">
+<g class="combo combopos-8">
 <rect rx="6" ry="6" x="596" y="113" width="28" height="26" class="combo"/>
 <text x="610" y="126" class="combo tap">;</text>
 </g>
-<g class="combo combopos-7">
+<g class="combo combopos-9">
 <rect rx="6" ry="6" x="76" y="43" width="28" height="26" class="combo"/>
 <text x="90" y="56" class="combo tap">[</text>
 </g>
-<g class="combo combopos-8">
+<g class="combo combopos-10">
 <rect rx="6" ry="6" x="566" y="43" width="28" height="26" class="combo"/>
 <text x="580" y="56" class="combo tap">]</text>
 </g>
-<g class="combo combopos-9">
+<g class="combo combopos-11">
 <rect rx="6" ry="6" x="136" y="43" width="28" height="26" class="combo"/>
 <text x="150" y="56" class="combo tap">(</text>
 </g>
-<g class="combo combopos-10">
+<g class="combo combopos-12">
 <rect rx="6" ry="6" x="506" y="43" width="28" height="26" class="combo"/>
 <text x="520" y="56" class="combo tap">)</text>
 </g>
-<g class="combo combopos-11">
+<g class="combo combopos-13">
 <rect rx="6" ry="6" x="196" y="43" width="28" height="26" class="combo"/>
 <text x="210" y="56" class="combo tap">{</text>
 </g>
-<g class="combo combopos-12">
+<g class="combo combopos-14">
 <rect rx="6" ry="6" x="446" y="43" width="28" height="26" class="combo"/>
 <text x="460" y="56" class="combo tap">}</text>
 </g>
-<g class="combo combopos-13">
+<g class="combo combopos-15">
 <rect rx="6" ry="6" x="196" y="99" width="28" height="26" class="combo"/>
 <text x="210" y="112" class="combo tap">&lt;</text>
 </g>
-<g class="combo combopos-14">
+<g class="combo combopos-16">
 <rect rx="6" ry="6" x="446" y="99" width="28" height="26" class="combo"/>
 <text x="460" y="112" class="combo tap">&gt;</text>
 </g>
-<g class="combo mouse-activator combopos-15">
+<g class="combo mouse-activator combopos-17">
 <rect rx="6" ry="6" x="226" y="183" width="28" height="26" class="combo mouse-activator"/>
 <a href="#Mouse">
 <text x="240" y="196" class="combo mouse-activator tap layer-activator">Mouse</text>
 </a></g>
-<g class="combo fn-activator combopos-16">
+<g class="combo fn-activator combopos-18">
 <rect rx="6" ry="6" x="416" y="183" width="28" height="26" class="combo fn-activator"/>
 <a href="#Fn">
 <text x="430" y="196" class="combo fn-activator tap layer-activator">Fn</text>
 </a></g>
-<g class="combo meta-backspace meta-combo combopos-17">
+<g class="combo meta-backspace meta-combo combopos-19">
 <rect rx="6" ry="6" x="298" y="114" width="74" height="27" class="combo meta-backspace meta-combo"/>
 <svg x="328" y="121" height="14" width="14.0" class="combo meta-backspace meta-combo tap glyph mdi:backspace" viewBox="0 0 24 24"><path d="M22,3H7C6.31,3 5.77,3.35 5.41,3.88L0,12L5.41,20.11C5.77,20.64 6.31,21 7,21H22A2,2 0 0,0 24,19V5A2,2 0 0,0 22,3M19,15.59L17.59,17L14,13.41L10.41,17L9,15.59L12.59,12L9,8.41L10.41,7L14,10.59L17.59,7L19,8.41L15.41,12" /></svg>
 <text x="335" y="139" class="combo meta-backspace meta-combo hold">Bspc</text>
-</g>
-<g class="combo meta-delete-inset combopos-18">
-<rect rx="6" ry="6" x="498" y="6" width="44" height="44" class="combo meta-delete-inset"/>
-</g>
-<g class="combo meta-delete-inset combopos-19">
-<rect rx="6" ry="6" x="558" y="6" width="44" height="44" class="combo meta-delete-inset"/>
 </g>
 <g class="combo meta-delete meta-combo combopos-20">
 <rect rx="6" ry="6" x="298" y="149" width="74" height="27" class="combo meta-delete meta-combo"/>
@@ -592,77 +592,77 @@ a[href="#Fn"] text.combo.layer-activator { fill: #f9e2af; }
 <a href="#Sym">
 <text x="0" y="0" class="key layer-activator sym-activator tap layer-activator">Sym</text>
 </a></g>
-<g class="combo combopos-0">
+<g class="combo meta-delete-inset combopos-0">
+<rect rx="6" ry="6" x="498" y="6" width="44" height="44" class="combo meta-delete-inset"/>
+</g>
+<g class="combo meta-delete-inset combopos-1">
+<rect rx="6" ry="6" x="558" y="6" width="44" height="44" class="combo meta-delete-inset"/>
+</g>
+<g class="combo combopos-2">
 <rect rx="6" ry="6" x="226" y="113" width="28" height="26" class="combo"/>
 <svg x="233" y="119" height="14" width="14.0" class="combo tap glyph mdi:select-all" viewBox="0 0 24 24"><path d="M9,9H15V15H9M7,17H17V7H7M15,5H17V3H15M15,21H17V19H15M19,17H21V15H19M19,9H21V7H19M19,21A2,2 0 0,0 21,19H19M19,13H21V11H19M11,21H13V19H11M9,3H7V5H9M3,17H5V15H3M5,21V19H3A2,2 0 0,0 5,21M19,3V5H21A2,2 0 0,0 19,3M13,3H11V5H13M3,9H5V7H3M7,21H9V19H7M3,13H5V11H3M3,5H5V3A2,2 0 0,0 3,5Z" /></svg>
 </g>
-<g class="combo combopos-1">
+<g class="combo combopos-3">
 <rect rx="6" ry="6" x="46" y="113" width="28" height="26" class="combo"/>
 <svg x="53" y="119" height="14" width="14.0" class="combo tap glyph mdi:undo" viewBox="0 0 24 24"><path d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" /></svg>
 <svg x="55" y="115" height="10" width="10.0" class="combo shifted glyph mdi:redo" viewBox="0 0 24 24"><path d="M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z" /></svg>
 </g>
-<g class="combo combopos-2">
+<g class="combo combopos-4">
 <rect rx="6" ry="6" x="16" y="71" width="28" height="26" class="combo"/>
 <text x="30" y="84" class="combo tap">Щ</text>
 </g>
-<g class="combo combopos-3">
+<g class="combo combopos-5">
 <rect rx="6" ry="6" x="76" y="43" width="28" height="26" class="combo"/>
 <text x="90" y="56" class="combo tap">Ц</text>
 </g>
-<g class="combo combopos-4">
+<g class="combo combopos-6">
 <rect rx="6" ry="6" x="76" y="99" width="28" height="26" class="combo"/>
 <text x="90" y="112" class="combo tap">Х</text>
 </g>
-<g class="combo combopos-5">
+<g class="combo combopos-7">
 <rect rx="6" ry="6" x="446" y="43" width="28" height="26" class="combo"/>
 <text x="460" y="56" class="combo tap">Ф</text>
 </g>
-<g class="combo combopos-6">
+<g class="combo combopos-8">
 <rect rx="6" ry="6" x="446" y="99" width="28" height="26" class="combo"/>
 <text x="460" y="112" class="combo tap">Ъ</text>
 </g>
-<g class="combo combopos-7">
+<g class="combo combopos-9">
 <rect rx="6" ry="6" x="566" y="43" width="28" height="26" class="combo"/>
 <text x="580" y="56" class="combo tap">Э</text>
 </g>
-<g class="combo combopos-8">
+<g class="combo combopos-10">
 <rect rx="6" ry="6" x="566" y="99" width="28" height="26" class="combo"/>
 <text x="580" y="112" class="combo tap">Ё</text>
 </g>
-<g class="combo combopos-9">
+<g class="combo combopos-11">
 <rect rx="6" ry="6" x="476" y="127" width="28" height="26" class="combo"/>
 <text x="490" y="140" class="combo tap">.</text>
 <text x="490" y="129" class="combo shifted">?</text>
 </g>
-<g class="combo combopos-10">
+<g class="combo combopos-12">
 <rect rx="6" ry="6" x="536" y="127" width="28" height="26" class="combo"/>
 <text x="550" y="140" class="combo tap">,</text>
 <text x="550" y="129" class="combo shifted">!</text>
 </g>
-<g class="combo combopos-11">
+<g class="combo combopos-13">
 <rect rx="6" ry="6" x="596" y="113" width="28" height="26" class="combo"/>
 <text x="610" y="126" class="combo tap">-</text>
 </g>
-<g class="combo mouse-activator combopos-12">
+<g class="combo mouse-activator combopos-14">
 <rect rx="6" ry="6" x="226" y="183" width="28" height="26" class="combo mouse-activator"/>
 <a href="#Mouse">
 <text x="240" y="196" class="combo mouse-activator tap layer-activator">Mouse</text>
 </a></g>
-<g class="combo fn-activator combopos-13">
+<g class="combo fn-activator combopos-15">
 <rect rx="6" ry="6" x="416" y="183" width="28" height="26" class="combo fn-activator"/>
 <a href="#Fn">
 <text x="430" y="196" class="combo fn-activator tap layer-activator">Fn</text>
 </a></g>
-<g class="combo meta-backspace meta-combo combopos-14">
+<g class="combo meta-backspace meta-combo combopos-16">
 <rect rx="6" ry="6" x="298" y="114" width="74" height="27" class="combo meta-backspace meta-combo"/>
 <svg x="328" y="121" height="14" width="14.0" class="combo meta-backspace meta-combo tap glyph mdi:backspace" viewBox="0 0 24 24"><path d="M22,3H7C6.31,3 5.77,3.35 5.41,3.88L0,12L5.41,20.11C5.77,20.64 6.31,21 7,21H22A2,2 0 0,0 24,19V5A2,2 0 0,0 22,3M19,15.59L17.59,17L14,13.41L10.41,17L9,15.59L12.59,12L9,8.41L10.41,7L14,10.59L17.59,7L19,8.41L15.41,12" /></svg>
 <text x="335" y="139" class="combo meta-backspace meta-combo hold">Bspc</text>
-</g>
-<g class="combo meta-delete-inset combopos-15">
-<rect rx="6" ry="6" x="498" y="6" width="44" height="44" class="combo meta-delete-inset"/>
-</g>
-<g class="combo meta-delete-inset combopos-16">
-<rect rx="6" ry="6" x="558" y="6" width="44" height="44" class="combo meta-delete-inset"/>
 </g>
 <g class="combo meta-delete meta-combo combopos-17">
 <rect rx="6" ry="6" x="298" y="149" width="74" height="27" class="combo meta-delete meta-combo"/>
@@ -1137,15 +1137,15 @@ a[href="#Fn"] text.combo.layer-activator { fill: #f9e2af; }
 </g>
 <g transform="translate(90, 84)" class="key keypos-11">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F1</text>
+<text x="0" y="0" class="key tap">F4</text>
 </g>
 <g transform="translate(150, 84)" class="key keypos-12">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F2</text>
+<text x="0" y="0" class="key tap">F5</text>
 </g>
 <g transform="translate(210, 84)" class="key keypos-13">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F3</text>
+<text x="0" y="0" class="key tap">F6</text>
 </g>
 <g transform="translate(270, 112)" class="key keypos-14">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>
@@ -1175,15 +1175,15 @@ a[href="#Fn"] text.combo.layer-activator { fill: #f9e2af; }
 </g>
 <g transform="translate(90, 140)" class="key keypos-20">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F4</text>
+<text x="0" y="0" class="key tap">F1</text>
 </g>
 <g transform="translate(150, 140)" class="key keypos-21">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F5</text>
+<text x="0" y="0" class="key tap">F2</text>
 </g>
 <g transform="translate(210, 140)" class="key keypos-22">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>
-<text x="0" y="0" class="key tap">F6</text>
+<text x="0" y="0" class="key tap">F3</text>
 </g>
 <g transform="translate(460, 140)" class="key keypos-23">
 <rect rx="6" ry="6" x="-28" y="-26" width="56" height="52" class="key"/>

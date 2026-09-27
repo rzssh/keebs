@@ -5,7 +5,7 @@
 / {
     behaviors {
         lmc_ctrl: layer_mod_ctrl_chord {
-            compatible = "zmk,behavior-layer-mod-chord";
+            compatible = "zmk,behavior-layer-modifier";
             #binding-cells = <0>;
             layer = <1>;
             layer-position = <0>;
@@ -19,7 +19,7 @@
         };
 
         lmc_shift: layer_mod_shift_chord {
-            compatible = "zmk,behavior-layer-mod-chord";
+            compatible = "zmk,behavior-layer-modifier";
             #binding-cells = <0>;
             layer = <1>;
             layer-position = <0>;
@@ -33,7 +33,7 @@
         };
 
         lmc_ctrl_shift: layer_mod_ctrl_shift_chord {
-            compatible = "zmk,behavior-layer-mod-chord";
+            compatible = "zmk,behavior-layer-modifier";
             #binding-cells = <0>;
             layer = <1>;
             layer-position = <0>;

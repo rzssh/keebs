@@ -10,7 +10,7 @@
 
     behaviors {
         num_chord: num_chord {
-            compatible = "zmk,behavior-layer-chord";
+            compatible = "zmk,behavior-layer-transition";
             #binding-cells = <1>;
             parent-layer = <1>;
             child-layer = <2>;
@@ -18,7 +18,7 @@
             child-position = <1>;
         };
         sym_shift: sym_shift {
-            compatible = "zmk,behavior-layer-mod-chord";
+            compatible = "zmk,behavior-layer-modifier";
             #binding-cells = <0>;
             layer = <2>;
             layer-position = <1>;
@@ -31,7 +31,7 @@
             tapping-term-ms = <175>;
         };
         sym_alt: sym_alt {
-            compatible = "zmk,behavior-layer-mod-chord";
+            compatible = "zmk,behavior-layer-modifier";
             #binding-cells = <0>;
             layer = <2>;
             layer-position = <1>;
@@ -44,7 +44,7 @@
             tapping-term-ms = <175>;
         };
         sym_shift_alt: sym_shift_alt {
-            compatible = "zmk,behavior-layer-mod-chord";
+            compatible = "zmk,behavior-layer-modifier";
             #binding-cells = <0>;
             layer = <2>;
             layer-position = <1>;

@@ -1,4 +1,4 @@
-name: zmk-layer-chord
+name: zmk-keymap-behaviors
 build:
   cmake: .
   kconfig: Kconfig

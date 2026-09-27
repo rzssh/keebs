@@ -1,4 +1,4 @@
-#define DT_DRV_COMPAT zmk_behavior_layer_mod_chord
+#define DT_DRV_COMPAT zmk_behavior_layer_modifier
 
 #include <zephyr/device.h>
 #include <zephyr/sys/util.h>
@@ -12,7 +12,7 @@
 #include <zmk/events/position_state_changed.h>
 #include <zmk/keymap.h>
 
-struct behavior_layer_mod_chord_config {
+struct behavior_layer_modifier_config {
     const struct zmk_behavior_binding *modifiers;
     const struct zmk_behavior_binding *sticky_modifiers;
     const uint32_t *modifier_positions;
@@ -26,7 +26,7 @@ struct behavior_layer_mod_chord_config {
     uint32_t layer_position;
 };
 
-struct behavior_layer_mod_chord_data {
+struct behavior_layer_modifier_data {
     struct zmk_behavior_binding_event modifier_events[4];
     int64_t modifier_timestamps[4];
     int64_t layer_timestamp;
@@ -34,14 +34,13 @@ struct behavior_layer_mod_chord_data {
     uint8_t modifiers_pressed;
     uint8_t modifiers_used;
     bool active;
-    bool combo_released;
     bool layer_position_pressed;
     bool layer_pressed;
 };
 
-static struct behavior_layer_mod_chord_data *active_session(zmk_keymap_layer_id_t layer);
-#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_LAYER_CHORD)
-bool zmk_layer_chord_position(uint32_t position);
+static struct behavior_layer_modifier_data *active_session(zmk_keymap_layer_id_t layer);
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_LAYER_TRANSITION)
+bool zmk_layer_transition_position(uint32_t position);
 #endif
 
 static int activate_layer(zmk_keymap_layer_id_t layer) {
@@ -60,8 +59,8 @@ static int deactivate_layer(zmk_keymap_layer_id_t layer) {
 #endif
 }
 
-static int press_modifier(const struct behavior_layer_mod_chord_config *config,
-                          struct behavior_layer_mod_chord_data *data, uint8_t index,
+static int press_modifier(const struct behavior_layer_modifier_config *config,
+                          struct behavior_layer_modifier_data *data, uint8_t index,
                           struct zmk_behavior_binding_event event) {
     uint8_t mask = BIT(index);
     if (data->modifiers_pressed & mask) {
@@ -77,8 +76,8 @@ static int press_modifier(const struct behavior_layer_mod_chord_config *config,
     return ret;
 }
 
-static int tap_sticky_modifier(const struct behavior_layer_mod_chord_config *config,
-                               uint8_t index, struct zmk_behavior_binding_event event) {
+static int tap_sticky_modifier(const struct behavior_layer_modifier_config *config, uint8_t index,
+                               struct zmk_behavior_binding_event event) {
     event.position = config->modifier_positions[index];
     int ret = zmk_behavior_invoke_binding(&config->sticky_modifiers[index], event, true);
     if (ret >= 0) {
@@ -87,8 +86,8 @@ static int tap_sticky_modifier(const struct behavior_layer_mod_chord_config *con
     return ret;
 }
 
-static int release_modifier(const struct behavior_layer_mod_chord_config *config,
-                            struct behavior_layer_mod_chord_data *data, uint8_t index,
+static int release_modifier(const struct behavior_layer_modifier_config *config,
+                            struct behavior_layer_modifier_data *data, uint8_t index,
                             int64_t timestamp, bool sticky) {
     uint8_t mask = BIT(index);
     if (!(data->modifiers_pressed & mask)) {
@@ -113,8 +112,8 @@ static int release_modifier(const struct behavior_layer_mod_chord_config *config
     return ret;
 }
 
-static int release_modifiers(const struct behavior_layer_mod_chord_config *config,
-                             struct behavior_layer_mod_chord_data *data, int64_t timestamp,
+static int release_modifiers(const struct behavior_layer_modifier_config *config,
+                             struct behavior_layer_modifier_data *data, int64_t timestamp,
                              bool sticky) {
     int ret = 0;
     for (uint8_t index = 0; index < config->modifier_count; index++) {
@@ -126,12 +125,11 @@ static int release_modifiers(const struct behavior_layer_mod_chord_config *confi
     return ret;
 }
 
-static int start_session(const struct behavior_layer_mod_chord_config *config,
-                         struct behavior_layer_mod_chord_data *data,
+static int start_session(const struct behavior_layer_modifier_config *config,
+                         struct behavior_layer_modifier_data *data,
                          struct zmk_behavior_binding_event event, bool sticky_released) {
     int ret = 0;
     data->active = true;
-    data->combo_released = sticky_released;
     data->layer_pressed = data->layer_position_pressed;
     data->modifiers_pressed = 0;
     data->modifiers_used = 0;
@@ -159,32 +157,31 @@ static int start_session(const struct behavior_layer_mod_chord_config *config,
             return ret;
         }
     }
-    if (!data->layer_pressed && !data->modifiers_pressed && data->combo_released) {
+    if (!data->layer_pressed && !data->modifiers_pressed) {
         data->active = false;
     }
     return ZMK_BEHAVIOR_OPAQUE;
 }
 
-static int layer_mod_chord_pressed(struct zmk_behavior_binding *binding,
-                                   struct zmk_behavior_binding_event event) {
+static int layer_modifier_pressed(struct zmk_behavior_binding *binding,
+                                  struct zmk_behavior_binding_event event) {
     const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
-    const struct behavior_layer_mod_chord_config *config = dev->config;
-    struct behavior_layer_mod_chord_data *data = dev->data;
+    const struct behavior_layer_modifier_config *config = dev->config;
+    struct behavior_layer_modifier_data *data = dev->data;
     if (active_session(config->layer) != NULL) {
         return ZMK_BEHAVIOR_OPAQUE;
     }
     return start_session(config, data, event, true);
 }
 
-static int layer_mod_chord_released(struct zmk_behavior_binding *binding,
-                                    struct zmk_behavior_binding_event event) {
+static int layer_modifier_released(struct zmk_behavior_binding *binding,
+                                   struct zmk_behavior_binding_event event) {
     const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
-    const struct behavior_layer_mod_chord_config *config = dev->config;
-    struct behavior_layer_mod_chord_data *data = active_session(config->layer);
+    const struct behavior_layer_modifier_config *config = dev->config;
+    struct behavior_layer_modifier_data *data = active_session(config->layer);
     if (data == NULL) {
         data = dev->data;
     }
-    data->combo_released = true;
     int ret = 0;
     if (!data->layer_position_pressed && data->layer_pressed) {
         data->layer_pressed = false;
@@ -204,20 +201,20 @@ static int layer_mod_chord_released(struct zmk_behavior_binding *binding,
     return ret < 0 ? ret : ZMK_BEHAVIOR_OPAQUE;
 }
 
-static const struct behavior_driver_api layer_mod_chord_driver_api = {
-    .binding_pressed = layer_mod_chord_pressed,
-    .binding_released = layer_mod_chord_released,
+static const struct behavior_driver_api layer_modifier_driver_api = {
+    .binding_pressed = layer_modifier_pressed,
+    .binding_released = layer_modifier_released,
 };
 
-#define LAYER_MOD_CHORD_DEVICE(inst) DEVICE_DT_INST_GET(inst),
-static const struct device *layer_mod_chord_devices[] = {
-    DT_INST_FOREACH_STATUS_OKAY(LAYER_MOD_CHORD_DEVICE)};
+#define LAYER_MODIFIER_DEVICE(inst) DEVICE_DT_INST_GET(inst),
+static const struct device *layer_modifier_devices[] = {
+    DT_INST_FOREACH_STATUS_OKAY(LAYER_MODIFIER_DEVICE)};
 
-static struct behavior_layer_mod_chord_data *active_session(zmk_keymap_layer_id_t layer) {
-    for (size_t index = 0; index < ARRAY_SIZE(layer_mod_chord_devices); index++) {
-        const struct device *dev = layer_mod_chord_devices[index];
-        const struct behavior_layer_mod_chord_config *config = dev->config;
-        struct behavior_layer_mod_chord_data *data = dev->data;
+static struct behavior_layer_modifier_data *active_session(zmk_keymap_layer_id_t layer) {
+    for (size_t index = 0; index < ARRAY_SIZE(layer_modifier_devices); index++) {
+        const struct device *dev = layer_modifier_devices[index];
+        const struct behavior_layer_modifier_config *config = dev->config;
+        struct behavior_layer_modifier_data *data = dev->data;
         if (config->layer == layer && data->active) {
             return data;
         }
@@ -225,7 +222,7 @@ static struct behavior_layer_mod_chord_data *active_session(zmk_keymap_layer_id_
     return NULL;
 }
 
-static bool enabled_on_active_layer(const struct behavior_layer_mod_chord_config *config) {
+static bool enabled_on_active_layer(const struct behavior_layer_modifier_config *config) {
     zmk_keymap_layer_id_t layer = zmk_keymap_highest_layer_active();
     for (uint8_t index = 0; index < config->activation_layer_count; index++) {
         if (config->activation_layers[index] == layer) {
@@ -238,10 +235,10 @@ static bool enabled_on_active_layer(const struct behavior_layer_mod_chord_config
 static const struct device *best_eager_candidate(zmk_keymap_layer_id_t layer) {
     const struct device *best = NULL;
     uint8_t best_count = 0;
-    for (size_t index = 0; index < ARRAY_SIZE(layer_mod_chord_devices); index++) {
-        const struct device *dev = layer_mod_chord_devices[index];
-        const struct behavior_layer_mod_chord_config *config = dev->config;
-        struct behavior_layer_mod_chord_data *data = dev->data;
+    for (size_t index = 0; index < ARRAY_SIZE(layer_modifier_devices); index++) {
+        const struct device *dev = layer_modifier_devices[index];
+        const struct behavior_layer_modifier_config *config = dev->config;
+        struct behavior_layer_modifier_data *data = dev->data;
         uint8_t triggers = config->trigger_modifiers;
         if (config->layer != layer || !enabled_on_active_layer(config) ||
             !data->layer_position_pressed ||
@@ -266,31 +263,29 @@ static const struct device *best_eager_candidate(zmk_keymap_layer_id_t layer) {
 }
 
 static bool layer_control_position(uint32_t position) {
-    for (size_t index = 0; index < ARRAY_SIZE(layer_mod_chord_devices); index++) {
-        const struct behavior_layer_mod_chord_config *config =
-            layer_mod_chord_devices[index]->config;
+    for (size_t index = 0; index < ARRAY_SIZE(layer_modifier_devices); index++) {
+        const struct behavior_layer_modifier_config *config = layer_modifier_devices[index]->config;
         if (position == config->layer_position) {
             return true;
         }
     }
-#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_LAYER_CHORD)
-    return zmk_layer_chord_position(position);
+#if IS_ENABLED(CONFIG_ZMK_BEHAVIOR_LAYER_TRANSITION)
+    return zmk_layer_transition_position(position);
 #else
     return false;
 #endif
 }
 
-static int layer_mod_chord_position_listener(const zmk_event_t *event) {
-    const struct zmk_position_state_changed *position_event =
-        as_zmk_position_state_changed(event);
+static int layer_modifier_position_listener(const zmk_event_t *event) {
+    const struct zmk_position_state_changed *position_event = as_zmk_position_state_changed(event);
     if (position_event == NULL) {
         return ZMK_EV_EVENT_BUBBLE;
     }
-    for (size_t device_index = 0; device_index < ARRAY_SIZE(layer_mod_chord_devices);
+    for (size_t device_index = 0; device_index < ARRAY_SIZE(layer_modifier_devices);
          device_index++) {
-        const struct device *dev = layer_mod_chord_devices[device_index];
-        const struct behavior_layer_mod_chord_config *config = dev->config;
-        struct behavior_layer_mod_chord_data *data = dev->data;
+        const struct device *dev = layer_modifier_devices[device_index];
+        const struct behavior_layer_modifier_config *config = dev->config;
+        struct behavior_layer_modifier_data *data = dev->data;
         if (position_event->position == config->layer_position) {
             data->layer_position_pressed = position_event->state;
             if (position_event->state) {
@@ -308,11 +303,11 @@ static int layer_mod_chord_position_listener(const zmk_event_t *event) {
     }
 
     if (position_event->state) {
-        for (size_t device_index = 0; device_index < ARRAY_SIZE(layer_mod_chord_devices);
+        for (size_t device_index = 0; device_index < ARRAY_SIZE(layer_modifier_devices);
              device_index++) {
-            const struct device *dev = layer_mod_chord_devices[device_index];
-            const struct behavior_layer_mod_chord_config *config = dev->config;
-            struct behavior_layer_mod_chord_data *data = dev->data;
+            const struct device *dev = layer_modifier_devices[device_index];
+            const struct behavior_layer_modifier_config *config = dev->config;
+            struct behavior_layer_modifier_data *data = dev->data;
             if (!data->layer_position_pressed || !data->modifier_positions_pressed ||
                 active_session(config->layer) != NULL) {
                 continue;
@@ -321,7 +316,7 @@ static int layer_mod_chord_position_listener(const zmk_event_t *event) {
             if (candidate == NULL) {
                 continue;
             }
-            const struct behavior_layer_mod_chord_config *candidate_config = candidate->config;
+            const struct behavior_layer_modifier_config *candidate_config = candidate->config;
             struct zmk_behavior_binding_event binding_event = {
                 .layer = candidate_config->layer,
                 .position = position_event->position,
@@ -335,11 +330,11 @@ static int layer_mod_chord_position_listener(const zmk_event_t *event) {
     }
 
     bool capture = false;
-    for (size_t device_index = 0; device_index < ARRAY_SIZE(layer_mod_chord_devices);
+    for (size_t device_index = 0; device_index < ARRAY_SIZE(layer_modifier_devices);
          device_index++) {
-        const struct device *dev = layer_mod_chord_devices[device_index];
-        const struct behavior_layer_mod_chord_config *config = dev->config;
-        struct behavior_layer_mod_chord_data *data = dev->data;
+        const struct device *dev = layer_modifier_devices[device_index];
+        const struct behavior_layer_modifier_config *config = dev->config;
+        struct behavior_layer_modifier_data *data = dev->data;
         if (!data->active) {
             continue;
         }
@@ -391,19 +386,19 @@ static int layer_mod_chord_position_listener(const zmk_event_t *event) {
     return capture ? ZMK_EV_EVENT_CAPTURED : ZMK_EV_EVENT_BUBBLE;
 }
 
-ZMK_LISTENER(layer_mod_chord, layer_mod_chord_position_listener);
-ZMK_SUBSCRIPTION(layer_mod_chord, zmk_position_state_changed);
+ZMK_LISTENER(layer_modifier, layer_modifier_position_listener);
+ZMK_SUBSCRIPTION(layer_modifier, zmk_position_state_changed);
 
 static void mark_modifiers_used(void) {
-    for (size_t index = 0; index < ARRAY_SIZE(layer_mod_chord_devices); index++) {
-        struct behavior_layer_mod_chord_data *data = layer_mod_chord_devices[index]->data;
+    for (size_t index = 0; index < ARRAY_SIZE(layer_modifier_devices); index++) {
+        struct behavior_layer_modifier_data *data = layer_modifier_devices[index]->data;
         if (data->active) {
             data->modifiers_used |= data->modifiers_pressed;
         }
     }
 }
 
-static int layer_mod_chord_output_listener(const zmk_event_t *event) {
+static int layer_modifier_output_listener(const zmk_event_t *event) {
     const struct zmk_keycode_state_changed *keycode = as_zmk_keycode_state_changed(event);
     if (keycode != NULL && keycode->state && !is_mod(keycode->usage_page, keycode->keycode)) {
         mark_modifiers_used();
@@ -411,54 +406,54 @@ static int layer_mod_chord_output_listener(const zmk_event_t *event) {
     return ZMK_EV_EVENT_BUBBLE;
 }
 
-ZMK_LISTENER(layer_mod_chord_output, layer_mod_chord_output_listener);
-ZMK_SUBSCRIPTION(layer_mod_chord_output, zmk_keycode_state_changed);
+ZMK_LISTENER(layer_modifier_output, layer_modifier_output_listener);
+ZMK_SUBSCRIPTION(layer_modifier_output, zmk_keycode_state_changed);
 
-#define TRANSFORM_BINDING(index, node, prop)                                                      \
+#define TRANSFORM_BINDING(index, node, prop)                                                       \
     {                                                                                              \
-        .behavior_dev = DEVICE_DT_NAME(DT_PHANDLE_BY_IDX(node, prop, index)),                     \
-        .param1 = COND_CODE_0(DT_PHA_HAS_CELL_AT_IDX(node, prop, index, param1), (0),             \
+        .behavior_dev = DEVICE_DT_NAME(DT_PHANDLE_BY_IDX(node, prop, index)),                      \
+        .param1 = COND_CODE_0(DT_PHA_HAS_CELL_AT_IDX(node, prop, index, param1), (0),              \
                               (DT_PHA_BY_IDX(node, prop, index, param1))),                         \
-        .param2 = COND_CODE_0(DT_PHA_HAS_CELL_AT_IDX(node, prop, index, param2), (0),             \
+        .param2 = COND_CODE_0(DT_PHA_HAS_CELL_AT_IDX(node, prop, index, param2), (0),              \
                               (DT_PHA_BY_IDX(node, prop, index, param2))),                         \
     }
-#define TRANSFORMED_BINDINGS(inst, prop)                                                          \
+#define TRANSFORMED_BINDINGS(inst, prop)                                                           \
     {LISTIFY(DT_INST_PROP_LEN(inst, prop), TRANSFORM_BINDING, (, ), DT_DRV_INST(inst), prop)}
 
-#define LAYER_MOD_CHORD_INST(inst)                                                                \
-    BUILD_ASSERT(DT_INST_PROP_LEN(inst, bindings) ==                                              \
-                     DT_INST_PROP_LEN(inst, sticky_bindings),                                     \
-                 "modifier and sticky bindings must have matching lengths");                    \
-    BUILD_ASSERT(DT_INST_PROP_LEN(inst, bindings) ==                                              \
-                     DT_INST_PROP_LEN(inst, modifier_positions),                                  \
-                 "modifier bindings and positions must have matching lengths");                 \
-    BUILD_ASSERT(DT_INST_PROP_LEN(inst, bindings) <= 4, "at most four modifiers are supported"); \
-    BUILD_ASSERT(DT_INST_PROP(inst, trigger_modifiers) < BIT(DT_INST_PROP_LEN(inst, bindings)),    \
-                 "trigger modifiers must identify modifier bindings");                           \
-    static const struct zmk_behavior_binding layer_mod_chord_modifiers_##inst[] =                 \
-        TRANSFORMED_BINDINGS(inst, bindings);                                                     \
-    static const struct zmk_behavior_binding layer_mod_chord_sticky_modifiers_##inst[] =          \
-        TRANSFORMED_BINDINGS(inst, sticky_bindings);                                              \
-    static const uint32_t layer_mod_chord_positions_##inst[] =                                    \
-        DT_INST_PROP(inst, modifier_positions);                                                   \
-    static const zmk_keymap_layer_id_t layer_mod_chord_activation_layers_##inst[] =                \
-        DT_INST_PROP(inst, activation_layers);                                                    \
-    static struct behavior_layer_mod_chord_data layer_mod_chord_data_##inst;                      \
-    static const struct behavior_layer_mod_chord_config layer_mod_chord_config_##inst = {         \
-        .modifiers = layer_mod_chord_modifiers_##inst,                                            \
-        .sticky_modifiers = layer_mod_chord_sticky_modifiers_##inst,                              \
-        .modifier_positions = layer_mod_chord_positions_##inst,                                   \
-        .activation_layers = layer_mod_chord_activation_layers_##inst,                             \
-        .tapping_term_ms = DT_INST_PROP(inst, tapping_term_ms),                                   \
-        .combo_term_ms = DT_INST_PROP(inst, combo_term_ms),                                       \
-        .modifier_count = DT_INST_PROP_LEN(inst, bindings),                                       \
-        .activation_layer_count = DT_INST_PROP_LEN(inst, activation_layers),                      \
-        .trigger_modifiers = DT_INST_PROP(inst, trigger_modifiers),                               \
-        .layer = DT_INST_PROP(inst, layer),                                                       \
-        .layer_position = DT_INST_PROP(inst, layer_position),                                     \
-    };                                                                                            \
-    BEHAVIOR_DT_INST_DEFINE(inst, NULL, NULL, &layer_mod_chord_data_##inst,                       \
-                            &layer_mod_chord_config_##inst, POST_KERNEL,                           \
-                            CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &layer_mod_chord_driver_api);
+#define LAYER_MODIFIER_INST(inst)                                                                  \
+    BUILD_ASSERT(DT_INST_PROP_LEN(inst, bindings) == DT_INST_PROP_LEN(inst, sticky_bindings),      \
+                 "modifier and sticky bindings must have matching lengths");                       \
+    BUILD_ASSERT(DT_INST_PROP_LEN(inst, bindings) == DT_INST_PROP_LEN(inst, modifier_positions),   \
+                 "modifier bindings and positions must have matching lengths");                    \
+    BUILD_ASSERT(DT_INST_PROP_LEN(inst, bindings) <= 4, "at most four modifiers are supported");   \
+    BUILD_ASSERT(DT_INST_PROP(inst, trigger_modifiers) > 0 &&                                      \
+                     DT_INST_PROP(inst, trigger_modifiers) <                                       \
+                         BIT(DT_INST_PROP_LEN(inst, bindings)),                                    \
+                 "trigger modifiers must identify modifier bindings");                             \
+    static const struct zmk_behavior_binding layer_modifier_modifiers_##inst[] =                   \
+        TRANSFORMED_BINDINGS(inst, bindings);                                                      \
+    static const struct zmk_behavior_binding layer_modifier_sticky_modifiers_##inst[] =            \
+        TRANSFORMED_BINDINGS(inst, sticky_bindings);                                               \
+    static const uint32_t layer_modifier_positions_##inst[] =                                      \
+        DT_INST_PROP(inst, modifier_positions);                                                    \
+    static const zmk_keymap_layer_id_t layer_modifier_activation_layers_##inst[] =                 \
+        DT_INST_PROP(inst, activation_layers);                                                     \
+    static struct behavior_layer_modifier_data layer_modifier_data_##inst;                         \
+    static const struct behavior_layer_modifier_config layer_modifier_config_##inst = {            \
+        .modifiers = layer_modifier_modifiers_##inst,                                              \
+        .sticky_modifiers = layer_modifier_sticky_modifiers_##inst,                                \
+        .modifier_positions = layer_modifier_positions_##inst,                                     \
+        .activation_layers = layer_modifier_activation_layers_##inst,                              \
+        .tapping_term_ms = DT_INST_PROP(inst, tapping_term_ms),                                    \
+        .combo_term_ms = DT_INST_PROP(inst, combo_term_ms),                                        \
+        .modifier_count = DT_INST_PROP_LEN(inst, bindings),                                        \
+        .activation_layer_count = DT_INST_PROP_LEN(inst, activation_layers),                       \
+        .trigger_modifiers = DT_INST_PROP(inst, trigger_modifiers),                                \
+        .layer = DT_INST_PROP(inst, layer),                                                        \
+        .layer_position = DT_INST_PROP(inst, layer_position),                                      \
+    };                                                                                             \
+    BEHAVIOR_DT_INST_DEFINE(inst, NULL, NULL, &layer_modifier_data_##inst,                         \
+                            &layer_modifier_config_##inst, POST_KERNEL,                            \
+                            CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &layer_modifier_driver_api);
 
-DT_INST_FOREACH_STATUS_OKAY(LAYER_MOD_CHORD_INST)
+DT_INST_FOREACH_STATUS_OKAY(LAYER_MODIFIER_INST)

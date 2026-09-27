@@ -47,5 +47,5 @@ ZEPHYR_SDK_INSTALL_DIR="$sdk" \
 ZEPHYR_TOOLCHAIN_VARIANT=zephyr \
 ZMK_SRC_DIR="$workspace/zmk/app" \
 ZMK_BUILD_DIR="$build_dir" \
-ZMK_EXTRA_MODULES="$repo/config/modules/layer-chord" \
-    "$workspace/zmk/app/run-test.sh" "$repo/config/modules/layer-chord/tests"
+ZMK_EXTRA_MODULES="$repo/config/modules/keymap-behaviors" \
+    "$workspace/zmk/app/run-test.sh" "$repo/config/modules/keymap-behaviors/tests"

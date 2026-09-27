@@ -96,9 +96,8 @@ def run_backend(repo: Path, registry: dict[str, Any], name: str, target: dict[st
         env["QMK_KEYMAP"] = qmk.get("keymap", "razen")
         if output := qmk.get("output_keyboard"):
             env["QMK_OUTPUT_KEYBOARD"] = output
-        if convert_to := qmk.get("convert_to"):
-            if "QMK_CONVERT_TO" not in env and "CONVERT_TO" not in env:
-                env["QMK_CONVERT_TO"] = convert_to
+        if (convert_to := qmk.get("convert_to")) and "QMK_CONVERT_TO" not in env and "CONVERT_TO" not in env:
+            env["QMK_CONVERT_TO"] = convert_to
         command = [str(repo / "qmk-build.sh"), action]
     else:
         raise RunnerError(f"unknown backend {backend!r}")

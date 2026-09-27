@@ -1,7 +1,88 @@
+diff --git a/dts/bindings/behaviors/zmk,behavior-adaptive-key.yaml b/dts/bindings/behaviors/zmk,behavior-adaptive-key.yaml
+index 3ff1bfb..ce1ea88 100644
+--- a/dts/bindings/behaviors/zmk,behavior-adaptive-key.yaml
++++ b/dts/bindings/behaviors/zmk,behavior-adaptive-key.yaml
+@@ -25,6 +25,9 @@ properties:
+   skip-magic:
+     type: boolean
+     description: Match the previous keycode instead of the last; repeat it on no match.
++  input-key:
++    type: int
++    default: 0
+
+ child-binding:
+   description: "An adaptive key condition"
+@@ -54,3 +57,10 @@ child-binding:
+       type: boolean
+     strict-modifiers:
+       type: boolean
++    continue-swap:
++      type: boolean
++    continue-shift:
++      type: boolean
++    swap-key:
++      type: int
++      default: 0
+diff --git a/src/behaviors/behavior_adaptive_key.c b/src/behaviors/behavior_adaptive_key.c
+index 2a1a1cb..697495b 100644
 --- a/src/behaviors/behavior_adaptive_key.c
 +++ b/src/behaviors/behavior_adaptive_key.c
-@@ -190,11 +190,18 @@
+@@ -41,6 +41,7 @@ struct binding_list {
+
+ struct trigger_cfg {
+     struct binding_list bindings;
++    struct zmk_key_param swap_key;
+     size_t trigger_keys_len;
+     const struct zmk_key_param trigger_keys[CONFIG_ZMK_ADAPTIVE_KEY_MAX_TRIGGER_CONDITIONS];
+     size_t prior_trigger_keys_len;
+@@ -51,10 +52,13 @@ struct trigger_cfg {
+     int max_idle_ms;
+     bool delete_prior;
+     bool strict_modifiers;
++    bool continue_swap;
++    bool continue_shift;
+ };
+
+ struct behavior_adaptive_key_config {
+     uint8_t index;
++    struct zmk_key_param input_key;
+     struct binding_list default_binding;
+     size_t triggers_len;
+     const struct trigger_cfg *triggers;
+@@ -79,6 +83,18 @@ int64_t prev_timestamp;
+
+ static struct zmk_key_param history[CONFIG_ZMK_ADAPTIVE_KEY_HISTORY_DEPTH];
+
++static struct {
++    bool active;
++    bool strict_modifiers;
++    bool allow_shift;
++    struct zmk_key_param input_key;
++    struct zmk_key_param swap_key;
++    const struct binding_list *input_bindings;
++    const struct binding_list *swap_bindings;
++    int max_idle_ms;
++    int64_t timestamp;
++} active_swap;
++
+ static inline int press_adaptive_key_behavior(const struct behavior_adaptive_key_data *data,
+                                               struct zmk_behavior_binding_event *event) {
+     const struct binding_list *list = data->pressed_bindings;
+@@ -125,6 +141,8 @@ static bool keys_are_equal(const struct zmk_key_param *key, const struct zmk_key
+     return key->page == other->page && key->id == other->id;
+ }
+
++static void clear_active_swap(void) { active_swap.active = false; }
++
+ static bool trigger_is_true(const struct trigger_cfg *trigger,
+                             struct behavior_adaptive_key_data *data, int64_t timestamp,
+                             bool skip_magic) {
+@@ -188,15 +206,58 @@ static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
+     }
+
      bool match = false;
++    bool skip_triggers = false;
++    const struct trigger_cfg *matched_trigger = NULL;
      const struct behavior_adaptive_key_config *config = dev->config;
 +    uint8_t mods = zmk_hid_get_explicit_mods();
 +    bool camel_case_boundary =
@@ -15,18 +96,54 @@
 -        if (trigger_is_true(&config->triggers[i], data, event.timestamp, config->skip_magic)) {
 -            match = true;
 -            break;
-+    if (!camel_case_boundary) {
++    if (active_swap.active) {
++        uint8_t allowed_mods = active_swap.allow_shift ? MOD_LSFT | MOD_RSFT : 0;
++        bool valid = (active_swap.max_idle_ms < 0 ||
++                      event.timestamp - active_swap.timestamp <= active_swap.max_idle_ms) &&
++                     !(active_swap.strict_modifiers && (mods & ~allowed_mods)) &&
++                     !camel_case_boundary;
++        if (valid && keys_are_equal(&config->input_key, &active_swap.input_key, false)) {
++            data->pressed_bindings = active_swap.input_bindings;
++            active_swap.timestamp = event.timestamp;
++            press_adaptive_key_behavior(data, &event);
++            return ZMK_BEHAVIOR_OPAQUE;
+         }
++        if (valid && keys_are_equal(&config->input_key, &active_swap.swap_key, false)) {
++            data->pressed_bindings = active_swap.swap_bindings;
++            active_swap.timestamp = event.timestamp;
++            press_adaptive_key_behavior(data, &event);
++            return ZMK_BEHAVIOR_OPAQUE;
++        }
++        clear_active_swap();
++        skip_triggers = true;
++    }
++    if (!camel_case_boundary && !skip_triggers) {
 +        for (int i = 0; i < config->triggers_len; i++) {
 +            if (trigger_is_true(&config->triggers[i], data, event.timestamp, config->skip_magic)) {
++                matched_trigger = &config->triggers[i];
 +                match = true;
 +                break;
 +            }
-         }
++        }
++    }
++
++    if (matched_trigger && matched_trigger->continue_swap) {
++        active_swap.active = true;
++        active_swap.strict_modifiers = matched_trigger->strict_modifiers;
++        active_swap.allow_shift = matched_trigger->continue_shift;
++        active_swap.input_key = config->input_key;
++        active_swap.swap_key = matched_trigger->swap_key;
++        active_swap.input_bindings = &matched_trigger->bindings;
++        active_swap.swap_bindings = &config->default_binding;
++        active_swap.max_idle_ms = matched_trigger->max_idle_ms;
++        active_swap.timestamp = event.timestamp;
      }
-@@ -283,6 +290,31 @@
+
+     if (!match) {
+@@ -283,6 +344,32 @@ static bool is_dead(const struct zmk_key_param *key) {
      return false;
  }
- 
+
 +static void restore_history(int64_t timestamp) {
 +    last_keycode = history[0];
 +    prev_keycode = CONFIG_ZMK_ADAPTIVE_KEY_HISTORY_DEPTH > 1
@@ -46,6 +163,7 @@
 +}
 +
 +static void clear_history(void) {
++    clear_active_swap();
 +    for (int i = 0; i < CONFIG_ZMK_ADAPTIVE_KEY_HISTORY_DEPTH; i++) {
 +        history[i] = (struct zmk_key_param){0};
 +    }
@@ -55,12 +173,13 @@
  static int adaptive_key_keycode_state_changed_listener(const zmk_event_t *eh) {
      struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
      if (ev == NULL || (!ev->state && !last_keycode_is_dead)) {
-@@ -303,6 +335,22 @@
+@@ -303,6 +390,28 @@ static int adaptive_key_keycode_state_changed_listener(const zmk_event_t *eh) {
          }
      }
- 
+
 +    if (key.page == ZMK_HID_USAGE_PAGE(BACKSPACE) &&
 +        key.id == ZMK_HID_USAGE_ID(BACKSPACE)) {
++        clear_active_swap();
 +        if (key.modifiers) {
 +            clear_history();
 +        } else {
@@ -75,6 +194,36 @@
 +        return ZMK_EV_EVENT_BUBBLE;
 +    }
 +
++    if (active_swap.active && !keys_are_equal(&key, &active_swap.input_key, false) &&
++        !keys_are_equal(&key, &active_swap.swap_key, false)) {
++        clear_active_swap();
++    }
++
      prev_keycode = last_keycode;
      prev_timestamp = last_timestamp;
- 
+
+@@ -345,6 +454,7 @@ static int behavior_adaptive_key_init(const struct device *dev) {
+ #define PROP_TRIGGERS(n, prop)                                                                     \
+     {                                                                                              \
+         .bindings = TRANSFORMED_BINDINGS(n),                                                       \
++        .swap_key = ZMK_KEY_PARAM_DECODE(DT_PROP(n, swap_key)),                                    \
+         .trigger_keys_len = DT_PROP_LEN(n, prop),                                                  \
+         .trigger_keys = {LISTIFY(DT_PROP_LEN(n, prop), KEY_TRIGGER_ITEM, (, ), n, prop)},          \
+         .prior_trigger_keys_len = DT_PROP_LEN(n, prior_trigger_keys),                              \
+@@ -355,6 +465,8 @@ static int behavior_adaptive_key_init(const struct device *dev) {
+         .min_idle_ms = DT_PROP(n, min_prior_idle_ms),                                              \
+         .max_idle_ms = DT_PROP(n, max_prior_idle_ms),                                              \
+         .strict_modifiers = DT_PROP(n, strict_modifiers),                                          \
++        .continue_swap = DT_PROP(n, continue_swap),                                                \
++        .continue_shift = DT_PROP(n, continue_shift),                                              \
+     }
+
+ #define KEY_LIST_ITEM(i, n, prop) ZMK_KEY_PARAM_DECODE(DT_INST_PROP_BY_IDX(n, prop, i))
+@@ -374,6 +486,7 @@ static int behavior_adaptive_key_init(const struct device *dev) {
+     static struct behavior_adaptive_key_data behavior_adaptive_key_data_##n = {};                  \
+     static const struct behavior_adaptive_key_config behavior_adaptive_key_config_##n = {          \
+         .index = n,                                                                                \
++        .input_key = ZMK_KEY_PARAM_DECODE(DT_INST_PROP(n, input_key)),                              \
+         .default_binding =                                                                         \
+             (struct binding_list){                                                                 \
+                 .size = 1,                                                                         \

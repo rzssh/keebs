@@ -7,30 +7,19 @@ layer_source = "layers.toml"
 behavior_source = "behaviors.toml"
 profile_source = "profiles.json"
 draw_combo_reference_layer = false
-combo_transient_layers = ["Nav", "Sym"]
-core34_setup = "left_space_split"
+space_hand = "left"
+symbol_layers = "separate"
 opposite_homing_tap = "shift"
 
 [features]
-home_row_mods = { core30 = true, core34 = false }
-graphite_right_hand = { core30 = false, core34 = true }
-key_combos = true
-key_combos_transient = true
-bracket_combos = { core30 = true, core34 = true }
-bracket_combos_transient = { core30 = true, core34 = false }
-editing_combos = { core30 = true, core34 = false }
-editing_combos_transient = false
-symbol_combos = { core30 = false, core34 = true }
-caps_word_combo = false
-nav_editing_keys = { core30 = false, core34 = true }
-nav_meta_keys = { core30 = false, core34 = false }
-layer_thumb_taps = { core30 = false, core34 = false }
+bracket_combos = { core30 = true, core34 = false }
+symbol_combos = { core30 = false, core34 = false }
 
 [[layer_stacks]]
 layers = ["Sym", "Num"]
 positions = ["L_THUMB_A", "R_THUMB_B"]
 variants = ["core34"]
-setups = ["right_space_split"]
+setups = ["right_space_symbols"]
 
 [[conditional_layers]]
 if_layers = ["Nav", "Sym"]
@@ -41,13 +30,13 @@ variants = ["core30"]
 if_layers = ["Nav", "Sym"]
 then_layer = "Num"
 variants = ["core34"]
-setups = ["left_space_split"]
+setups = ["left_space_symbols"]
 
 [[conditional_layers]]
 if_layers = ["Nav", "Sym"]
 then_layer = "Mouse"
 variants = ["core34"]
-setups = ["right_space_split"]
+setups = ["right_space_symbols"]
 
 [operating_systems.linux]
 home = { key = "HOME" }
@@ -64,8 +53,6 @@ cut = { key = "X", mods = ["LCTRL"] }
 copy = { key = "INS", mods = ["LCTRL"] }
 paste = { key = "V", mods = ["LCTRL"] }
 select_all = { key = "A", mods = ["LCTRL"] }
-screenshot_full = { key = "P", mods = ["LGUI", "LSHIFT"] }
-screenshot_area = { key = "S", mods = ["LGUI", "LSHIFT"] }
 
 [operating_systems.macos]
 home = { key = "LEFT", mods = ["LGUI"] }
@@ -82,8 +69,6 @@ cut = { key = "X", mods = ["LGUI"] }
 copy = { key = "C", mods = ["LGUI"] }
 paste = { key = "V", mods = ["LGUI"] }
 select_all = { key = "A", mods = ["LGUI"] }
-screenshot_full = { key = "N3", mods = ["LGUI", "LSHIFT"] }
-screenshot_area = { key = "N4", mods = ["LGUI", "LSHIFT"] }
 
 [operating_systems.windows]
 home = { key = "HOME" }
@@ -100,5 +85,3 @@ cut = { key = "X", mods = ["LCTRL"] }
 copy = { key = "INS", mods = ["LCTRL"] }
 paste = { key = "INS", mods = ["LSHIFT"] }
 select_all = { key = "A", mods = ["LCTRL"] }
-screenshot_full = { key = "S", mods = ["LGUI", "LSHIFT"] }
-screenshot_area = { key = "S", mods = ["LGUI", "LSHIFT"] }

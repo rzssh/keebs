@@ -1,4 +1,4 @@
-#define DT_DRV_COMPAT zmk_behavior_layer_chord
+#define DT_DRV_COMPAT zmk_behavior_layer_transition
 
 #include <zephyr/device.h>
 #include <zephyr/sys/util.h>
@@ -12,7 +12,7 @@
 #include <zmk/events/position_state_changed.h>
 #include <zmk/keymap.h>
 
-struct behavior_layer_chord_config {
+struct behavior_layer_transition_config {
     zmk_keymap_layer_id_t parent_layer;
     zmk_keymap_layer_id_t child_layer;
     zmk_keymap_layer_id_t parent_overlay_layer;
@@ -22,7 +22,7 @@ struct behavior_layer_chord_config {
     bool ordered;
 };
 
-struct behavior_layer_chord_data {
+struct behavior_layer_transition_data {
     bool active;
     bool parent_pressed;
     bool child_pressed;
@@ -46,15 +46,15 @@ static int deactivate_layer(zmk_keymap_layer_id_t layer) {
 }
 
 static void update_ordered_layers(const struct device *dev) {
-    const struct behavior_layer_chord_config *config = dev->config;
-    struct behavior_layer_chord_data *data = dev->data;
+    const struct behavior_layer_transition_config *config = dev->config;
+    struct behavior_layer_transition_data *data = dev->data;
     bool both = (data->parent_pressed || data->child_pressed) &&
                 zmk_keymap_layer_active(config->parent_layer) &&
                 zmk_keymap_layer_active(config->child_layer);
-    zmk_keymap_layer_id_t selected = data->child_latest ? config->child_overlay_layer
-                                                       : config->parent_overlay_layer;
-    zmk_keymap_layer_id_t rejected = data->child_latest ? config->parent_overlay_layer
-                                                       : config->child_overlay_layer;
+    zmk_keymap_layer_id_t selected =
+        data->child_latest ? config->child_overlay_layer : config->parent_overlay_layer;
+    zmk_keymap_layer_id_t rejected =
+        data->child_latest ? config->parent_overlay_layer : config->child_overlay_layer;
     if (zmk_keymap_layer_active(rejected)) {
         deactivate_layer(rejected);
     }
@@ -67,12 +67,12 @@ static void update_ordered_layers(const struct device *dev) {
     }
 }
 
-static int layer_chord_pressed(struct zmk_behavior_binding *binding,
-                               struct zmk_behavior_binding_event event) {
+static int layer_transition_pressed(struct zmk_behavior_binding *binding,
+                                    struct zmk_behavior_binding_event event) {
     (void)event;
     const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
-    const struct behavior_layer_chord_config *config = dev->config;
-    struct behavior_layer_chord_data *data = dev->data;
+    const struct behavior_layer_transition_config *config = dev->config;
+    struct behavior_layer_transition_data *data = dev->data;
     if (config->ordered) {
         bool child = binding->param1;
         if (child) {
@@ -104,12 +104,12 @@ static int layer_chord_pressed(struct zmk_behavior_binding *binding,
     return ZMK_BEHAVIOR_OPAQUE;
 }
 
-static int layer_chord_released(struct zmk_behavior_binding *binding,
-                                struct zmk_behavior_binding_event event) {
+static int layer_transition_released(struct zmk_behavior_binding *binding,
+                                     struct zmk_behavior_binding_event event) {
     (void)event;
     const struct device *dev = zmk_behavior_get_binding(binding->behavior_dev);
-    const struct behavior_layer_chord_config *config = dev->config;
-    struct behavior_layer_chord_data *data = dev->data;
+    const struct behavior_layer_transition_config *config = dev->config;
+    struct behavior_layer_transition_data *data = dev->data;
     if (config->ordered) {
         bool child = binding->param1;
         if (child) {
@@ -139,18 +139,19 @@ static int layer_chord_released(struct zmk_behavior_binding *binding,
     return ZMK_BEHAVIOR_OPAQUE;
 }
 
-static const struct behavior_driver_api layer_chord_driver_api = {
-    .binding_pressed = layer_chord_pressed,
-    .binding_released = layer_chord_released,
+static const struct behavior_driver_api layer_transition_driver_api = {
+    .binding_pressed = layer_transition_pressed,
+    .binding_released = layer_transition_released,
 };
 
-#define LAYER_CHORD_DEVICE(inst) DEVICE_DT_INST_GET(inst),
-static const struct device *layer_chord_devices[] = {
-    DT_INST_FOREACH_STATUS_OKAY(LAYER_CHORD_DEVICE)};
+#define LAYER_TRANSITION_DEVICE(inst) DEVICE_DT_INST_GET(inst),
+static const struct device *layer_transition_devices[] = {
+    DT_INST_FOREACH_STATUS_OKAY(LAYER_TRANSITION_DEVICE)};
 
-bool zmk_layer_chord_position(uint32_t position) {
-    for (size_t index = 0; index < ARRAY_SIZE(layer_chord_devices); index++) {
-        const struct behavior_layer_chord_config *config = layer_chord_devices[index]->config;
+bool zmk_layer_transition_position(uint32_t position) {
+    for (size_t index = 0; index < ARRAY_SIZE(layer_transition_devices); index++) {
+        const struct behavior_layer_transition_config *config =
+            layer_transition_devices[index]->config;
         if (position == config->parent_position || position == config->child_position) {
             return true;
         }
@@ -158,16 +159,15 @@ bool zmk_layer_chord_position(uint32_t position) {
     return false;
 }
 
-static int layer_chord_position_listener(const zmk_event_t *event) {
-    const struct zmk_position_state_changed *position_event =
-        as_zmk_position_state_changed(event);
+static int layer_transition_position_listener(const zmk_event_t *event) {
+    const struct zmk_position_state_changed *position_event = as_zmk_position_state_changed(event);
     if (position_event == NULL) {
         return ZMK_EV_EVENT_BUBBLE;
     }
-    for (size_t index = 0; index < ARRAY_SIZE(layer_chord_devices); index++) {
-        const struct device *dev = layer_chord_devices[index];
-        const struct behavior_layer_chord_config *config = dev->config;
-        struct behavior_layer_chord_data *data = dev->data;
+    for (size_t index = 0; index < ARRAY_SIZE(layer_transition_devices); index++) {
+        const struct device *dev = layer_transition_devices[index];
+        const struct behavior_layer_transition_config *config = dev->config;
+        struct behavior_layer_transition_data *data = dev->data;
         if (!data->active || config->ordered) {
             continue;
         }
@@ -195,18 +195,18 @@ static int layer_chord_position_listener(const zmk_event_t *event) {
     return ZMK_EV_EVENT_BUBBLE;
 }
 
-ZMK_LISTENER(layer_chord, layer_chord_position_listener);
-ZMK_SUBSCRIPTION(layer_chord, zmk_position_state_changed);
+ZMK_LISTENER(layer_transition, layer_transition_position_listener);
+ZMK_SUBSCRIPTION(layer_transition, zmk_position_state_changed);
 
-static int layer_chord_layer_listener(const zmk_event_t *event) {
+static int layer_transition_layer_listener(const zmk_event_t *event) {
     const struct zmk_layer_state_changed *layer_event = as_zmk_layer_state_changed(event);
     if (layer_event == NULL || layer_event->state) {
         return ZMK_EV_EVENT_BUBBLE;
     }
-    for (size_t index = 0; index < ARRAY_SIZE(layer_chord_devices); index++) {
-        const struct device *dev = layer_chord_devices[index];
-        const struct behavior_layer_chord_config *config = dev->config;
-        struct behavior_layer_chord_data *data = dev->data;
+    for (size_t index = 0; index < ARRAY_SIZE(layer_transition_devices); index++) {
+        const struct device *dev = layer_transition_devices[index];
+        const struct behavior_layer_transition_config *config = dev->config;
+        struct behavior_layer_transition_data *data = dev->data;
         if (config->ordered) {
             update_ordered_layers(dev);
             continue;
@@ -221,12 +221,12 @@ static int layer_chord_layer_listener(const zmk_event_t *event) {
     return ZMK_EV_EVENT_BUBBLE;
 }
 
-ZMK_LISTENER(layer_chord_layer, layer_chord_layer_listener);
-ZMK_SUBSCRIPTION(layer_chord_layer, zmk_layer_state_changed);
+ZMK_LISTENER(layer_transition_layer, layer_transition_layer_listener);
+ZMK_SUBSCRIPTION(layer_transition_layer, zmk_layer_state_changed);
 
-#define LAYER_CHORD_INST(inst)                                                                    \
-    static struct behavior_layer_chord_data layer_chord_data_##inst;                              \
-    static const struct behavior_layer_chord_config layer_chord_config_##inst = {                  \
+#define LAYER_TRANSITION_INST(inst)                                                                \
+    static struct behavior_layer_transition_data layer_transition_data_##inst;                     \
+    static const struct behavior_layer_transition_config layer_transition_config_##inst = {        \
         .parent_layer = DT_INST_PROP(inst, parent_layer),                                          \
         .child_layer = DT_INST_PROP(inst, child_layer),                                            \
         .parent_overlay_layer = DT_INST_PROP_OR(inst, parent_overlay_layer, 0),                    \
@@ -235,8 +235,8 @@ ZMK_SUBSCRIPTION(layer_chord_layer, zmk_layer_state_changed);
         .child_position = DT_INST_PROP(inst, child_position),                                      \
         .ordered = DT_INST_NODE_HAS_PROP(inst, parent_overlay_layer),                              \
     };                                                                                             \
-    BEHAVIOR_DT_INST_DEFINE(inst, NULL, NULL, &layer_chord_data_##inst,                            \
-                            &layer_chord_config_##inst, POST_KERNEL,                               \
-                            CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &layer_chord_driver_api);
+    BEHAVIOR_DT_INST_DEFINE(inst, NULL, NULL, &layer_transition_data_##inst,                       \
+                            &layer_transition_config_##inst, POST_KERNEL,                          \
+                            CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &layer_transition_driver_api);
 
-DT_INST_FOREACH_STATUS_OKAY(LAYER_CHORD_INST)
+DT_INST_FOREACH_STATUS_OKAY(LAYER_TRANSITION_INST)

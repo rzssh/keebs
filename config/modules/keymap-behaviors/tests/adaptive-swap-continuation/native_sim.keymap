@@ -1,0 +1,81 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/kscan_mock.h>
+
+/ {
+    behaviors {
+        corrected_c: corrected_c {
+            compatible = "zmk,behavior-adaptive-key";
+            #binding-cells = <0>;
+            bindings = <&kp C>;
+            input-key = <C>;
+
+            cascade {
+                trigger-keys = <S>;
+                bindings = <&kp D>;
+                max-prior-idle-ms = <1000>;
+                strict-modifiers;
+            };
+        };
+
+        corrected_x: corrected_x {
+            compatible = "zmk,behavior-adaptive-key";
+            #binding-cells = <0>;
+            bindings = <&kp X>;
+            input-key = <X>;
+
+            swap {
+                trigger-keys = <C>;
+                bindings = <&kp S>;
+                max-prior-idle-ms = <1000>;
+                strict-modifiers;
+                continue-swap;
+                continue-shift;
+                swap-key = <S>;
+            };
+        };
+
+        corrected_s: corrected_s {
+            compatible = "zmk,behavior-adaptive-key";
+            #binding-cells = <0>;
+            bindings = <&kp S>;
+            input-key = <S>;
+
+            swap {
+                trigger-keys = <C>;
+                bindings = <&kp X>;
+                max-prior-idle-ms = <1000>;
+                strict-modifiers;
+                continue-swap;
+                continue-shift;
+                swap-key = <X>;
+            };
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            bindings = <&corrected_c &corrected_x &corrected_s &kp SPACE>;
+        };
+    };
+};
+
+&kscan {
+    events = <
+        ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_PRESS(1,1,10) ZMK_MOCK_RELEASE(1,1,10)
+
+        ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_PRESS(1,0,10) ZMK_MOCK_RELEASE(1,0,10)
+        ZMK_MOCK_PRESS(1,1,10) ZMK_MOCK_RELEASE(1,1,10)
+
+        ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_RELEASE(0,0,10)
+    >;
+};

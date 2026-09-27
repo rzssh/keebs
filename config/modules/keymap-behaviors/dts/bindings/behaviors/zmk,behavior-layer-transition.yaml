@@ -1,6 +1,6 @@
-description: Momentary layer chord with independently released layers
+description: Momentary transition between independently released layers
 
-compatible: "zmk,behavior-layer-chord"
+compatible: "zmk,behavior-layer-transition"
 
 include: one_param.yaml
 

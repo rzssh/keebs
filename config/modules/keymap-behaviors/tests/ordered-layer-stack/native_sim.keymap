@@ -5,7 +5,7 @@
 / {
     behaviors {
         layer_stack: layer_stack {
-            compatible = "zmk,behavior-layer-chord";
+            compatible = "zmk,behavior-layer-transition";
             #binding-cells = <1>;
             parent-layer = <1>;
             child-layer = <2>;
