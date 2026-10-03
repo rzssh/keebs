@@ -387,6 +387,13 @@ recipe = "platform"
 action = "caps_word"
 targets = ["zmk", "qmk"]
 
+[behaviors.num_word]
+recipe = "auto_layer"
+layer = "NumWord"
+continue = ["BSPC", "DEL", "DOT", "COMMA", "PLUS", "MINUS", "STAR", "FSLH", "EQUAL"]
+ignore_numbers = true
+targets = ["zmk", "qmk"]
+
 [behaviors.caps_word_lock]
 recipe = "shift_morph"
 tap = { use = "caps_word" }
@@ -1090,15 +1097,13 @@ prior_idle_ms = 0
 draw = { action = "UNDER" }
 
 [[combos]]
-name = "graphium_slash"
+name = "num_word"
 positions = ["R_RING_BOTTOM", "R_PINKY_BOTTOM"]
 layers = ["Graphium"]
 variants = ["core34"]
-feature = "symbol_combos"
-action = { use = "combo_slash_bslh" }
+action = { use = "num_word" }
 term_ms = 20
 prior_idle_ms = 0
-draw = { action = "FSLH" }
 
 [[combos]]
 name = "graphium_lbkt"

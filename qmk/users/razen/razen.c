@@ -397,6 +397,13 @@ static bool custom_keycode(uint16_t keycode) {
         }
     }
 #endif
+#ifdef RAZEN_AUTO_LAYER_ENABLE
+    for (uint8_t index = 0; index < razen_auto_layer_count; index++) {
+        if (razen_auto_layers[index].trigger == keycode) {
+            return true;
+        }
+    }
+#endif
     for (uint8_t index = 0; index < razen_morph_count; index++) {
         if (razen_morphs[index].trigger == keycode) {
             return true;
@@ -414,6 +421,58 @@ static bool custom_keycode(uint16_t keycode) {
     }
     return false;
 }
+
+#ifdef RAZEN_AUTO_LAYER_ENABLE
+static uint16_t auto_layer_keycode(uint16_t keycode) {
+    for (uint8_t index = 0; index < razen_morph_count; index++) {
+        if (razen_morphs[index].trigger == keycode) {
+            return razen_morphs[index].tap;
+        }
+    }
+    return keycode;
+}
+
+static bool auto_layer_continues(const razen_auto_layer_t *auto_layer, uint16_t keycode) {
+    if (auto_layer->ignore_numbers && keycode >= KC_1 && keycode <= KC_0) {
+        return true;
+    }
+    for (uint8_t index = 0; index < auto_layer->continue_count; index++) {
+        if (auto_layer->continue_keycodes[index] == keycode) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool process_auto_layers(uint16_t keycode, keyrecord_t *record) {
+    for (uint8_t index = 0; index < razen_auto_layer_count; index++) {
+        const razen_auto_layer_t *auto_layer = &razen_auto_layers[index];
+        if (auto_layer->trigger != keycode) {
+            continue;
+        }
+        if (record->event.pressed) {
+            if (layer_state_is(auto_layer->layer)) {
+                layer_off(auto_layer->layer);
+            } else {
+                layer_on(auto_layer->layer);
+            }
+            clear_history();
+        }
+        return false;
+    }
+    if (!record->event.pressed) {
+        return true;
+    }
+    uint16_t effective_keycode = auto_layer_keycode(keycode);
+    for (uint8_t index = 0; index < razen_auto_layer_count; index++) {
+        const razen_auto_layer_t *auto_layer = &razen_auto_layers[index];
+        if (layer_state_is(auto_layer->layer) && !auto_layer_continues(auto_layer, effective_keycode)) {
+            layer_off(auto_layer->layer);
+        }
+    }
+    return true;
+}
+#endif
 
 #ifdef RAZEN_LAYER_MODIFIER_ENABLE
 static void press_layer_modifier(razen_layer_modifier_t *state, uint8_t index) {
@@ -639,6 +698,12 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     process_tap_dance_release(keycode, record);
+
+#ifdef RAZEN_AUTO_LAYER_ENABLE
+    if (!process_auto_layers(keycode, record)) {
+        return false;
+    }
+#endif
 
 #ifdef RAZEN_LAYER_STACK_ENABLE
     if (record->event.pressed) {

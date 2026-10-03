@@ -1,5 +1,5 @@
 version = 1
-layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num", "Fn", "Mouse", "Magic"]
+layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num", "NumWord", "Fn", "Mouse", "Magic"]
 alpha_layers = ["Graphium", "Vestnik"]
 default_layer = "Graphium"
 default_os = "linux"
@@ -13,7 +13,7 @@ opposite_homing_tap = "shift"
 
 [features]
 bracket_combos = { core30 = true, core34 = false }
-symbol_combos = { core30 = false, core34 = false }
+symbol_combos = { core30 = false, core34 = true }
 vim_adaptive_guard = true
 
 [[layer_stacks]]

@@ -18,6 +18,10 @@ manifest:
       remote: urob
       revision: bc114546392b4615ac90a99140eaf21dde31209d
       path: modules/zmk/helpers
+    - name: zmk-auto-layer
+      remote: urob
+      revision: b50d514219c5ad61198f9a8be137c59d0674b11c
+      path: modules/zmk/auto-layer
     - name: zmk-adaptive-key
       remote: rzssh
       revision: 540b774f6da9d763e61bc64b694790757ed3bd84

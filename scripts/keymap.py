@@ -503,7 +503,7 @@ def validate(model: dict[str, Any]) -> None:
     behavior_identifiers = [ident(name) for name in behaviors]
     if len(behavior_identifiers) != len(set(behavior_identifiers)):
         fail("behavior names produce duplicate identifiers")
-    allowed_recipes = {"shift_morph", "pair_morph", "sequence", "repeat_magic", "contextual_key", "tap_hold", "macro", "layer_transition", "layer_modifier", "sticky_key", "platform"}
+    allowed_recipes = {"shift_morph", "pair_morph", "sequence", "repeat_magic", "contextual_key", "tap_hold", "macro", "layer_transition", "layer_modifier", "auto_layer", "sticky_key", "platform"}
     for name, behavior in behaviors.items():
         if behavior.get("recipe") not in allowed_recipes:
             fail(f"behavior {name}: unknown recipe {behavior.get('recipe')!r}")
@@ -594,6 +594,16 @@ def validate(model: dict[str, Any]) -> None:
                 fail(f"behavior {name}: modifier behaviors must be unique")
             if any(behaviors.get(modifier, {}).get("recipe") != "sticky_key" for modifier in modifier_behaviors):
                 fail(f"behavior {name}: modifier_behaviors must reference sticky keys")
+        if behavior["recipe"] == "auto_layer":
+            continue_keys = behavior.get("continue", [])
+            if behavior.get("targets") != ["zmk", "qmk"]:
+                fail(f"behavior {name}: auto_layer must target ZMK and QMK")
+            if behavior.get("layer") not in declared_layers:
+                fail(f"behavior {name}: unknown layer")
+            if not isinstance(continue_keys, list) or len(continue_keys) != len(set(continue_keys)) or len(continue_keys) > 16 or any(not valid_key(model, key) for key in continue_keys):
+                fail(f"behavior {name}: invalid continue keys")
+            if not isinstance(behavior.get("ignore_numbers"), bool):
+                fail(f"behavior {name}: ignore_numbers must be a boolean")
         if behavior["recipe"] == "sticky_key" and resolved_key(model, behavior.get("key", "")) not in MODS:
             fail(f"behavior {name}: key must be a modifier")
         if behavior["recipe"] == "sticky_key" and behavior.get("timing") not in behavior_source.get("timings", {}):
@@ -1257,6 +1267,8 @@ def zmk_action(model: dict[str, Any], ir: dict[str, Any], value: Any, adaptive_n
         recipe = item["recipe"]
         if recipe in {"shift_morph", "sequence", "macro", "contextual_key", "layer_modifier"}:
             return f"&{name}"
+        if recipe == "auto_layer":
+            return f"&{name} LAYER_{item['layer']}"
         if recipe == "pair_morph":
             return f"&{name} 0 0"
         if recipe == "layer_transition":
@@ -1346,6 +1358,7 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
         lines.append("ZMK_MOD_MORPH(smart_shift, bindings = <&sk LSHFT>, <&caps_word>; mods = <(MOD_LSFT|MOD_RSFT)>;)")
     layer_transitions = []
     layer_modifiers = []
+    auto_layers = []
     combo_behaviors = {
         combo["action"]["use"]
         for combo in ir["combos"]
@@ -1408,6 +1421,8 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
             lines.append(f"ZMK_MACRO({name}, bindings = {bindings};)")
         elif recipe == "layer_modifier" and name in combo_behaviors:
             layer_modifiers.append((name, item))
+        elif recipe == "auto_layer":
+            auto_layers.append((name, item))
         elif recipe == "layer_transition":
             chord_name = f"{name}_hold" if "tap" in item else name
             layer_transitions.append((chord_name, item))
@@ -1460,7 +1475,7 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
             timing = timings[item["timing"]]
             lines.append("ZMK_MACRO(rgb_status, bindings = <&rgb_ug RGB_STATUS>;)")
             lines.append(f'ZMK_HOLD_TAP({name}, bindings = <&mo>, <&rgb_status>; flavor = "{timing["flavor"]}"; tapping-term-ms = <{timing["tapping_term_ms"]}>; quick-tap-ms = <{timing["quick_tap_ms"]}>;)')
-    if layer_transitions or ir["layer_stacks"] or layer_modifiers:
+    if layer_transitions or ir["layer_stacks"] or layer_modifiers or auto_layers:
         lines.extend(["", "/ {", "    behaviors {"])
         for name, item in layer_transitions:
             lines.extend([
@@ -1487,6 +1502,16 @@ def render_zmk_behaviors(model: dict[str, Any], ir: dict[str, Any]) -> list[str]
                 f"            child-overlay-layer = <LAYER_{second_alias}>;",
                 f"            parent-position = <{slot_indices[first_position]}>;",
                 f"            child-position = <{slot_indices[second_position]}>;",
+                "        };",
+            ])
+        for name, item in auto_layers:
+            continue_keys = " ".join(zmk_key(model, key) for key in item["continue"])
+            lines.extend([
+                f"        {name}: {name} {{",
+                '            compatible = "zmk,behavior-auto-layer";',
+                "            #binding-cells = <1>;",
+                f"            continue-list = <{continue_keys}>;",
+                *(["            ignore-numbers;"] if item["ignore_numbers"] else []),
                 "        };",
             ])
         for name, item in layer_modifiers:
@@ -1898,6 +1923,8 @@ def qmk_action(model: dict[str, Any], ir: dict[str, Any], value: Any, td_keys: d
             return custom_name("LAYER_TRANSITION", name)
         if recipe == "layer_modifier":
             return custom_name("LAYER_MODIFIER", name)
+        if recipe == "auto_layer":
+            return custom_name("AUTO_LAYER", name)
         if recipe == "sticky_key":
             return f"OSM({QMK_ONESHOT_MODS[resolved_key(model, item['key'])]})"
         if recipe == "platform":
@@ -1952,6 +1979,8 @@ def qmk_custom_ids(model: dict[str, Any], ir: dict[str, Any]) -> list[str]:
             result.append(custom_name("LAYER_TRANSITION", name))
         elif item["recipe"] == "layer_modifier":
             result.append(custom_name("LAYER_MODIFIER", name))
+        elif item["recipe"] == "auto_layer":
+            result.append(custom_name("AUTO_LAYER", name))
     return result
 
 
@@ -1985,6 +2014,11 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
         (name, item)
         for name, item in model["behaviors"]["behaviors"].items()
         if item["recipe"] == "layer_modifier" and name in combo_behaviors and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"])
+    ]
+    auto_layers = [
+        (name, item)
+        for name, item in model["behaviors"]["behaviors"].items()
+        if item["recipe"] == "auto_layer" and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"])
     ]
     lines.extend([
         "};",
@@ -2051,6 +2085,20 @@ def render_qmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
         lines.extend([
             "};",
             "const uint8_t razen_layer_modifier_count = sizeof(razen_layer_modifiers) / sizeof(razen_layer_modifiers[0]);",
+            "",
+        ])
+    if auto_layers:
+        lines.append("const razen_auto_layer_t razen_auto_layers[] = {")
+        for name, item in auto_layers:
+            continue_keys = [qmk_key(model, key) for key in item["continue"]]
+            continue_keys.extend(["KC_NO"] * (16 - len(continue_keys)))
+            lines.append(
+                f"    {{{custom_name('AUTO_LAYER', name)}, {qmk_layer(item['layer'])}, "
+                f"{{{', '.join(continue_keys)}}}, {len(item['continue'])}, {'true' if item['ignore_numbers'] else 'false'}}},"
+            )
+        lines.extend([
+            "};",
+            "const uint8_t razen_auto_layer_count = sizeof(razen_auto_layers) / sizeof(razen_auto_layers[0]);",
             "",
         ])
     lines.append("enum generated_tap_dances {")
@@ -2269,6 +2317,11 @@ def render_qmk_config(model: dict[str, Any], ir: dict[str, Any]) -> str:
         *(["#define RAZEN_VIM_ADAPTIVE_GUARD_ENABLE"] if feature_enabled(model, "vim_adaptive_guard", ir["variant"]) else []),
         *(["#define RAZEN_LAYER_STACK_ENABLE"] if ir["layer_stacks"] else []),
         *(
+            ["#define RAZEN_AUTO_LAYER_ENABLE"]
+            if any(item["recipe"] == "auto_layer" and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"]) for item in model["behaviors"]["behaviors"].values())
+            else []
+        ),
+        *(
             ["#define RAZEN_LAYER_TRANSITION_ENABLE"]
             if any(item["recipe"] == "layer_transition" and behavior_available(item, "qmk") and behavior_layer_refs(model, item).issubset(ir["layers"]) for item in model["behaviors"]["behaviors"].values())
             else []
@@ -2389,6 +2442,8 @@ def label_action(model: dict[str, Any], ir: dict[str, Any], value: Any) -> Any:
             return {"t": tap_layer, "h": hold_layer}
         if name == "glove_magic":
             return {"t": "RGB", "h": "Magic"}
+        if item["recipe"] == "auto_layer":
+            return {"t": item["layer"], "type": "layer-activator"}
         if item["recipe"] == "platform":
             return {
                 "bootloader": {"t": mdi("progress-download"), "s": "Boot"},
