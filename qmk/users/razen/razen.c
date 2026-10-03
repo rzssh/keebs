@@ -13,6 +13,9 @@ static uint32_t last_keypress_timer;
 static uint32_t current_keypress_idle = UINT32_MAX;
 static uint32_t repeat_timer;
 static uint8_t repeat_mods;
+#ifdef RAZEN_VIM_ADAPTIVE_GUARD_ENABLE
+static bool adaptives_enabled = true;
+#endif
 
 static bool shift_active(void) {
     return (get_mods() | get_oneshot_mods() | get_weak_mods()) & MOD_MASK_SHIFT;
@@ -70,6 +73,18 @@ static void clear_history(void) {
     history_timer = 0;
     active_swap = NULL;
 }
+
+#ifdef RAZEN_VIM_ADAPTIVE_GUARD_ENABLE
+bool led_update_user(led_t led_state) {
+    uint8_t code = led_state.compose | (led_state.kana << 1) | (led_state.scroll_lock << 2);
+    bool enabled = code == 0 || code == 2 || code == 5;
+    if (enabled != adaptives_enabled) {
+        adaptives_enabled = enabled;
+        clear_history();
+    }
+    return true;
+}
+#endif
 
 static void append_history(uint16_t keycode, uint8_t mods) {
     if (history_len == 6) {
@@ -178,6 +193,13 @@ static bool process_adaptive(uint16_t keycode, keyrecord_t *record) {
         }
         return true;
     }
+
+#ifdef RAZEN_VIM_ADAPTIVE_GUARD_ENABLE
+    if (!adaptives_enabled) {
+        clear_history();
+        return true;
+    }
+#endif
 
     uint16_t basic = tap_keycode(keycode, record);
     if (basic == KC_NO) {

@@ -1614,6 +1614,15 @@ def render_zmk(model: dict[str, Any], ir: dict[str, Any]) -> str:
             "};",
             "",
         ])
+    if feature_enabled(model, "vim_adaptive_guard", ir["variant"]):
+        lines.extend([
+            "/ {",
+            "    vim_adaptive_guard {",
+            '        compatible = "razen,vim-adaptive-guard";',
+            "    };",
+            "};",
+            "",
+        ])
     if zmk.get("transform"):
         coordinates = [f"RC({row},{column})" for row, column in zmk["transform"]]
         lines.extend(["&default_transform {", "    map = <"])
@@ -2257,6 +2266,7 @@ def render_qmk_config(model: dict[str, Any], ir: dict[str, Any]) -> str:
         "#endif",
         "",
         f"#define RAZEN_LAYER_NAMES {{{', '.join(json.dumps(ir['layer_aliases'].get(name, name)) for name in ir['layers'])}}}",
+        *(["#define RAZEN_VIM_ADAPTIVE_GUARD_ENABLE"] if feature_enabled(model, "vim_adaptive_guard", ir["variant"]) else []),
         *(["#define RAZEN_LAYER_STACK_ENABLE"] if ir["layer_stacks"] else []),
         *(
             ["#define RAZEN_LAYER_TRANSITION_ENABLE"]

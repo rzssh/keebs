@@ -14,6 +14,7 @@ opposite_homing_tap = "shift"
 [features]
 bracket_combos = { core30 = true, core34 = false }
 symbol_combos = { core30 = false, core34 = false }
+vim_adaptive_guard = true
 
 [[layer_stacks]]
 layers = ["Sym", "Num"]
