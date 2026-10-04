@@ -19,6 +19,10 @@ My current 34-key setup can be seen below.
 
 Both layouts use [adaptive swaps](https://dario.ca/posts/2026-05-18-keyboard-layout-adaptive-swaps/) to remove selected [same-finger bigrams](https://layouts.wiki/reference/metrics/same-finger/#same-finger-bigram). After a trigger key, two other keys temporarily exchange outputs. For example, after `s`, the physical `d` key emits `c`, turning `sc` into a roll; the rarer `sd` is typed through the other side of the swap. I also use this mechanism to repair selected [weak redirects](https://layouts.wiki/reference/metrics/rhythm/#weak-redirects), extending the idea from bigrams to awkward trigram patterns. This application is my own addition. The rules take some learning, but common sequences become much more comfortable.
 
+Ctrl, Alt and Super shortcuts don't trigger swaps. Backspace rewinds the adaptive history, so correcting a word keeps the same typing pattern. The ZMK implementation lives in [my fork of urob's adaptive module](https://github.com/rzssh/zmk-adaptive-key); QMK uses the same rules.
+
+For Neovim, I use [my fork of zmk-vim-mode](https://github.com/rzssh/zmk-vim-mode) to sync the keyboard with the editor's actual mode. Adaptives are off in Normal/Visual and on in Insert/command-line. Mode changes clear the history. Still testing this part. The [Neovim config](https://github.com/rzssh/nvim/blob/main/lua/plugins/zmk-vim-mode.lua) and [host setup](https://github.com/rzssh/dotfiles) connect it all.
+
 ### Languages and symbols
 
 The language keys switch both the firmware layout and the host language, so I don't have to keep them in sync by hand. With Ctrl, Alt, or Super active, Vestnik uses the same shortcut positions as Graphium. I only learn those once. Shift on its own still gives uppercase Cyrillic.
