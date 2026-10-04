@@ -17,7 +17,7 @@ manifest:
       revision: bc114546392b4615ac90a99140eaf21dde31209d
     - name: zmk-adaptive-key
       remote: rzssh
-      revision: 540b774f6da9d763e61bc64b694790757ed3bd84
+      revision: 95083d7bb0c4b76dbc475c15bf352775932d87ef
     - name: zmk-vim-mode
       remote: rzssh
       revision: 34a8dd2187c6335f5890c1b5c43fabdfac75ac86
