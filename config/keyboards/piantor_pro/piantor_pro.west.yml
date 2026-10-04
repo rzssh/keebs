@@ -20,7 +20,7 @@ manifest:
       path: modules/zmk/helpers
     - name: zmk-adaptive-key
       remote: rzssh
-      revision: 95083d7bb0c4b76dbc475c15bf352775932d87ef
+      revision: 8a835ea157c23de50e0808945a4a0a47895fd2c7
       path: modules/zmk/adaptive-key
     - name: zmk-vim-mode
       remote: rzssh
