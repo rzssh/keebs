@@ -1,0 +1,87 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/kscan_mock.h>
+
+/ {
+    combos {
+        compatible = "zmk,combos";
+        home {
+            timeout-ms = <40>;
+            key-positions = <0 1>;
+            bindings = <&kp HOME>;
+        };
+        end {
+            timeout-ms = <40>;
+            key-positions = <1 2>;
+            bindings = <&kp END>;
+        };
+        enter {
+            timeout-ms = <40>;
+            key-positions = <0 1 2>;
+            bindings = <&kp RET>;
+        };
+    };
+
+    behaviors {
+        tab_next: tab_next {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <1>;
+            tap-ms = <1>;
+            bindings = <&kp LC(TAB)>;
+        };
+        tab_previous: tab_previous {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <1>;
+            tap-ms = <1>;
+            bindings = <&kp LC(LS(TAB))>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+        nav {
+            bindings = <&kp LEFT &kp DOWN &kp RIGHT &kp LSHFT &kp LALT &tab_next &tab_previous &none>;
+        };
+    };
+};
+
+&kscan {
+    columns = <4>;
+    events = <
+        ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,0,10) ZMK_MOCK_RELEASE(0,1,60)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,1,10) ZMK_MOCK_RELEASE(0,0,60)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_PRESS(0,2,10)
+        ZMK_MOCK_RELEASE(0,1,10) ZMK_MOCK_RELEASE(0,2,60)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,2,10) ZMK_MOCK_RELEASE(0,1,60)
+
+        ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_PRESS(0,2,10)
+        ZMK_MOCK_RELEASE(0,0,10) ZMK_MOCK_RELEASE(0,1,10) ZMK_MOCK_RELEASE(0,2,60)
+        ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,0,10) ZMK_MOCK_RELEASE(0,2,10) ZMK_MOCK_RELEASE(0,1,60)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_PRESS(0,2,10)
+        ZMK_MOCK_RELEASE(0,1,10) ZMK_MOCK_RELEASE(0,0,10) ZMK_MOCK_RELEASE(0,2,60)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,1,10) ZMK_MOCK_RELEASE(0,2,10) ZMK_MOCK_RELEASE(0,0,60)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,2,10) ZMK_MOCK_RELEASE(0,0,10) ZMK_MOCK_RELEASE(0,1,60)
+        ZMK_MOCK_PRESS(0,2,10) ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,2,10) ZMK_MOCK_RELEASE(0,1,10) ZMK_MOCK_RELEASE(0,0,60)
+
+        ZMK_MOCK_PRESS(0,3,10)
+        ZMK_MOCK_PRESS(0,0,10) ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,0,10) ZMK_MOCK_RELEASE(0,1,60)
+        ZMK_MOCK_PRESS(0,1,10) ZMK_MOCK_PRESS(0,2,10)
+        ZMK_MOCK_RELEASE(0,1,10) ZMK_MOCK_RELEASE(0,2,60)
+        ZMK_MOCK_RELEASE(0,3,60)
+
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_PRESS(1,1,10) ZMK_MOCK_RELEASE(1,1,60)
+        ZMK_MOCK_PRESS(1,2,10) ZMK_MOCK_RELEASE(1,2,60)
+        ZMK_MOCK_RELEASE(1,0,10)
+    >;
+};

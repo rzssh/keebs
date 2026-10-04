@@ -4,8 +4,6 @@
 
 enum razen_tap_kind {
     RAZEN_TAP_KEY,
-    RAZEN_TAP_MORPH,
-    RAZEN_TAP_MAGIC,
     RAZEN_TAP_ONESHOT_MOD,
     RAZEN_TAP_ONESHOT_LAYER,
     RAZEN_TAP_SMART_SHIFT,
@@ -14,7 +12,6 @@ enum razen_tap_kind {
 enum razen_hold_kind {
     RAZEN_HOLD_KEY,
     RAZEN_HOLD_LAYER,
-    RAZEN_HOLD_SEQUENCE,
 };
 
 typedef struct {
@@ -23,6 +20,11 @@ typedef struct {
     uint16_t shifted;
     uint16_t active_output;
 } razen_morph_t;
+
+typedef struct {
+    uint16_t position;
+    uint16_t keycode;
+} razen_shortcut_t;
 
 typedef struct {
     uint16_t trigger;
@@ -78,40 +80,10 @@ typedef struct {
 
 typedef struct {
     uint16_t trigger;
-    uint8_t layer;
-    uint16_t continue_keycodes[16];
-    uint8_t continue_count;
-    bool ignore_numbers;
-} razen_auto_layer_t;
-
-typedef struct {
-    uint8_t parent_layer;
-    uint8_t child_layer;
-    uint8_t parent_overlay_layer;
-    uint8_t child_overlay_layer;
-    uint16_t parent_trigger;
-    uint16_t child_trigger;
-    uint16_t parent_position;
-    uint16_t child_position;
-    uint16_t tap_keycodes[2];
-    uint16_t tapping_terms[2];
-    uint16_t timers[2];
-    bool interrupted[2];
-    bool parent_pressed;
-    bool child_pressed;
-    bool child_latest;
-} razen_layer_stack_t;
-
-typedef struct {
-    uint16_t trigger;
     uint8_t parent_layer;
     uint8_t child_layer;
     uint16_t parent_position;
     uint16_t child_position;
-    uint16_t tap_keycode;
-    uint16_t tapping_term;
-    uint16_t timer;
-    bool interrupted;
     bool parent_pressed;
     bool child_pressed;
 } razen_layer_transition_t;
@@ -140,6 +112,8 @@ typedef struct {
 
 extern razen_morph_t razen_morphs[];
 extern const uint8_t razen_morph_count;
+extern const razen_shortcut_t razen_shortcuts[];
+extern const uint8_t razen_shortcut_count;
 extern const razen_macro_t razen_macros[];
 extern const uint8_t razen_macro_count;
 extern const razen_sequence_t razen_sequences[];
@@ -162,14 +136,6 @@ extern const razen_quick_tap_t razen_quick_taps[];
 extern const uint8_t razen_quick_tap_count;
 extern const razen_oneshot_layer_t razen_oneshot_layers[];
 extern const uint8_t razen_oneshot_layer_count;
-#ifdef RAZEN_AUTO_LAYER_ENABLE
-extern const razen_auto_layer_t razen_auto_layers[];
-extern const uint8_t razen_auto_layer_count;
-#endif
-#ifdef RAZEN_LAYER_STACK_ENABLE
-extern razen_layer_stack_t razen_layer_stacks[];
-extern const uint8_t razen_layer_stack_count;
-#endif
 #ifdef RAZEN_LAYER_TRANSITION_ENABLE
 extern razen_layer_transition_t razen_layer_transitions[];
 extern const uint8_t razen_layer_transition_count;

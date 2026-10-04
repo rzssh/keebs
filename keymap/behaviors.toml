@@ -11,11 +11,6 @@ tapping_term_ms = 175
 quick_tap_ms = 0
 flavor = "balanced"
 
-[timings.bspc_thumb]
-tapping_term_ms = 175
-quick_tap_ms = 175
-flavor = "balanced"
-
 [timings.layer_thumb]
 tapping_term_ms = 175
 quick_tap_ms = 0
@@ -28,10 +23,6 @@ flavor = "balanced"
 
 [timings.function_number]
 tapping_term_ms = 250
-flavor = "tap-preferred"
-
-[timings.bracket_pair]
-tapping_term_ms = 150
 flavor = "tap-preferred"
 
 [timings.layer_modifier]
@@ -65,6 +56,36 @@ time_to_max_ms = 200
 value = 20
 
 [keys]
+pointer_click = { key = "F13", label = "$$mdi:cursor-default-click$$" }
+pointer_hover = { key = "F14", label = "$$mdi:cursor-default-outline$$" }
+pointer_bisect = { key = "F15", label = "$$mdi:arrow-split-vertical$$" }
+nav_pointer_click = { key = "F13", label = { t = "$$mdi:cursor-default-click$$", left = "$$mdi:arrow-split-vertical$$", right = "$$mdi:mouse-right-click-outline$$", type = "nav-group" } }
+nav_scroll_up = { key = "PG_UP", label = "$$mdi:mouse-move-up$$" }
+nav_scroll_down = { key = "PG_DN", label = "$$mdi:mouse-move-down$$" }
+nav_overview = { key = "F16", label = "$$mdi:view-dashboard$$" }
+nav_opacity = { key = "F10", label = "$$mdi:circle-opacity$$" }
+nav_workspace_up = { key = "PG_UP", label = { t = "$$mdi:arrow-left-bold-box-outline$$", s = "$$mdi:application-export$$" } }
+nav_workspace_down = { key = "PG_DN", label = { t = "$$mdi:arrow-right-bold-box-outline$$", s = "$$mdi:application-export$$" } }
+nav_launcher = { key = "R", label = "$$mdi:rocket-launch$$" }
+nav_files = { key = "P", label = { t = "$$mdi:folder-open-outline$$", s = "$$mdi:console$$", left = "$$mdi:clipboard-text-outline$$", right = "$$mdi:bell-outline$$", type = "nav-group" } }
+nav_window = { key = "F", label = { t = "$$mdi:window-maximize$$", s = "$$mdi:fullscreen$$", left = "$$mdi:window-restore$$", right = "$$mdi:align-horizontal-center$$", type = "nav-group" } }
+nav_region = { key = "F1", label = { t = "$$mdi:select-drag$$", s = "$$mdi:microphone$$", left = "$$mdi:video$$", right = "$$mdi:volume-off$$", type = "nav-group" } }
+nav_display = { key = "F2", label = { t = "$$mdi:monitor-screenshot$$", s = "$$mdi:microphone$$", left = "$$mdi:video$$", right = "$$mdi:volume-off$$", type = "nav-group" } }
+nav_tools = { key = "F3", label = { t = "$$mdi:image-edit-outline$$", s = "$$mdi:bell-outline$$", left = "$$mdi:text-recognition$$", right = "$$mdi:cellphone-arrow-down$$", type = "nav-group" } }
+nav_speech = { key = "F4", label = { t = "$$mdi:microphone$$", s = "$$mdi:incognito$$", left = "$$mdi:text-recognition$$", right = "$$mdi:alphabet-cyrillic$$", type = "nav-group" } }
+nav_mic_mute = { key = "F5", label = "$$mdi:microphone-off$$" }
+nav_media_previous = { key = "F7", label = "$$mdi:skip-previous$$" }
+nav_media_play = { key = "F8", label = "$$mdi:play-pause$$" }
+nav_media_next = { key = "F9", label = "$$mdi:skip-next$$" }
+nav_tab_previous = { key = "TAB", label = { t = "$$mdi:table-arrow-left$$", right = "$$mdi:robot-outline$$", type = "nav-group" } }
+nav_tab_next = { key = "TAB", label = { t = "$$mdi:table-arrow-right$$", right = "$$mdi:robot-outline$$", type = "nav-group" } }
+nav_workspace_previous = { key = "TAB", label = "$$mdi:swap-horizontal-bold$$" }
+nav_volume_down = { key = "F11", label = "$$mdi:volume-minus$$" }
+nav_volume_up = { key = "F12", label = "$$mdi:volume-plus$$" }
+nav_output_mute = { key = "F6", label = "$$mdi:volume-mute$$" }
+nav_zoom_out = { key = "MINUS", label = "$$mdi:magnify-minus-outline$$" }
+nav_zoom_in = { key = "PLUS", label = "$$mdi:magnify-plus-outline$$" }
+nav_zoom_reset = { key = "N0", label = "$$mdi:magnify-remove-outline$$" }
 "Ц" = { key = "W", label = "Ц" }
 "Д" = { key = "L", label = "Д" }
 "Р" = { key = "H", label = "Р" }
@@ -104,16 +125,6 @@ value = 20
 "RU_EXCL" = { key = "EXCL", label = "!" }
 "UA_APOSTROPHE" = { key = "GRAVE", label = "'" }
 
-[behaviors.sqt_dqt]
-recipe = "shift_morph"
-tap = "SQT"
-shifted = "DQT"
-
-[behaviors.minus_slash]
-recipe = "shift_morph"
-tap = "MINUS"
-shifted = "FSLH"
-
 [behaviors.dot_qmark]
 recipe = "shift_morph"
 tap = "DOT"
@@ -122,6 +133,21 @@ shifted = "QMARK"
 [behaviors.comma_excl]
 recipe = "shift_morph"
 tap = "COMMA"
+shifted = "EXCL"
+
+[behaviors.comma_semi]
+recipe = "shift_morph"
+tap = "COMMA"
+shifted = "SEMI"
+
+[behaviors.dot_colon]
+recipe = "shift_morph"
+tap = "DOT"
+shifted = "COLON"
+
+[behaviors.qmark_excl]
+recipe = "shift_morph"
+tap = "QMARK"
 shifted = "EXCL"
 
 [behaviors.ru_dot_qmark]
@@ -144,31 +170,6 @@ recipe = "shift_morph"
 tap = "FSLH"
 shifted = "EXCL"
 
-[behaviors.grave_tilde]
-recipe = "shift_morph"
-tap = "GRAVE"
-shifted = "TILDE"
-
-[behaviors.semi_hash]
-recipe = "shift_morph"
-tap = "SEMI"
-shifted = "HASH"
-
-[behaviors.under_star]
-recipe = "shift_morph"
-tap = "UNDER"
-shifted = "STAR"
-
-[behaviors.equal_pipe]
-recipe = "shift_morph"
-tap = "EQUAL"
-shifted = "PIPE"
-
-[behaviors.plus_percent]
-recipe = "shift_morph"
-tap = "PLUS"
-shifted = "PRCNT"
-
 [behaviors.combo_grave_hash]
 recipe = "shift_morph"
 tap = "GRAVE"
@@ -189,55 +190,10 @@ recipe = "shift_morph"
 tap = "EQUAL"
 shifted = "PLUS"
 
-[behaviors.combo_under_pipe]
-recipe = "shift_morph"
-tap = "UNDER"
-shifted = "PIPE"
-
 [behaviors.combo_slash_bslh]
 recipe = "shift_morph"
 tap = "FSLH"
 shifted = "BSLH"
-
-[behaviors.dollar_caret]
-recipe = "shift_morph"
-tap = "DLLR"
-shifted = "CARET"
-
-[behaviors.sqt_plain]
-recipe = "shift_morph"
-tap = "SQT"
-shifted = "SQT"
-
-[behaviors.equal_plain]
-recipe = "shift_morph"
-tap = "EQUAL"
-shifted = "EQUAL"
-
-[behaviors.minus_plain]
-recipe = "shift_morph"
-tap = "MINUS"
-shifted = "MINUS"
-
-[behaviors.semi_plain]
-recipe = "shift_morph"
-tap = "SEMI"
-shifted = "SEMI"
-
-[behaviors.bslh_plain]
-recipe = "shift_morph"
-tap = "BSLH"
-shifted = "BSLH"
-
-[behaviors.slash_plain]
-recipe = "shift_morph"
-tap = "FSLH"
-shifted = "FSLH"
-
-[behaviors.dot_plain]
-recipe = "shift_morph"
-tap = "DOT"
-shifted = "DOT"
 
 [behaviors.paren]
 recipe = "shift_morph"
@@ -257,58 +213,6 @@ shifted = "RBKT"
 [behaviors.angle]
 recipe = "shift_morph"
 tap = "LT"
-shifted = "GT"
-
-[behaviors.paired_paren]
-recipe = "pair_morph"
-tap = "LPAR"
-shifted = "RPAR"
-pair = ["LPAR", "RPAR", "LEFT"]
-timing = "bracket_pair"
-hold_label = "()"
-
-[behaviors.paired_brace]
-recipe = "pair_morph"
-tap = "LBRC"
-shifted = "RBRC"
-pair = ["LBRC", "RBRC", "LEFT"]
-timing = "bracket_pair"
-hold_label = "{}"
-
-[behaviors.paired_square]
-recipe = "pair_morph"
-tap = "LBKT"
-shifted = "RBKT"
-pair = ["LBKT", "RBKT", "LEFT"]
-timing = "bracket_pair"
-hold_label = "[]"
-
-[behaviors.paired_angle]
-recipe = "pair_morph"
-tap = "LT"
-shifted = "GT"
-pair = ["LT", "GT", "LEFT"]
-timing = "bracket_pair"
-hold_label = "<>"
-
-[behaviors.lpar_lbkt]
-recipe = "shift_morph"
-tap = "LPAR"
-shifted = "LBKT"
-
-[behaviors.rpar_rbkt]
-recipe = "shift_morph"
-tap = "RPAR"
-shifted = "RBKT"
-
-[behaviors.lbrc_lt]
-recipe = "shift_morph"
-tap = "LBRC"
-shifted = "LT"
-
-[behaviors.rbrc_gt]
-recipe = "shift_morph"
-tap = "RBRC"
 shifted = "GT"
 
 [behaviors.bspc_word]
@@ -357,6 +261,31 @@ steps = [
   { key = "TAB", mods = ["LCTRL"] },
 ]
 
+[behaviors.nav_page_up]
+recipe = "shift_morph"
+tap = "PG_UP"
+shifted = { mouse = "SCRL_UP", draw = "nav_scroll_up" }
+
+[behaviors.nav_page_down]
+recipe = "shift_morph"
+tap = "PG_DN"
+shifted = { mouse = "SCRL_DOWN", draw = "nav_scroll_down" }
+
+[behaviors.nav_overview_opacity]
+recipe = "shift_morph"
+tap = "nav_overview"
+shifted = { key = "F10", mods = ["LGUI", "LCTRL"], draw = "nav_opacity" }
+
+[behaviors.nav_pointer]
+recipe = "shift_morph"
+tap = { key = "F13", draw = "nav_pointer_click" }
+shifted = "pointer_hover"
+
+[behaviors.nav_mute]
+recipe = "shift_morph"
+tap = { key = "F6", mods = ["LGUI"], draw = "nav_output_mute" }
+shifted = { key = "F5", mods = ["LGUI"], draw = "nav_mic_mute" }
+
 [behaviors.fat_arrow]
 recipe = "sequence"
 label = "=>"
@@ -364,6 +293,66 @@ steps = [
   { key = "EQUAL" },
   { key = "GT" },
 ]
+
+[behaviors.not_equal]
+recipe = "sequence"
+label = "!="
+steps = [{ key = "EXCL" }, { key = "EQUAL" }]
+
+[behaviors.less_equal]
+recipe = "sequence"
+label = "<="
+steps = [{ key = "LT" }, { key = "EQUAL" }]
+
+[behaviors.greater_equal]
+recipe = "sequence"
+label = ">="
+steps = [{ key = "GT" }, { key = "EQUAL" }]
+
+[behaviors.dot_brace]
+recipe = "sequence"
+label = ".{"
+steps = [{ key = "DOT" }, { key = "LBRC" }]
+
+[behaviors.optional_chain]
+recipe = "sequence"
+label = "?."
+steps = [{ key = "QMARK" }, { key = "DOT" }]
+
+[behaviors.relative_path]
+recipe = "sequence"
+label = "./"
+steps = [{ key = "DOT" }, { key = "FSLH" }]
+
+[behaviors.vim_save]
+recipe = "sequence"
+label = ":w"
+steps = [{ key = "COLON" }, { key = "W" }, { key = "RET" }]
+
+[behaviors.vim_save_quit]
+recipe = "sequence"
+label = ":wq"
+steps = [{ key = "COLON" }, { key = "W" }, { key = "Q" }, { key = "RET" }]
+
+[behaviors.vim_vertical_split]
+recipe = "sequence"
+label = "vsplit"
+steps = [{ key = "W", mods = ["LCTRL"] }, { key = "V" }]
+
+[behaviors.vim_horizontal_split]
+recipe = "sequence"
+label = "split"
+steps = [{ key = "W", mods = ["LCTRL"] }, { key = "S" }]
+
+[behaviors.template_interpolation]
+recipe = "sequence"
+label = "${"
+steps = [{ key = "DLLR" }, { key = "LBRC" }]
+
+[behaviors.rust_attribute]
+recipe = "sequence"
+label = "#["
+steps = [{ key = "HASH" }, { key = "LBKT" }]
 
 [behaviors.thin_arrow]
 recipe = "sequence"
@@ -387,18 +376,6 @@ recipe = "platform"
 action = "caps_word"
 targets = ["zmk", "qmk"]
 
-[behaviors.num_word]
-recipe = "auto_layer"
-layer = "NumWord"
-continue = ["BSPC", "DEL", "DOT", "COMMA", "PLUS", "MINUS", "STAR", "FSLH", "EQUAL"]
-ignore_numbers = true
-targets = ["zmk", "qmk"]
-
-[behaviors.caps_word_lock]
-recipe = "shift_morph"
-tap = { use = "caps_word" }
-shifted = "CAPS"
-
 [behaviors.mouse_chord]
 recipe = "layer_transition"
 parent_layer = "Nav"
@@ -406,37 +383,9 @@ child_layer = "Mouse"
 parent_position = "L_THUMB_A"
 child_position = "L_THUMB_B"
 
-[behaviors.mouse_chord_34]
-recipe = "layer_transition"
-parent_layer = "Nav"
-child_layer = "Sym"
-parent_position = "L_THUMB_B"
-child_position = "L_THUMB_A"
-
 [behaviors.fn_chord]
 recipe = "layer_transition"
 parent_layer = "Sym"
-child_layer = "Fn"
-parent_position = "R_THUMB_B"
-child_position = "R_THUMB_A"
-
-[behaviors.fn_chord_34]
-recipe = "layer_transition"
-parent_layer = "Num"
-child_layer = "Fn"
-parent_position = "R_THUMB_B"
-child_position = "R_THUMB_A"
-
-[behaviors.mouse_sym_chord]
-recipe = "layer_transition"
-parent_layer = "Sym"
-child_layer = "Mouse"
-parent_position = "L_THUMB_A"
-child_position = "L_THUMB_B"
-
-[behaviors.fn_nav_chord]
-recipe = "layer_transition"
-parent_layer = "Nav"
 child_layer = "Fn"
 parent_position = "R_THUMB_B"
 child_position = "R_THUMB_A"
@@ -484,38 +433,6 @@ modifiers = [
 ]
 
 [[layer_modifiers]]
-name = "nav_34"
-layer = "Nav"
-layer_position = "L_THUMB_B"
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["right_space_symbols"]
-term_ms = 40
-prior_idle_ms = 0
-modifiers = [
-  { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
-  { name = "alt", behavior = "osm_alt", position = "L_RING_HOME" },
-  { name = "ctrl", behavior = "osm_ctrl", position = "L_MIDDLE_HOME" },
-  { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
-]
-
-[[layer_modifiers]]
-name = "num_34"
-layer = "Num"
-layer_position = "R_THUMB_B"
-layers = ["Graphium", "Vestnik", "Nav", "Sym"]
-variants = ["core34"]
-setups = ["right_space_symbols"]
-term_ms = 40
-prior_idle_ms = 0
-modifiers = [
-  { name = "shift", behavior = "osm_shift", position = "R_INDEX_HOME" },
-  { name = "ctrl", behavior = "osm_ctrl", position = "R_MIDDLE_HOME" },
-  { name = "alt", behavior = "osm_alt", position = "R_RING_HOME" },
-  { name = "gui", behavior = "osm_gui", position = "R_PINKY_HOME" },
-]
-
-[[layer_modifiers]]
 name = "sym"
 layer = "Sym"
 layer_position = "R_THUMB_B"
@@ -531,28 +448,11 @@ modifiers = [
 ]
 
 [[layer_modifiers]]
-name = "sym_34"
-layer = "Sym"
-layer_position = "L_THUMB_A"
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["right_space_symbols"]
-term_ms = 40
-prior_idle_ms = 0
-modifiers = [
-  { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
-  { name = "alt", behavior = "osm_alt", position = "L_RING_HOME" },
-  { name = "ctrl", behavior = "osm_ctrl", position = "L_MIDDLE_HOME" },
-  { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
-]
-
-[[layer_modifiers]]
 name = "nav_34_left_space"
 layer = "Nav"
 layer_position = "L_THUMB_A"
 layers = ["Graphium", "Vestnik"]
 variants = ["core34"]
-setups = ["left_space_symbols", "left_space_symnum"]
 term_ms = 40
 prior_idle_ms = 0
 modifiers = [
@@ -568,7 +468,6 @@ layer = "Sym"
 layer_position = "R_THUMB_B"
 layers = ["Graphium", "Vestnik"]
 variants = ["core34"]
-setups = ["left_space_symbols", "left_space_symnum"]
 term_ms = 40
 prior_idle_ms = 0
 modifiers = [
@@ -577,68 +476,6 @@ modifiers = [
   { name = "alt", behavior = "osm_alt", position = "R_RING_HOME" },
   { name = "gui", behavior = "osm_gui", position = "R_PINKY_HOME" },
 ]
-
-[[layer_modifiers]]
-name = "nav_34_right_symnum"
-layer = "Nav"
-layer_position = "R_THUMB_B"
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["right_space_symnum"]
-term_ms = 40
-prior_idle_ms = 0
-modifiers = [
-  { name = "gui", behavior = "osm_gui", position = "L_PINKY_HOME" },
-  { name = "alt", behavior = "osm_alt", position = "L_RING_HOME" },
-  { name = "ctrl", behavior = "osm_ctrl", position = "L_MIDDLE_HOME" },
-  { name = "shift", behavior = "osm_shift", position = "L_INDEX_HOME" },
-]
-
-[[layer_modifiers]]
-name = "sym_34_right_symnum"
-layer = "Sym"
-layer_position = "L_THUMB_A"
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["right_space_symnum"]
-term_ms = 40
-prior_idle_ms = 0
-modifiers = [
-  { name = "shift", behavior = "osm_shift", position = "R_INDEX_HOME" },
-  { name = "ctrl", behavior = "osm_ctrl", position = "R_MIDDLE_HOME" },
-  { name = "alt", behavior = "osm_alt", position = "R_RING_HOME" },
-  { name = "gui", behavior = "osm_gui", position = "R_PINKY_HOME" },
-]
-
-[behaviors.under_nav]
-recipe = "tap_hold"
-timing = "layer_thumb"
-hold = { layer = "Nav", mode = "momentary" }
-tap = "UNDER"
-
-[behaviors.bspc_plain_nav]
-recipe = "tap_hold"
-timing = "bspc_thumb"
-hold = { layer = "Nav", mode = "momentary" }
-tap = "BSPC"
-
-[behaviors.shift_nav]
-recipe = "tap_hold"
-timing = "bspc_thumb"
-hold = { layer = "Nav", mode = "momentary" }
-tap = { use = "osm_shift" }
-
-[behaviors.repeat_nav]
-recipe = "tap_hold"
-timing = "bspc_thumb"
-hold = { layer = "Nav", mode = "momentary" }
-tap = { use = "thumb_magic" }
-
-[behaviors.bspc_shift]
-recipe = "tap_hold"
-timing = "magic"
-hold = { key = "LSHIFT" }
-tap = "BSPC"
 
 [behaviors.esc_mouse]
 recipe = "tap_hold"
@@ -766,6 +603,7 @@ swaps = [
 rules = [
   { input = "O", after = ["J", "U"], emit = ["BSPC", "O", "U"], allow_shift = true },
   { input = "S", after = ["Y", "O", "U"], emit = ["SQT"] },
+  { input = "S", after = ["T", "H", "E", "Y"], emit = ["SQT"] },
   { input = "O", after = ["I", "U"], emit = ["BSPC", "O", "U"] },
   { input = "T", after = ["N", "R"], emit = ["BSPC", "T", "R"] },
 ]
@@ -1022,22 +860,220 @@ term_ms = 25
 prior_idle_ms = 0
 
 [[combos]]
-name = "symnum_fat_arrow"
+name = "nav_workspace_previous"
+positions = ["L_RING_TOP", "L_MIDDLE_TOP"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { key = "TAB", mods = ["LGUI"] }
+term_ms = 40
+prior_idle_ms = 0
+draw = { action = "nav_workspace_previous" }
+
+[[combos]]
+name = "nav_volume_down"
 positions = ["R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { key = "F11", mods = ["LGUI"] }
+term_ms = 40
+prior_idle_ms = 0
+draw = { action = "nav_volume_down" }
+
+[[combos]]
+name = "nav_volume_up"
+positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { key = "F12", mods = ["LGUI"] }
+term_ms = 40
+prior_idle_ms = 0
+draw = { action = "nav_volume_up" }
+
+[[combos]]
+name = "nav_output_mute"
+positions = ["R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { use = "nav_mute" }
+term_ms = 40
+prior_idle_ms = 0
+draw = { type = "nav-mute", align = "bottom", offset = 0.1, height = 38 }
+
+[[combos]]
+name = "nav_zoom_out"
+positions = ["L_RING_BOTTOM", "L_MIDDLE_BOTTOM"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { key = "MINUS", mods = ["LCTRL"] }
+term_ms = 40
+prior_idle_ms = 0
+draw = { action = "nav_zoom_out" }
+
+[[combos]]
+name = "nav_zoom_in"
+positions = ["L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { key = "PLUS", mods = ["LCTRL"] }
+term_ms = 40
+prior_idle_ms = 0
+draw = { action = "nav_zoom_in" }
+
+[[combos]]
+name = "nav_zoom_reset"
+positions = ["L_RING_BOTTOM", "L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { key = "N0", mods = ["LCTRL"] }
+term_ms = 40
+prior_idle_ms = 0
+draw = { action = "nav_zoom_reset", align = "bottom", offset = 0.1 }
+
+[[combos]]
+name = "nav_home"
+positions = ["R_INDEX_HOME", "R_MIDDLE_HOME"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { os = "home" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "nav_end"
+positions = ["R_MIDDLE_HOME", "R_RING_HOME"]
+layers = ["Nav"]
+variants = ["core34"]
+action = { os = "end" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "vim_save"
+positions = ["L_RING_TOP", "L_INDEX_HOME"]
+layers = ["Vim"]
+variants = ["core34"]
+feature = "vim_combos"
+action = { use = "vim_save" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "vim_save_quit"
+positions = ["L_INDEX_TOP", "L_RING_HOME"]
+layers = ["Vim"]
+variants = ["core34"]
+feature = "vim_combos"
+action = { use = "vim_save_quit" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "vim_vertical_split"
+positions = ["R_INDEX_TOP", "R_RING_HOME"]
+layers = ["Vim"]
+variants = ["core34"]
+feature = "vim_combos"
+action = { use = "vim_vertical_split" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "vim_horizontal_split"
+positions = ["R_INDEX_HOME", "R_RING_TOP"]
+layers = ["Vim"]
+variants = ["core34"]
+feature = "vim_combos"
+action = { use = "vim_horizontal_split" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_not_equal"
+positions = ["L_RING_TOP", "L_MIDDLE_TOP"]
 layers = ["Sym"]
 variants = ["core34"]
-setups = ["left_space_symnum", "right_space_symnum"]
+action = { use = "not_equal" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_less_equal"
+positions = ["L_MIDDLE_TOP", "L_INDEX_TOP"]
+layers = ["Sym"]
+variants = ["core34"]
+action = { use = "less_equal" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_fat_arrow"
+positions = ["R_INDEX_TOP", "R_MIDDLE_TOP"]
+layers = ["Sym"]
+variants = ["core34"]
 action = { use = "fat_arrow" }
 term_ms = 40
 prior_idle_ms = 0
 
 [[combos]]
-name = "symnum_thin_arrow"
+name = "ferris_dot_brace"
+positions = ["L_RING_HOME", "L_MIDDLE_HOME"]
+layers = ["Sym"]
+variants = ["core34"]
+action = { use = "dot_brace" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_greater_equal"
+positions = ["L_MIDDLE_HOME", "L_INDEX_HOME"]
+layers = ["Sym"]
+variants = ["core34"]
+action = { use = "greater_equal" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_thin_arrow"
+positions = ["R_INDEX_BOTTOM", "R_MIDDLE_BOTTOM"]
+layers = ["Sym"]
+variants = ["core34"]
+action = { use = "thin_arrow" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_template_interpolation"
+positions = ["R_MIDDLE_TOP", "R_RING_TOP"]
+layers = ["Sym"]
+variants = ["core34"]
+action = { use = "template_interpolation" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_rust_attribute"
 positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
 layers = ["Sym"]
 variants = ["core34"]
-setups = ["left_space_symnum", "right_space_symnum"]
-action = { use = "thin_arrow" }
+action = { use = "rust_attribute" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_optional_chain"
+positions = ["L_RING_BOTTOM", "L_MIDDLE_BOTTOM"]
+layers = ["Sym"]
+variants = ["core34"]
+action = { use = "optional_chain" }
+term_ms = 40
+prior_idle_ms = 0
+
+[[combos]]
+name = "ferris_relative_path"
+positions = ["L_MIDDLE_BOTTOM", "L_INDEX_BOTTOM"]
+layers = ["Sym"]
+variants = ["core34"]
+action = { use = "relative_path" }
 term_ms = 40
 prior_idle_ms = 0
 
@@ -1086,24 +1122,24 @@ prior_idle_ms = 0
 draw = { action = "EQUAL" }
 
 [[combos]]
-name = "graphium_under"
+name = "graphium_minus_under"
 positions = ["R_MIDDLE_BOTTOM", "R_RING_BOTTOM"]
 layers = ["Graphium"]
 variants = ["core34"]
-feature = "symbol_combos"
-action = { use = "combo_under_pipe" }
-term_ms = 20
+action = "MINUS"
+term_ms = 40
 prior_idle_ms = 0
-draw = { action = "UNDER" }
 
 [[combos]]
-name = "num_word"
+name = "graphium_slash"
 positions = ["R_RING_BOTTOM", "R_PINKY_BOTTOM"]
 layers = ["Graphium"]
 variants = ["core34"]
-action = { use = "num_word" }
+feature = "symbol_combos"
+action = { use = "combo_slash_bslh" }
 term_ms = 20
 prior_idle_ms = 0
+draw = { action = "FSLH" }
 
 [[combos]]
 name = "graphium_lbkt"
@@ -1197,19 +1233,6 @@ slow_release = true
 draw = { type = "mouse-activator" }
 
 [[combos]]
-name = "mouse_34"
-positions = ["L_THUMB_A", "L_THUMB_B"]
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["right_space_symbols"]
-extended_thumbs = false
-action = { use = "mouse_chord_34" }
-term_ms = 60
-prior_idle_ms = 0
-slow_release = true
-draw = { type = "mouse-activator" }
-
-[[combos]]
 name = "fn"
 positions = ["R_THUMB_A", "R_THUMB_B"]
 layers = ["Graphium", "Vestnik"]
@@ -1221,24 +1244,10 @@ slow_release = true
 draw = { type = "fn-activator" }
 
 [[combos]]
-name = "fn_34"
-positions = ["R_THUMB_A", "R_THUMB_B"]
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["right_space_symbols"]
-extended_thumbs = false
-action = { use = "fn_chord_34" }
-term_ms = 60
-prior_idle_ms = 0
-slow_release = true
-draw = { type = "fn-activator" }
-
-[[combos]]
 name = "mouse_left_space_34"
 positions = ["L_THUMB_A", "L_THUMB_B"]
 layers = ["Graphium", "Vestnik"]
 variants = ["core34"]
-setups = ["left_space_symbols", "left_space_symnum"]
 extended_thumbs = false
 action = { use = "mouse_chord" }
 term_ms = 60
@@ -1247,52 +1256,12 @@ slow_release = true
 draw = { type = "mouse-activator" }
 
 [[combos]]
-name = "fn_symnum_34"
-positions = ["R_THUMB_A", "R_THUMB_B"]
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["left_space_symnum"]
-extended_thumbs = false
-action = { use = "fn_chord" }
-term_ms = 12
-prior_idle_ms = 0
-slow_release = true
-draw = { type = "fn-activator" }
-
-[[combos]]
 name = "fn_symbols_34"
 positions = ["R_THUMB_A", "R_THUMB_B"]
 layers = ["Graphium", "Vestnik"]
 variants = ["core34"]
-setups = ["left_space_symbols"]
 extended_thumbs = false
 action = { use = "fn_chord" }
-term_ms = 60
-prior_idle_ms = 0
-slow_release = true
-draw = { type = "fn-activator" }
-
-[[combos]]
-name = "mouse_right_symnum_34"
-positions = ["L_THUMB_A", "L_THUMB_B"]
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["right_space_symnum"]
-extended_thumbs = false
-action = { use = "mouse_sym_chord" }
-term_ms = 60
-prior_idle_ms = 0
-slow_release = true
-draw = { type = "mouse-activator" }
-
-[[combos]]
-name = "fn_right_symnum_34"
-positions = ["R_THUMB_A", "R_THUMB_B"]
-layers = ["Graphium", "Vestnik"]
-variants = ["core34"]
-setups = ["right_space_symnum"]
-extended_thumbs = false
-action = { use = "fn_nav_chord" }
 term_ms = 60
 prior_idle_ms = 0
 slow_release = true
@@ -1313,7 +1282,7 @@ draw = false
 [[combos]]
 name = "backspace"
 positions = ["R_INDEX_TOP", "R_MIDDLE_TOP", "R_RING_TOP"]
-layers = ["Graphium", "Vestnik", "Nav", "Sym"]
+layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num"]
 variants = ["core30", "core34"]
 action = { use = "bspc_word" }
 term_ms = 40
@@ -1324,7 +1293,7 @@ draw = { action = "BSPC", layers = ["Graphium", "Vestnik"], type = "meta-backspa
 [[combos]]
 name = "delete"
 positions = ["R_MIDDLE_TOP", "R_RING_TOP", "R_PINKY_TOP"]
-layers = ["Graphium", "Vestnik", "Nav", "Sym"]
+layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num"]
 variants = ["core30", "core34"]
 action = { use = "del_word" }
 term_ms = 40
@@ -1334,7 +1303,7 @@ draw = { action = "DEL", layers = ["Graphium", "Vestnik"], type = "meta-delete",
 [[combos]]
 name = "escape"
 positions = ["L_RING_TOP", "L_MIDDLE_TOP", "L_INDEX_TOP"]
-layers = ["Graphium", "Vestnik", "Nav", "Sym"]
+layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num"]
 variants = ["core30", "core34"]
 action = "ESC"
 term_ms = 40
@@ -1344,7 +1313,7 @@ draw = { layers = ["Graphium", "Vestnik"], type = "meta-escape", center = 0, nam
 [[combos]]
 name = "tab"
 positions = ["L_RING_HOME", "L_MIDDLE_HOME", "L_INDEX_HOME"]
-layers = ["Graphium", "Vestnik", "Nav", "Sym"]
+layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num"]
 variants = ["core30", "core34"]
 action = "TAB"
 term_ms = 40
@@ -1354,7 +1323,7 @@ draw = { layers = ["Graphium", "Vestnik"], type = "meta-tab", center = 1, name =
 [[combos]]
 name = "enter"
 positions = ["R_INDEX_HOME", "R_MIDDLE_HOME", "R_RING_HOME"]
-layers = ["Graphium", "Vestnik", "Nav", "Sym"]
+layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num"]
 variants = ["core30", "core34"]
 action = "RET"
 term_ms = 40
@@ -1412,7 +1381,7 @@ draw = false
 [[combos]]
 name = "layer_right_shift_ctrl"
 positions = ["R_INDEX_HOME", "R_MIDDLE_HOME"]
-layers = ["Sym", "Num"]
+layers = ["Sym"]
 action = { key = "LCTRL", mods = ["LSHFT"] }
 term_ms = 25
 prior_idle_ms = 0
@@ -1421,7 +1390,7 @@ draw = false
 [[combos]]
 name = "layer_right_ctrl_alt"
 positions = ["R_MIDDLE_HOME", "R_RING_HOME"]
-layers = ["Sym", "Num"]
+layers = ["Sym"]
 action = { key = "LCTRL", mods = ["LALT"] }
 term_ms = 25
 prior_idle_ms = 0
@@ -1430,7 +1399,37 @@ draw = false
 [[combos]]
 name = "layer_right_alt_gui"
 positions = ["R_RING_HOME", "R_PINKY_HOME"]
-layers = ["Sym", "Num"]
+layers = ["Sym"]
+action = { key = "LGUI", mods = ["LALT"] }
+term_ms = 25
+prior_idle_ms = 0
+draw = false
+
+[[combos]]
+name = "num_right_shift_ctrl_core30"
+positions = ["R_INDEX_HOME", "R_MIDDLE_HOME"]
+layers = ["Num"]
+variants = ["core30"]
+action = { key = "LCTRL", mods = ["LSHFT"] }
+term_ms = 25
+prior_idle_ms = 0
+draw = false
+
+[[combos]]
+name = "num_right_ctrl_alt_core30"
+positions = ["R_MIDDLE_HOME", "R_RING_HOME"]
+layers = ["Num"]
+variants = ["core30"]
+action = { key = "LCTRL", mods = ["LALT"] }
+term_ms = 25
+prior_idle_ms = 0
+draw = false
+
+[[combos]]
+name = "num_right_alt_gui_core30"
+positions = ["R_RING_HOME", "R_PINKY_HOME"]
+layers = ["Num"]
+variants = ["core30"]
 action = { key = "LGUI", mods = ["LALT"] }
 term_ms = 25
 prior_idle_ms = 0

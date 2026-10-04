@@ -1,5 +1,5 @@
 version = 1
-layers = ["Graphium", "Vestnik", "Nav", "Sym", "Num", "NumWord", "Fn", "Mouse", "Magic"]
+layers = ["Graphium", "Vestnik", "Vim", "Nav", "Sym", "Num", "Fn", "Mouse", "Magic"]
 alpha_layers = ["Graphium", "Vestnik"]
 default_layer = "Graphium"
 default_os = "linux"
@@ -7,37 +7,17 @@ layer_source = "layers.toml"
 behavior_source = "behaviors.toml"
 profile_source = "profiles.json"
 draw_combo_reference_layer = false
-space_hand = "left"
-symbol_layers = "separate"
-opposite_homing_tap = "shift"
 
 [features]
+linux_symbol_plane = true
 bracket_combos = { core30 = true, core34 = false }
-symbol_combos = { core30 = false, core34 = true }
+symbol_combos = { core30 = false, core34 = false }
 vim_adaptive_guard = true
-
-[[layer_stacks]]
-layers = ["Sym", "Num"]
-positions = ["L_THUMB_A", "R_THUMB_B"]
-variants = ["core34"]
-setups = ["right_space_symbols"]
+vim_combos = { core30 = false, core34 = false }
 
 [[conditional_layers]]
 if_layers = ["Nav", "Sym"]
 then_layer = "Num"
-variants = ["core30"]
-
-[[conditional_layers]]
-if_layers = ["Nav", "Sym"]
-then_layer = "Num"
-variants = ["core34"]
-setups = ["left_space_symbols"]
-
-[[conditional_layers]]
-if_layers = ["Nav", "Sym"]
-then_layer = "Mouse"
-variants = ["core34"]
-setups = ["right_space_symbols"]
 
 [operating_systems.linux]
 home = { key = "HOME" }

@@ -11,10 +11,6 @@ properties:
   child-layer:
     type: int
     required: true
-  parent-overlay-layer:
-    type: int
-  child-overlay-layer:
-    type: int
   parent-position:
     type: int
     required: true

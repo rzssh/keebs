@@ -224,18 +224,12 @@
       },
       "overlays": {
         "Nav": {
-          "L_THUMB_OPTIONAL": {"layer": "Mouse", "mode": "momentary"},
-          "L_THUMB_B": {"layer": "Nav", "mode": "momentary"},
-          "R_THUMB_A": "SPACE"
+          "L_THUMB_OPTIONAL": {"layer": "Mouse", "mode": "momentary"}
         },
         "Sym": {
-          "L_THUMB_OPTIONAL": {"layer": "Mouse", "mode": "momentary"},
-          "L_THUMB_A": {"layer": "Sym", "mode": "momentary"}
+          "L_THUMB_OPTIONAL": {"layer": "Mouse", "mode": "momentary"}
         },
         "Num": {
-          "L_THUMB_B": {"use": "bspc_plain_nav"},
-          "R_THUMB_A": "none",
-          "R_THUMB_B": {"layer": "Num", "mode": "momentary"},
           "R_THUMB_OPTIONAL": {"layer": "Fn", "mode": "momentary"}
         },
         "Mouse": {
@@ -357,9 +351,7 @@
         "L_THUMB_OPTIONAL": {"layer": "Num", "mode": "momentary"}
       },
       "overlays": {
-        "Graphium": {"L_THUMB_A": {"layer": "Sym", "mode": "momentary"}},
         "Vestnik": {
-          "L_THUMB_A": {"layer": "Sym", "mode": "momentary"},
           "L_TOP_EXTRA": "Щ",
           "R_TOP_EXTRA": "Ъ",
           "R_TOP_OUTER": "Ё",

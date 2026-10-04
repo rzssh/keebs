@@ -8,6 +8,12 @@ trap 'rm -rf "$temporary"' EXIT
 
 cd "$repo"
 ./scripts/generate check
+python3 scripts/test-adaptive-history.py
+python3 scripts/test-layouts.py
+python3 scripts/test-ferris.py
+python3 scripts/test-nav.py
+python3 scripts/test-native-num.py
+python3 scripts/test-vim.py
 PYTHONPYCACHEPREFIX="$temporary/pycache" python3 -m compileall -q scripts
 
 mapfile -t shell_files < <(git ls-files '*.sh' 'scripts/generate' 'scripts/check' 'scripts/zmk-test')

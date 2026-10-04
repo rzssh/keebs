@@ -56,15 +56,24 @@ draw_config:
     .layer-Vestnik text, .layer-Vestnik .glyph, .layer-Vestnik rect.held { fill: #cba6f7; }
     .layer-Vestnik .key.shifted { fill: #ff6b6b; }
     .layer-Nav text, .layer-Nav .glyph, .layer-Nav rect.held { fill: #89b4fa; }
-    .layer-Sym text, .layer-Sym .glyph, .layer-Sym rect.held, .layer-SymNum text, .layer-SymNum .glyph, .layer-SymNum rect.held { fill: #a6e3a1; }
-    .layer-SymNum text.symnum-number.tap { fill: #fab387; }
+    .layer-Nav path.combo { stroke-width: 1; stroke-dasharray: none; opacity: 1; }
+    .layer-Nav rect.combo { stroke: none; }
+    .layer-Nav .shifted { fill: #f0e442; }
+    .layer-Nav .nav-group.left, .layer-Nav .modifier-legend.left { fill: #e69f00; }
+    .layer-Nav .nav-group.right, .layer-Nav .modifier-legend.right { fill: #cc79a7; }
+    .layer-Nav rect.combo.modifier-legend { fill: #313244; stroke: #45475a; }
+    .layer-Nav svg.modifier-legend.shifted { transform: translate(0, -13px); }
+    .layer-Nav svg.modifier-legend.left { transform: translate(-12px, 0); }
+    .layer-Nav svg.modifier-legend.right { transform: translate(12px, 0); }
+    .layer-Nav svg.combo.nav-mute.shifted { transform: translate(0, -6px); }
+    .layer-Sym text, .layer-Sym .glyph, .layer-Sym rect.held { fill: #a6e3a1; }
     .layer-Num text, .layer-Num .glyph, .layer-Num rect.held { fill: #fab387; }
     .layer-Fn text, .layer-Fn .glyph, .layer-Fn rect.held { fill: #f9e2af; }
     .layer-Mouse text, .layer-Mouse .glyph, .layer-Mouse rect.held { fill: #94e2d5; }
     text.held { fill: #1e1e2e; }
     text.trans { fill: #6c7086; }
     rect.nav-activator, rect:has(~ a[href="#Nav"]) { stroke: #89b4fa; stroke-width: 2; }
-    rect.sym-activator, rect.symnum-activator, rect:has(~ a[href="#Sym"]), rect:has(~ a[href="#SymNum"]) { stroke: #a6e3a1; stroke-width: 2; }
+    rect.sym-activator, rect:has(~ a[href="#Sym"]) { stroke: #a6e3a1; stroke-width: 2; }
     rect.num-activator, rect:has(~ a[href="#Num"]) { stroke: #fab387; stroke-width: 2; }
     rect.key.mouse-activator, rect.key:has(~ a[href="#Mouse"]) { stroke: #94e2d5; stroke-width: 2; }
     rect.key.fn-activator, rect.key:has(~ a[href="#Fn"]) { stroke: #f9e2af; stroke-width: 2; }
